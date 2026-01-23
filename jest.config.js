@@ -1,0 +1,75 @@
+/**
+ * Jest Configuration for AgroBridge Frontend
+ * @description Complete testing setup for frontend validation
+ */
+
+export default {
+  // Test environment
+  testEnvironment: 'jsdom',
+
+  // Setup files
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+
+  // Test file patterns (exclude e2e tests - those use Playwright)
+  testMatch: [
+    '<rootDir>/tests/**/*.test.js'
+  ],
+
+  // Ignore E2E tests (they use Playwright)
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/tests/e2e/'
+  ],
+
+  // Coverage configuration
+  collectCoverage: true,
+  coverageDirectory: '<rootDir>/coverage',
+  coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
+
+  // Coverage thresholds - 90%+ target
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 85,
+      lines: 90,
+      statements: 90
+    }
+  },
+
+  // Files to collect coverage from
+  collectCoverageFrom: [
+    'public_html/scripts/**/*.js',
+    '!public_html/scripts/**/*.min.js',
+    '!**/node_modules/**'
+  ],
+
+  // Module paths
+  moduleDirectories: ['node_modules', 'public_html/scripts'],
+
+  // Transform configuration
+  transform: {},
+
+  // Verbose output
+  verbose: true,
+
+  // Test timeout
+  testTimeout: 10000,
+
+  // Clear mocks between tests
+  clearMocks: true,
+
+  // Restore mocks after each test
+  restoreMocks: true,
+
+  // Module name mapping for imports
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/public_html/scripts/$1'
+  },
+
+  // Global setup/teardown
+  globalSetup: undefined,
+  globalTeardown: undefined,
+
+  // Reporter configuration
+  reporters: ['default']
+};

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://agrobridge.global/</loc>
+    <lastmod>2026-01-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://agrobridge.global/assets/images/og-image.jpg</image:loc>
+      <image:title>AgroBridge ZTD | Confianza Criptográfica Enterprise</image:title>
+      <image:caption>Trazabilidad inviolable para productos agrícolas premium de Michoacán</image:caption>
+    </image:image>
+    <!-- Multi-language support -->
+    <xhtml:link rel="alternate" hreflang="es" href="https://agrobridge.global/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://agrobridge.global/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://agrobridge.global/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://agrobridge.global/"/>
+  </url>
+
+  <!-- Products Section -->
+  <url>
+    <loc>https://agrobridge.global/#productos</loc>
+    <lastmod>2026-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Validation Section -->
+  <url>
+    <loc>https://agrobridge.global/#validacion</loc>
+    <lastmod>2026-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Technology Section -->
+  <url>
+    <loc>https://agrobridge.global/#tecnologia</loc>
+    <lastmod>2026-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Success Cases -->
+  <url>
+    <loc>https://agrobridge.global/#casos-exito</loc>
+    <lastmod>2026-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Process Section -->
+  <url>
+    <loc>https://agrobridge.global/#proceso</loc>
+    <lastmod>2026-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact Section -->
+  <url>
+    <loc>https://agrobridge.global/#contacto</loc>
+    <lastmod>2026-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

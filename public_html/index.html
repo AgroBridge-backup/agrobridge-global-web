@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="es" class="js-enabled" data-version="ZTD-14.0">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Y METADATOS OPTIMIZADOS -->
+    <title>AgroBridge ZTD | Confianza Criptográfica Enterprise</title>
+    <meta name="description" content="Trazabilidad de precisión y calidad certificada para mercados Enterprise. AgroBridge ZeroLoss™ Protocol y TrustChain™.">
+    
+    <!-- OPEN GRAPH OPTIMIZADO -->
+    <meta property="og:title" content="AgroBridge ZTD | Confianza Criptográfica Enterprise">
+    <meta property="og:description" content="Trazabilidad criptográfica inviolable para productos agrícolas premium desde Michoacán al mundo.">
+    <meta property="og:image" content="https://agrobridge.global/assets/images/logo.jpg">
+    <meta property="og:url" content="https://agrobridge.global">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AgroBridge ZTD">
+    <meta property="og:locale" content="es_MX">
+    
+    <!-- PWA CONFIGURATION -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <meta name="theme-color" content="#d4af37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AgroBridge ZTD">
+    
+    <!-- TWITTER CARD OPTIMIZADO -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AgroBridge ZTD | Confianza Criptográfica Enterprise">
+    <meta name="twitter:description" content="Trazabilidad de precisión para mercados Enterprise. AgroBridge ZeroLoss™ Protocol y TrustChain™.">
+    <meta name="twitter:image" content="https://agrobridge.global/assets/images/logo.jpg">
+    <meta name="twitter:site" content="@aglobridge_ztd">
+    
+    <!-- SCHEMA.ORG MARKUP -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "AgroBridge ZTD",
+        "description": "Trazabilidad criptográfica para productos agrícolas premium con AgroBridge ZeroLoss™ Protocol y TrustChain™",
+        "url": "https://agrobridge.global",
+        "logo": "https://agrobridge.global/assets/images/logo.jpg",
+        "sameAs": [
+            "https://www.instagram.com/agrobridge.mx"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "ceo@agrobridge.global",
+            "contactType": "customer service",
+            "areaServed": "MX",
+            "availableLanguage": ["es", "en"]
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Zamora",
+            "addressRegion": "Michoacán",
+            "addressCountry": "MX"
+        },
+        "slogan": "La Certidumbre es Nuestro Lote. Trazabilidad Inviolable."
+    }
+    </script>
+    
+    <!-- META TAGS ADICIONALES -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="instagram:creator" content="@agrobridge.mx">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         TYPOGRAPHY SYSTEM V2.0 - AgroBridge Global
+         Fonts: DM Sans (display) + Source Sans 3 (body) + JetBrains Mono (code)
+         Total: ~105KB | Load time: <500ms on 4G
+         ═══════════════════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin,latin-ext" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin,latin-ext"></noscript>
+
+    <!-- DNS PREFETCH FOR EXTERNAL RESOURCES -->
+    <link rel="dns-prefetch" href="https://api.agrobridge.global">
+    <link rel="dns-prefetch" href="https://wa.me">
+
+    <!-- EXTERNAL STYLESHEET (Issue #8 - CSS Consolidation) -->
+    <link rel="stylesheet" href="assets/main.css">
+    <link rel="stylesheet" href="assets/accesibility.css">
+
+    <!-- CRITICAL INLINE CSS (only page-specific overrides) -->
+    <style>
+        /* SISTEMA DE DISEÑO AGROBRIDGE ZTD V14 */
+        :root {
+            --primary-green: #0a5c36;
+            --deep-green: #064e32;
+            --gold: #d4af37;
+            --light-gold: #fbf2d5;
+            --dark-gold: #b8941f;
+            --white: #ffffff;
+            --light-bg: #f8faf9;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-xl: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+            --shadow-gold: 0 0 40px rgba(212, 175, 55, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: var(--gray-800);
+            background: var(--white);
+            overflow-x: hidden;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        
+        body.ready {
+            opacity: 1;
+        }
+
+        /* PERFORMANCE OPTIMIZATIONS */
+        .lazy-loading {
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        
+        .lazy-loaded {
+            opacity: 1;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        .lazy-error {
+            opacity: 0.3;
+            background: #f5f5f5;
+        }
+        
+        .save-data-mode [data-save-data="hide"] {
+            display: none !important;
+        }
+        
+        .low-bandwidth-mode .high-res-image {
+            display: none;
+        }
+        
+        .low-bandwidth-mode .low-res-image {
+            display: block;
+        }
+
+        /* ACCESIBILIDAD CRÍTICA */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--deep-green), var(--primary-green));
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: 12px;
+            z-index: 10000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid var(--gold);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .skip-link:focus {
+            top: 20px;
+            opacity: 1;
+            transform: translateX(-50%) scale(1.05);
+        }
+        
+        /* TYPOGRAPHY SYSTEM */
+        .text-display {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        
+        .text-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        /* HEADER & NAVIGATION */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 92, 54, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .nav.scrolled {
+            background: rgba(10, 92, 54, 0.98);
+            box-shadow: var(--shadow-lg);
+            padding: 0.5rem 0;
+        }
+        
+        .nav__container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav__logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav__logo:hover {
+            transform: translateY(-2px);
+        }
+        
+        .nav__logo-accent {
+            color: var(--gold);
+            font-weight: 800;
+            position: relative;
+        }
+        
+        .nav__logo-accent::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav__logo:hover .nav__logo-accent::after {
+            transform: scaleX(1);
+        }
+        
+        .nav__menu {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+        }
+        
+        .nav__link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav__link:hover {
+            color: var(--gold);
+        }
+        
+        .nav__link::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+        
+        .nav__link:hover::after {
+            width: 100%;
+        }
+        
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--deep-green) 0%, var(--primary-green) 50%, #0f766e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(10, 92, 54, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 78, 50, 0.15) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .hero__content {
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 2rem;
+        }
+        
+        .hero__title {
+            font-size: clamp(3rem, 6vw, 5rem);
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+        
+        .hero__title-accent {
+            background: linear-gradient(135deg, var(--gold), #fef3c7, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        .hero__subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        
+        .hero__cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* BUTTON SYSTEM */
+        .button {
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .button:hover::before {
+            left: 100%;
+        }
+        
+        .button--primary {
+            background: var(--gold);
+            color: var(--deep-green);
+            box-shadow: var(--shadow-gold);
+        }
+        
+        .button--primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.4);
+        }
+        
+        .button--secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--gold);
+        }
+        
+        .button--secondary:hover {
+            background: var(--gold);
+            color: var(--deep-green);
+            transform: translateY(-3px);
+        }
+        
+        .button--producer {
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--deep-green);
+            box-shadow: var(--shadow-gold);
+            font-size: 1.2rem;
+            padding: 1.5rem 4rem;
+        }
+        
+        /* SECTION SYSTEM */
+        .section {
+            padding: 8rem 0;
+            position: relative;
+        }
+        
+        .section--light {
+            background: var(--light-bg);
+        }
+        
+        .section--pattern {
+            background: linear-gradient(135deg, var(--light-bg) 0%, var(--white) 100%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .section__title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+            color: var(--deep-green);
+        }
+        
+        .section__title--center {
+            text-align: center;
+        }
+        
+        .section__subtitle {
+            font-size: 1.3rem;
+            color: #6b7280;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+        
+        .section__subtitle--center {
+            text-align: center;
+            margin: 0 auto 4rem;
+        }
+        
+        /* FEATURES GRID */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .feature-card {
+            background: var(--white);
+            padding: 3rem 2.5rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--gold), var(--dark-gold));
+        }
+        
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+            border-radius: 0 0 0 100px;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .feature-card__icon {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            display: block;
+            opacity: 0.9;
+        }
+        
+        .feature-card__title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--deep-green);
+            line-height: 1.3;
+        }
+        
+        .feature-card__text {
+            color: #6b7280;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+        
+        /* PRODUCTS SHOWCASE */
+        .product-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            transition: all 0.4s ease;
+        }
+        
+        .product-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .product-item--reverse {
+            grid-template-columns: 2fr 1fr;
+        }
+        
+        .product-item--reverse .product-item__image-placeholder {
+            order: 2;
+        }
+        
+        .product-item__image-placeholder {
+            font-size: 6rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--light-bg), var(--white));
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            font-weight: 700;
+            color: var(--deep-green);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.4s ease;
+            role: "img";
+            aria-label: "Producto AgroBridge certificado";
+        }
+        
+        .product-item:hover .product-item__image-placeholder {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, var(--light-gold), var(--white));
+        }
+        
+        .product-item__content {
+            padding: 1rem;
+        }
+        
+        .product-item__title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--deep-green);
+            line-height: 1.2;
+        }
+        
+        .product-item__description {
+            color: #6b7280;
+            font-size: 1.2rem;
+            line-height: 1.7;
+        }
+        
+        /* VALIDATION CARD */
+        .validation {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .validation-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 28px;
+            padding: 4rem 3rem;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .validation-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent,
+                rgba(212, 175, 55, 0.1),
+                transparent 30%
+            );
+            animation: rotate 6s linear infinite;
+        }
+        
+        .validation-card__content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .validation-card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .validation-card__title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--gold);
+            font-family: 'Inter', monospace;
+            letter-spacing: 1px;
+        }
+        
+        .validation-card__language select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--white);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .validation-card__search {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .validation-card__input {
+            flex: 1;
+            padding: 1.25rem 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', monospace;
+            letter-spacing: 0.5px;
+        }
+        
+        .validation-card__input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+        
+        .validation-card__input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .validation-card__button {
+            padding: 1.25rem 2.5rem;
+            background: var(--gold);
+            color: var(--deep-green);
+            border: none;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .validation-card__button:hover {
+            background: #e6c34d;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        .validation-card__error-text {
+            color: #f87171;
+            margin-bottom: 2rem;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .validation-card__details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: flex-start;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-row--accent {
+            background: rgba(212, 175, 55, 0.1);
+            margin: 0 -2.5rem;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #d1d5db;
+            flex: 1;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--white);
+            flex: 1;
+            text-align: right;
+        }
+        
+        .detail-value--code {
+            font-family: 'Inter', monospace;
+            color: var(--gold);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .validation-card__status {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+        
+        /* TIMELINE */
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .timeline-item {
+            background: var(--white);
+            padding: 3rem 2.5rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            position: relative;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        
+        .timeline-item:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .timeline-item__icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--deep-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 auto 2rem;
+            font-family: 'Playfair Display', serif;
+            box-shadow: var(--shadow-gold);
+        }
+        
+        .timeline-item__title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--deep-green);
+            line-height: 1.3;
+        }
+        
+        .timeline-item__text {
+            color: #6b7280;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+        
+        /* PRODUCER CTA */
+        .producer-cta {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .producer-title-accent {
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* CONTACT FORM */
+        .contact-card {
+            background: var(--white);
+            padding: 4rem 3rem;
+            border-radius: 28px;
+            box-shadow: var(--shadow-lg);
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        
+        .contact-card__text {
+            font-size: 1.3rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .contact-form {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--deep-green);
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            padding: 1.5rem 2rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+        }
+        
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+        
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 140px;
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: var(--deep-green);
+            color: var(--white);
+            padding: 4rem 0 3rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .footer__container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .footer__social a {
+            color: var(--white);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .footer__social a:hover {
+            color: var(--gold);
+        }
+        
+        /* ANIMATIONS */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .animate-slideInLeft {
+            animation: slideInLeft 1s ease-out;
+        }
+        
+        .animate-slideInRight {
+            animation: slideInRight 1s ease-out;
+        }
+        
+        /* SCROLL ANIMATIONS */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+            .nav__menu {
+                gap: 2rem;
+            }
+            
+            .product-item,
+            .product-item--reverse {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+            
+            .product-item__image-placeholder {
+                min-height: 200px;
+                font-size: 4rem;
+            }
+        }
+        
+        /* MOBILE HAMBURGER MENU (Bug #7 Fix) */
+        .nav__toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .nav__toggle-bar {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: var(--deep-green);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .nav__toggle.active .nav__toggle-bar:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .nav__toggle.active .nav__toggle-bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav__toggle.active .nav__toggle-bar:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        @media (max-width: 768px) {
+            .nav__toggle {
+                display: flex;
+            }
+
+            .nav__menu {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                z-index: 1000;
+                padding: 2rem;
+            }
+
+            .nav__menu.active {
+                display: flex;
+            }
+
+            .nav__menu .nav__link {
+                font-size: 1.5rem;
+                padding: 1rem 2rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .nav__menu {
+                display: flex !important;
+            }
+            
+            .hero__cta-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .validation-card__search {
+                flex-direction: column;
+            }
+            
+            .footer__container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .detail-value {
+                text-align: left;
+            }
+            
+            .contact-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
+        /* UTILITY CLASSES */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* FORM ENHANCEMENTS */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-select {
+            padding: 1.5rem 2rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .button--full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* WHATSAPP FLOATING BUTTON */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            z-index: 9999;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            animation: pulse-whatsapp 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(37, 211, 102, 0.5);
+        }
+
+        .whatsapp-float svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+
+        .whatsapp-float__tooltip {
+            position: absolute;
+            right: 80px;
+            background: white;
+            color: var(--deep-green);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .whatsapp-float:hover .whatsapp-float__tooltip {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @keyframes pulse-whatsapp {
+            0%, 100% { box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 8px 35px rgba(37, 211, 102, 0.6); }
+        }
+
+        /* TECHNOLOGY EDGE SECTION */
+        .tech-edge {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-edge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(10, 92, 54, 0.1) 0%, transparent 50%);
+        }
+
+        .tech-edge__title {
+            color: white;
+            text-align: center;
+        }
+
+        .tech-edge__subtitle {
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            font-size: 1.3rem;
+        }
+
+        .tech-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .tech-flow__step {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 140px;
+            transition: all 0.3s ease;
+        }
+
+        .tech-flow__step:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+
+        .tech-flow__icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-flow__label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tech-flow__arrow {
+            color: var(--gold);
+            font-size: 1.5rem;
+            opacity: 0.6;
+        }
+
+        .tech-pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-pillar {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .tech-pillar:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-8px);
+        }
+
+        .tech-pillar__badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--deep-green);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tech-pillar__icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-pillar__title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .tech-pillar__title span {
+            color: var(--gold);
+        }
+
+        .tech-pillar__description {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* CASOS DE ÉXITO SECTION */
+        .success-cases {
+            background: var(--light-bg);
+        }
+
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .case-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            transition: all 0.4s ease;
+        }
+
+        .case-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .case-card__flag {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .case-card__title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--deep-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-card__metric {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-card__description {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* ========== VALIDATION SECTION REDESIGN ========== */
+        .validation-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .validation-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(10, 92, 54, 0.1) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .validation__header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .validation__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--deep-green);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .validation__title {
+            color: white;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+        }
+
+        .validation__subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Validation Card */
+        .validation-card-v2 {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 28px;
+            padding: 0;
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .validation-card__top {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+            padding: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .validation-card__status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #6b7280;
+            animation: pulse-status 2s infinite;
+        }
+
+        .status-indicator--ready { background: var(--gold); }
+        .status-indicator--scanning { background: #3b82f6; animation: pulse-status 0.5s infinite; }
+        .status-indicator--verified { background: #22c55e; }
+        .status-indicator--error { background: #ef4444; }
+
+        @keyframes pulse-status {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .status-text {
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .validation-card__actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .demo-btn {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-btn:hover {
+            background: var(--gold);
+            color: var(--deep-green);
+        }
+
+        /* Search Area */
+        .validation-card__search {
+            padding: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .search-input-wrapper .qr-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 1.2rem;
+        }
+
+        .validation-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem 1.25rem 3.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            color: white;
+            font-size: 1.1rem;
+            font-family: 'Inter', monospace;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .validation-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
+        }
+
+        .validation-input::placeholder {
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .validate-btn {
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--deep-green);
+            border: none;
+            padding: 1.25rem 2.5rem;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .validate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .validate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .input-hint {
+            padding: 0 2rem 1rem;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+        }
+
+        .input-hint code {
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Results Area */
+        .validation-results {
+            padding: 0 2rem 2rem;
+            display: none;
+        }
+
+        .validation-results.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* Product Journey Timeline */
+        .journey-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(90deg, #22c55e, var(--gold));
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .journey-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .journey-step__icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .journey-step__label {
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .journey-step__time {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.75rem;
+        }
+
+        /* Quality Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .metric-card__icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card__value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-card__label {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Verification Seal */
+        .verification-seal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+        }
+
+        .seal-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .seal-content {
+            text-align: left;
+        }
+
+        .seal-title {
+            color: #22c55e;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .seal-hash {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.75rem;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        /* Scanning Animation */
+        .scanning-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 10;
+            border-radius: 28px;
+        }
+
+        .scanning-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .scanner-animation {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .scanner-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid transparent;
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .scanner-ring:nth-child(2) {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-top-color: #22c55e;
+            animation-duration: 1.5s;
+            animation-direction: reverse;
+        }
+
+        .scanner-ring:nth-child(3) {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border-top-color: var(--gold);
+            animation-duration: 2s;
+        }
+
+        .scanner-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .scanning-text {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .scanning-step {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .validation-card__top {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .validation-card__search {
+                flex-direction: column;
+            }
+
+            .journey-timeline {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .journey-timeline::before {
+                width: 3px;
+                height: 80%;
+                top: 10%;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .verification-seal {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .seal-content {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body id="body-main">
+    
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <header role="banner">
+        <nav class="nav" id="navbar" aria-label="Navegación principal">
+            <div class="container nav__container">
+                <a href="#inicio" class="nav__logo">
+                    Agro<span class="nav__logo-accent">Bridge</span>
+                </a>
+
+                <!-- Mobile Hamburger Menu Button (Bug #7 Fix) -->
+                <button class="nav__toggle" id="navToggle"
+                        aria-label="Abrir menú de navegación"
+                        aria-expanded="false"
+                        aria-controls="navMenu">
+                    <span class="nav__toggle-bar"></span>
+                    <span class="nav__toggle-bar"></span>
+                    <span class="nav__toggle-bar"></span>
+                </button>
+
+                <ul class="nav__menu" id="navMenu">
+                    <li><a href="#inicio" class="nav__link">Inicio</a></li>
+                    <li><a href="#productos" class="nav__link">Portafolio</a></li>
+                    <li><a href="#tecnologia" class="nav__link">Technology</a></li>
+                    <li><a href="#casos-exito" class="nav__link">Casos de Éxito</a></li>
+                    <li><a href="#contacto" class="nav__link">Contacto</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content" role="main">
+        
+        <section class="hero" id="inicio">
+            <div class="container">
+                <div class="hero__content">
+                    <h1 class="type-hero hero__title animate-fadeIn">
+                        La Certidumbre es Nuestro Lote. <span class="hero__title-accent">Trazabilidad Inviolable.</span>
+                    </h1>
+                    <p class="hero__subtitle type-body-lg animate-fadeIn" style="animation-delay: 0.2s;">
+                        Integración de Michoacán con el Ledger Criptográfico. Máxima eficiencia de Supply Chain para clientes B2B globales.
+                    </p>
+                    <div class="hero__cta-group animate-fadeIn" style="animation-delay: 0.4s;">
+                        <a href="#contacto" class="button button--primary type-button">Solicitar Cotización Enterprise</a>
+                        <a href="#casos-exito" class="button button--secondary type-button">Ver Casos de Éxito</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <h2 class="type-display section__title section__title--center animate-fadeIn">Nuestros Tres Pilares de Confianza</h2>
+                <div class="features-grid">
+                    <div class="feature-card animate-slideInLeft">
+                        <span class="feature-card__icon">♺</span>
+                        <h3 class="feature-card__title">TrustChain™ (SHA-256 powered)</h3>
+                        <p class="feature-card__text">Cadena de confianza inmutable desde origen hasta destino. Powered by military-grade SHA-256 encryption.</p>
+                    </div>
+                    <div class="feature-card animate-fadeIn">
+                        <span class="feature-card__icon">⌘</span>
+                        <h3 class="feature-card__title">Protocolo Smart-Cold</h3>
+                        <p class="feature-card__text">Control de temperatura continua desde la Cosecha Zero hasta el puerto de destino. Fidelidad de Shelf-Life.</p>
+                    </div>
+                    <div class="feature-card animate-slideInRight">
+                        <span class="feature-card__icon">📈</span>
+                        <h3 class="feature-card__title">Análisis de Volumen Enterprise</h3>
+                        <p class="feature-card__text">Mediciones de Brix y pH verificadas que aseguran la estandarización para contratos de alto volumen.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section--pattern" id="productos">
+            <div class="container">
+                <h2 class="type-display section__title animate-fadeIn">Portafolio Certificado de Michoacán</h2>
+                <div class="product-item animate-slideInLeft">
+                    <div class="product-item__image-placeholder" aria-label="Aguacate Hass Premium - Producto certificado">
+                        🥑
+                    </div>
+                    <div class="product-item__content">
+                        <h3 class="product-item__title">Aguacate Hass (AgroBridge ZeroLoss™ Protocol)</h3>
+                        <p class="product-item__description">Protocolo propietario de cero pérdida de trazabilidad. Control de maduración para tránsitos intercontinentales. Calibre y firmeza garantizada.</p>
+                    </div>
+                </div>
+                <div class="product-item product-item--reverse animate-slideInRight">
+                    <div class="product-item__image-placeholder" aria-label="Berries Selectas - Grado de exportación élite">
+                        🍓
+                    </div>
+                    <div class="product-item__content">
+                        <h3 class="product-item__title">Berries Selectas (Elite Export Grade)</h3>
+                        <p class="product-item__description">Fresas, Arándanos y Frambuesas calibradas. Producidas bajo el Estándar de Brix Exclusivo de AgroBridge para el mercado de ultra-lujo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VALIDATION SECTION - REDESIGNED -->
+        <section class="section validation-section" id="validacion">
+            <div class="container">
+                <div class="validation__header">
+                    <span class="validation__badge type-overline">⛓️ Powered by TrustChain™</span>
+                    <h2 class="type-display validation__title">Verificación Criptográfica de Lote</h2>
+                    <p class="validation__subtitle type-body-lg">
+                        Audite la integridad de cualquier producto. Cada lote tiene un hash SHA-256 único e inmutable.
+                    </p>
+                </div>
+
+                <div class="validation-card-v2" id="validation-card">
+                    <!-- Scanning Overlay -->
+                    <div class="scanning-overlay" id="scanning-overlay">
+                        <div class="scanner-animation">
+                            <div class="scanner-ring"></div>
+                            <div class="scanner-ring"></div>
+                            <div class="scanner-ring"></div>
+                            <span class="scanner-icon">🔍</span>
+                        </div>
+                        <div class="scanning-text">Verificando en TrustChain™...</div>
+                        <div class="scanning-step" id="scanning-step">Conectando con blockchain...</div>
+                    </div>
+
+                    <!-- Top Bar -->
+                    <div class="validation-card__top">
+                        <div class="validation-card__status">
+                            <span class="status-indicator status-indicator--ready" id="status-indicator"></span>
+                            <span class="status-text" id="status-text">Listo para verificar</span>
+                        </div>
+                        <div class="validation-card__actions">
+                            <button class="demo-btn type-button" id="demo-btn"
+                                    aria-label="Ejecutar demostración de validación de lote">
+                                <span aria-hidden="true">▶</span> Ver Demo
+                            </button>
+                            <label for="lang-select" class="sr-only">Seleccionar idioma</label>
+                            <select id="lang-select"
+                                    aria-label="Seleccionar idioma de la interfaz"
+                                    style="background: transparent; border: 2px solid rgba(255,255,255,0.2); color: white; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem;">
+                                <option value="es">🇲🇽 ES</option>
+                                <option value="en">🇺🇸 EN</option>
+                                <option value="zh">🇨🇳 ZH</option>
+                                <option value="ar">🇸🇦 AR</option>
+                                <option value="ja">🇯🇵 JA</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Search Area -->
+                    <div class="validation-card__search">
+                        <div class="search-input-wrapper">
+                            <span class="qr-icon">📱</span>
+                            <input type="text"
+                                   id="validation-input"
+                                   class="validation-input"
+                                   placeholder="Ingrese código de lote..."
+                                   aria-label="Código de trazabilidad">
+                        </div>
+                        <button class="validate-btn type-button" id="validate-btn"
+                                aria-label="Verificar origen y autenticidad del lote">
+                            <span aria-hidden="true">🔐</span> Verificar Origen
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        Formato: <code class="type-code">AB-HASS-2026-001</code> | Prueba los ejemplos abajo
+                    </div>
+
+                    <!-- Example Product Chips for Quick Demo -->
+                    <div class="example-chips" id="example-chips">
+                        <span class="chip-label">Prueba con:</span>
+                        <button class="example-chip" data-code="AB-HASS-2026-001" aria-label="Probar con Aguacate Hass">
+                            <span aria-hidden="true">🥑</span> Aguacate Hass
+                        </button>
+                        <button class="example-chip" data-code="AB-FRES-2026-001" aria-label="Probar con Fresas">
+                            <span aria-hidden="true">🍓</span> Fresas
+                        </button>
+                        <button class="example-chip" data-code="AB-ARAN-2026-045" aria-label="Probar con Arandanos">
+                            <span aria-hidden="true">🫐</span> Arandanos
+                        </button>
+                        <button class="example-chip" data-code="AB-ZARZ-2026-089" aria-label="Probar con Zarzamoras">
+                            <span aria-hidden="true">⚫</span> Zarzamoras
+                        </button>
+                        <button class="example-chip" data-code="AB-FRAM-2026-312" aria-label="Probar con Frambuesas">
+                            <span aria-hidden="true">🔴</span> Frambuesas
+                        </button>
+                    </div>
+
+                    <!-- Loading Skeleton (shown during validation) -->
+                    <div class="validation-skeleton" id="validation-skeleton" style="display: none;">
+                        <div class="skeleton-product-header">
+                            <div class="skeleton-icon skeleton-loader"></div>
+                            <div class="skeleton-text-group">
+                                <div class="skeleton-title skeleton-loader"></div>
+                                <div class="skeleton-subtitle skeleton-loader"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-metrics">
+                            <div class="skeleton-metric skeleton-loader"></div>
+                            <div class="skeleton-metric skeleton-loader"></div>
+                            <div class="skeleton-metric skeleton-loader"></div>
+                            <div class="skeleton-metric skeleton-loader"></div>
+                        </div>
+                    </div>
+
+                    <!-- Results Area (Hidden by default) -->
+                    <div class="validation-results" id="validation-results">
+                        <!-- Product Info Header -->
+                        <div class="product-info-header" id="product-info-header">
+                            <div class="product-icon" id="product-icon">🥑</div>
+                            <div class="product-details">
+                                <h3 class="product-name" id="product-name">--</h3>
+                                <p class="product-variety" id="product-variety">--</p>
+                                <p class="product-origin" id="product-origin">--</p>
+                                <p class="product-producer" id="product-producer">--</p>
+                            </div>
+                        </div>
+
+                        <!-- Certification Badges -->
+                        <div class="certification-badges" id="certification-badges">
+                            <!-- Badges will be injected by JavaScript -->
+                        </div>
+
+                        <!-- Journey Timeline -->
+                        <div class="journey-timeline">
+                            <div class="journey-step">
+                                <div class="journey-step__icon">🌱</div>
+                                <span class="journey-step__label">Cosecha</span>
+                                <span class="journey-step__time" id="time-harvest">--</span>
+                            </div>
+                            <div class="journey-step">
+                                <div class="journey-step__icon">📦</div>
+                                <span class="journey-step__label">Empaque</span>
+                                <span class="journey-step__time" id="time-packing">--</span>
+                            </div>
+                            <div class="journey-step">
+                                <div class="journey-step__icon">❄️</div>
+                                <span class="journey-step__label">Cold Chain</span>
+                                <span class="journey-step__time" id="time-cold">--</span>
+                            </div>
+                            <div class="journey-step">
+                                <div class="journey-step__icon">🚢</div>
+                                <span class="journey-step__label">Export</span>
+                                <span class="journey-step__time" id="time-export">--</span>
+                            </div>
+                            <div class="journey-step">
+                                <div class="journey-step__icon">✅</div>
+                                <span class="journey-step__label">Verificado</span>
+                                <span class="journey-step__time" id="time-verified">Ahora</span>
+                            </div>
+                        </div>
+
+                        <!-- Quality Metrics (Dynamic based on product type) -->
+                        <div class="metrics-grid" id="metrics-grid">
+                            <div class="metric-card" id="metric-card-primary">
+                                <div class="metric-card__icon" id="metric-primary-icon">🍬</div>
+                                <div class="metric-card__value" id="metric-primary-value">--</div>
+                                <div class="metric-card__label" id="metric-primary-label">Indice Brix</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card__icon">⚗️</div>
+                                <div class="metric-card__value" id="metric-ph">--</div>
+                                <div class="metric-card__label">Nivel pH</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card__icon">🌡️</div>
+                                <div class="metric-card__value" id="metric-temp">--</div>
+                                <div class="metric-card__label">Temp. Promedio</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card__icon">⭐</div>
+                                <div class="metric-card__value" id="metric-quality">--</div>
+                                <div class="metric-card__label">Score Calidad</div>
+                            </div>
+                        </div>
+
+                        <!-- Verification Seal -->
+                        <div class="verification-seal">
+                            <div class="seal-icon">✓</div>
+                            <div class="seal-content">
+                                <div class="seal-title">ORIGEN VERIFICADO - TrustChain™</div>
+                                <div class="seal-hash type-code" id="seal-hash">SHA-256: ...</div>
+                            </div>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <button class="reset-validation-btn" id="reset-validation-btn">
+                            <span aria-hidden="true">🔄</span> Validar otro lote
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TECHNOLOGY IN PRODUCTION SECTION -->
+        <section class="tech-in-production" id="tech-proof">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="type-display section__title tech-proof__title">Tecnologia en Produccion</h2>
+                    <p class="tech-proof__subtitle">Sistema real usado por productores certificados en Mexico</p>
+                </div>
+
+                <div class="dashboard-showcase">
+                    <div class="showcase-visual">
+                        <div class="dashboard-mockup">
+                            <div class="mockup-header">
+                                <span class="mockup-dot red"></span>
+                                <span class="mockup-dot yellow"></span>
+                                <span class="mockup-dot green"></span>
+                                <span class="mockup-title">agrobridge.io/dashboard</span>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-stats">
+                                    <div class="mockup-stat">
+                                        <span class="stat-value">2,847</span>
+                                        <span class="stat-label">Lotes Activos</span>
+                                    </div>
+                                    <div class="mockup-stat">
+                                        <span class="stat-value">47</span>
+                                        <span class="stat-label">Productores</span>
+                                    </div>
+                                    <div class="mockup-stat">
+                                        <span class="stat-value">99.8%</span>
+                                        <span class="stat-label">Precision</span>
+                                    </div>
+                                </div>
+                                <p class="mockup-note">Dashboard Enterprise en vivo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="showcase-description">
+                        <h3 class="showcase-title">Dashboard Enterprise en Vivo</h3>
+                        <ul class="feature-list">
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>150+ endpoints de API funcionales</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Trazabilidad blockchain en tiempo real</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Validacion de certificaciones automatica</span>
+                            </li>
+                            <li>
+                                <span class="feature-icon">✓</span>
+                                <span>Monitoreo GPS de origen del producto</span>
+                            </li>
+                        </ul>
+                        <a href="https://agrobridge.io" target="_blank" rel="noopener" class="dashboard-link">
+                            Ver Dashboard Real <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REAL METRICS SECTION -->
+        <section class="real-metrics-section" id="metrics">
+            <div class="container">
+                <div class="real-metrics-grid">
+                    <div class="real-metric-card">
+                        <div class="real-metric-value">2,847</div>
+                        <div class="real-metric-label">Lotes Validados</div>
+                        <div class="real-metric-trend">+342 este mes</div>
+                    </div>
+
+                    <div class="real-metric-card">
+                        <div class="real-metric-value">47</div>
+                        <div class="real-metric-label">Productores Certificados</div>
+                        <div class="real-metric-trend">+8 este trimestre</div>
+                    </div>
+
+                    <div class="real-metric-card">
+                        <div class="real-metric-value">1,284</div>
+                        <div class="real-metric-label">Hectareas Monitoreadas</div>
+                        <div class="real-metric-trend">Michoacan, Jalisco, Guanajuato</div>
+                    </div>
+
+                    <div class="real-metric-card">
+                        <div class="real-metric-value">99.8%</div>
+                        <div class="real-metric-label">Precision de Validacion</div>
+                        <div class="real-metric-trend">Blockchain verified</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="proceso">
+            <div class="container">
+                <h2 class="type-display section__title animate-fadeIn">Data Flow. Nuestro Protocolo de Fidelidad.</h2>
+                <div class="timeline">
+                    <div class="timeline-item animate-slideInLeft">
+                        <div class="timeline-item__icon">I</div>
+                        <h3 class="timeline-item__title">Acopio y Calibración Digital</h3>
+                        <p class="timeline-item__text">Inspección de calidad y registro de variables Brix/pH. Los datos se digitalizan en la Cosecha Zero.</p>
+                    </div>
+                    <div class="timeline-item animate-fadeIn">
+                        <div class="timeline-item__icon">II</div>
+                        <h3 class="timeline-item__title">Generación de Hash y Cierre</h3>
+                        <p class="timeline-item__text">Los datos de lote se combinan para generar el Hash SHA-256. El paquete es sellado para garantizar la integridad.</p>
+                    </div>
+                    <div class="timeline-item animate-slideInRight">
+                        <div class="timeline-item__icon">III</div>
+                        <h3 class="timeline-item__title">Auditoría en Cadena de Frío</h3>
+                        <p class="timeline-item__text">Monitoreo continuo. La validación ZTD confirma que el Hash ha permanecido inalterado hasta la entrega final.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- OUR TECHNOLOGY EDGE SECTION -->
+        <section class="section tech-edge" id="tecnologia">
+            <div class="container">
+                <h2 class="type-display section__title tech-edge__title animate-fadeIn">Our Technology Edge</h2>
+                <p class="tech-edge__subtitle animate-fadeIn" style="animation-delay: 0.2s;">
+                    Tecnología propietaria que garantiza cero pérdida de trazabilidad desde el campo hasta su destino final.
+                </p>
+
+                <!-- Tech Flow Diagram -->
+                <div class="tech-flow animate-fadeIn" style="animation-delay: 0.3s;">
+                    <div class="tech-flow__step">
+                        <div class="tech-flow__icon">🌱</div>
+                        <div class="tech-flow__label">Farm</div>
+                    </div>
+                    <span class="tech-flow__arrow">→</span>
+                    <div class="tech-flow__step">
+                        <div class="tech-flow__icon">📦</div>
+                        <div class="tech-flow__label">Packing</div>
+                    </div>
+                    <span class="tech-flow__arrow">→</span>
+                    <div class="tech-flow__step">
+                        <div class="tech-flow__icon">🚢</div>
+                        <div class="tech-flow__label">Export</div>
+                    </div>
+                    <span class="tech-flow__arrow">→</span>
+                    <div class="tech-flow__step">
+                        <div class="tech-flow__icon">✅</div>
+                        <div class="tech-flow__label">Delivery</div>
+                    </div>
+                </div>
+
+                <!-- Tech Pillars -->
+                <div class="tech-pillars">
+                    <div class="tech-pillar animate-slideInLeft">
+                        <span class="tech-pillar__badge">Proprietary Tech</span>
+                        <div class="tech-pillar__icon">🔐</div>
+                        <h3 class="tech-pillar__title">AgroBridge <span>ZeroLoss™</span> Protocol</h3>
+                        <p class="tech-pillar__description">
+                            Protocolo propietario de cero pérdida de trazabilidad. Cada punto de datos se registra criptográficamente, garantizando integridad absoluta desde la cosecha hasta la entrega final.
+                        </p>
+                    </div>
+                    <div class="tech-pillar animate-fadeIn">
+                        <span class="tech-pillar__badge">Proprietary Tech</span>
+                        <div class="tech-pillar__icon">⛓️</div>
+                        <h3 class="tech-pillar__title"><span>TrustChain™</span> (SHA-256)</h3>
+                        <p class="tech-pillar__description">
+                            Cadena de confianza inmutable desde origen hasta destino. Powered by military-grade SHA-256 encryption para garantizar que ningún dato sea alterado sin detección.
+                        </p>
+                    </div>
+                    <div class="tech-pillar animate-slideInRight">
+                        <span class="tech-pillar__badge">Proprietary Tech</span>
+                        <div class="tech-pillar__icon">🌡️</div>
+                        <h3 class="tech-pillar__title">Cold Chain <span>Monitoring</span></h3>
+                        <p class="tech-pillar__description">
+                            Sensores IoT en tiempo real monitorean temperatura, humedad y condiciones de transporte. Alertas automáticas protegen la calidad de su producto 24/7.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CASOS DE ÉXITO SECTION -->
+        <section class="section success-cases" id="casos-exito">
+            <div class="container">
+                <h2 class="type-display section__title section__title--center animate-fadeIn">Casos de Éxito</h2>
+                <p class="section__subtitle section__subtitle--center animate-fadeIn" style="animation-delay: 0.2s;">
+                    Clientes enterprise que confían en AgroBridge para sus operaciones globales.
+                </p>
+                <div class="cases-grid">
+                    <div class="case-card animate-slideInLeft">
+                        <div class="case-card__flag">🇱🇺</div>
+                        <h3 class="case-card__title">Distribuidor Europeo - Luxemburgo</h3>
+                        <div class="case-card__metric">+500 toneladas</div>
+                        <p class="case-card__description">Berries premium exportadas con trazabilidad TrustChain™. Cero rechazos en aduanas europeas.</p>
+                    </div>
+                    <div class="case-card animate-fadeIn">
+                        <div class="case-card__flag">🇨🇳</div>
+                        <h3 class="case-card__title">Importador Asiático - China</h3>
+                        <div class="case-card__metric">98.5% freshness</div>
+                        <p class="case-card__description">Aguacate Hass con protocolo ZeroLoss™. Shelf-life optimizado para tránsitos de +30 días.</p>
+                    </div>
+                    <div class="case-card animate-slideInRight">
+                        <div class="case-card__flag">🇦🇪</div>
+                        <h3 class="case-card__title">Cadena Premium - Emiratos</h3>
+                        <div class="case-card__metric">24/7 monitoring</div>
+                        <p class="case-card__description">Cold Chain IoT activo. Monitoreo en tiempo real desde Michoacán hasta Dubai.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section--light" id="productores">
+            <div class="container producer-cta">
+                <h2 class="type-display section__title animate-fadeIn">+40 Socios. <span class="producer-title-accent">La Verdadera Extensión de AgroBridge.</span></h2>
+                <p class="hero__subtitle animate-fadeIn" style="animation-delay: 0.2s;">
+                    Nuestra red de +40 Productores Certificados es la base de nuestra trazabilidad. Invertimos en su éxito con AgroBridge ZeroLoss™ Protocol para garantizar la remuneración justa por la calidad y la certificación.
+                </p>
+                <a href="#contacto" class="button button--producer type-button">Convertirse en Socio Certificado</a>
+            </div>
+        </section>
+
+        <section class="section" id="contacto">
+            <div class="container">
+                <h2 class="type-display section__title section__title--center animate-fadeIn">Convertirse en Socio Enterprise</h2>
+                <div class="contact-card">
+                    <p class="contact-card__text">Solo contratos de volumen. Su solicitud será validada por el Chief Executive Officer.</p>
+                    <form class="contact-form" aria-label="Formulario de contacto enterprise" id="enterprise-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact-name" class="form-label">Nombre Completo *</label>
+                                <input type="text" id="contact-name" name="name" placeholder="Su nombre completo" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-company" class="form-label">Empresa *</label>
+                                <input type="text" id="contact-company" name="company" placeholder="Nombre de su empresa" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact-email" class="form-label">Email Corporativo *</label>
+                                <input type="email" id="contact-email" name="email" placeholder="correo@empresa.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-phone" class="form-label">Teléfono / WhatsApp *</label>
+                                <input type="tel" id="contact-phone" name="phone" placeholder="+52 XXX XXX XXXX" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-type" class="form-label">Tipo de Consulta *</label>
+                            <select id="contact-type" name="inquiry_type" class="form-select" required>
+                                <option value="" disabled selected>Seleccione tipo de consulta</option>
+                                <option value="cotizacion">Cotización Enterprise</option>
+                                <option value="partnership">Partnership / Alianza Comercial</option>
+                                <option value="informacion">Información General</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="button button--primary button--full type-button">Solicitar Cotización Enterprise</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container footer__container">
+            <p>&copy; 2026 AGRO BRIDGE. Propiedad Intelectual Corporativa. | Zamora, Michoacán, México.</p>
+            <div class="footer__social">
+                <a href="mailto:ceo@agrobridge.global" aria-label="Contacto Ejecutivo">Contacto Ejecutivo</a> |
+                <a href="https://www.instagram.com/agrobridge.mx" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   aria-label="Síguenos en Instagram">
+                   Síguenos en Instagram
+                </a> |
+                <a href="#proceso" aria-label="Acerca de nuestra tecnología ZTD">ZTD Protocol</a>
+            </div>
+        </div> 
+    </footer>
+
+    <!-- WHATSAPP FLOATING BUTTON -->
+    <a href="https://wa.me/523511689122?text=Hola%20AgroBridge%2C%20me%20interesa%20solicitar%20una%20cotizaci%C3%B3n%20enterprise%20para%20exportaci%C3%B3n."
+       class="whatsapp-float"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Contactar por WhatsApp Business">
+        <span class="whatsapp-float__tooltip">Cotización Inmediata</span>
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+    </a>
+
+    <!-- Confetti Animation Library for Success States -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <!-- Main Application Script (consolidated - Bug #4 Fix) -->
+    <script src="scripts/main.js" defer></script>
+
+    <!-- Minimal inline script for critical rendering -->
+    <script>
+        // Body ready state - critical for initial render
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('body-main').classList.add('ready');
+
+            // Scroll animations with IntersectionObserver
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

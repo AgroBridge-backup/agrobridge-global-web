@@ -1,0 +1,62 @@
+{
+  "name": "AgroBridge ZTD | Confianza Criptográfica Enterprise",
+  "short_name": "AgroBridge",
+  "description": "Trazabilidad de precisión y calidad certificada para mercados Enterprise. Protocolos Zero-Trust Data (ZTD).",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a5c36",
+  "theme_color": "#d4af37",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230a5c36' width='100' height='100' rx='20'/><text y='.9em' font-size='65' x='15'>🌱</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230a5c36' width='100' height='100' rx='20'/><text y='.9em' font-size='65' x='15'>🌱</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230a5c36' width='100' height='100' rx='20'/><text y='.9em' font-size='65' x='15'>🌱</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Validar Lote",
+      "short_name": "Validar",
+      "description": "Validación criptográfica de lote ZTD",
+      "url": "/#validacion"
+    },
+    {
+      "name": "Portafolio",
+      "short_name": "Productos",
+      "description": "Portafolio certificado de Michoacán",
+      "url": "/#productos"
+    },
+    {
+      "name": "Contacto Enterprise",
+      "short_name": "Contacto",
+      "description": "Solicitar cotización enterprise",
+      "url": "/#contacto"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+agrobridge",
+      "url": "/?hash=%s"
+    }
+  ]
+}
