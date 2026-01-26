@@ -16,10 +16,10 @@ describe('Validation Flow Integration', () => {
       currentLang: 'es',
       isValidating: false,
       lastValidationTime: 0,
-      RATE_LIMIT_MS: 1000,
-      USE_DEMO_MODE: true,
+      RATE_LIMIT_MS: 500,
+      USE_DEMO_MODE: false,
 
-      isValidLotCode: (code) => /^AB-[A-Z]{4}-\d{4}-\d{3}$/.test(code.toUpperCase()),
+      isValidLotCode: (code) => /^[A-Z0-9-]+$/.test(code.toUpperCase()),
 
       escapeHtml: (str) => {
         if (typeof str !== 'string') return '';
@@ -39,7 +39,7 @@ describe('Validation Flow Integration', () => {
       t: (key) => {
         const translations = {
           'error.empty': 'Por favor ingrese un código de lote',
-          'error.format': 'Formato inválido. Use: AB-HASS-2026-001',
+          'error.format': 'Formato inválido. Use letras, números y guiones.',
           'error.ratelimit': 'Espere un momento antes de verificar nuevamente.',
           'status.verifying': 'Verificando...',
           'status.verified': 'Origen Verificado'
@@ -173,9 +173,19 @@ describe('Validation Flow Integration', () => {
   // FORMAT VALIDATION
   // ============================================
   describe('Format Validation', () => {
-    test('should reject invalid format', async () => {
+    test('should reject format with spaces', async () => {
       const input = document.getElementById('search-input');
-      input.value = 'INVALID';
+      input.value = 'AGR 2024 001';
+
+      const result = await mockApp.validateLot();
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('invalid_format');
+    });
+
+    test('should reject format with special characters', async () => {
+      const input = document.getElementById('search-input');
+      input.value = 'AGR-2024-00!';
 
       const result = await mockApp.validateLot();
 
@@ -185,31 +195,12 @@ describe('Validation Flow Integration', () => {
 
     test('should show format error message', async () => {
       const input = document.getElementById('search-input');
-      input.value = 'BAD-CODE';
+      input.value = 'BAD CODE';
 
       await mockApp.validateLot();
 
       const errorDiv = document.getElementById('search-error');
       expect(errorDiv.textContent).toContain('Formato inválido');
-    });
-
-    test('should reject code with wrong prefix', async () => {
-      const input = document.getElementById('search-input');
-      input.value = 'XX-HASS-2026-001';
-
-      const result = await mockApp.validateLot();
-
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('invalid_format');
-    });
-
-    test('should reject code with wrong length', async () => {
-      const input = document.getElementById('search-input');
-      input.value = 'AB-HAS-2026-01';
-
-      const result = await mockApp.validateLot();
-
-      expect(result.success).toBe(false);
     });
   });
 
@@ -219,7 +210,7 @@ describe('Validation Flow Integration', () => {
   describe('Successful Validation', () => {
     test('should accept valid lot code', async () => {
       const input = document.getElementById('search-input');
-      input.value = 'AB-HASS-2026-001';
+      input.value = 'AGR-2024-001';
 
       const result = await mockApp.validateLot();
 
@@ -228,7 +219,7 @@ describe('Validation Flow Integration', () => {
 
     test('should return valid data on success', async () => {
       const input = document.getElementById('search-input');
-      input.value = 'AB-HASS-2026-001';
+      input.value = 'AGR-2024-001';
 
       const result = await mockApp.validateLot();
 
@@ -342,7 +333,7 @@ describe('Validation Flow Integration', () => {
     test('should re-enable button after validation error', async () => {
       const input = document.getElementById('search-input');
       const btn = document.getElementById('search-button');
-      input.value = 'INVALID';
+      input.value = 'INVALID CODE';
 
       await mockApp.validateLot();
 
@@ -382,7 +373,7 @@ describe('Contact Form Integration', () => {
 
       handleContactSubmit: async function(formData) {
         // Validate required fields
-        if (!formData.name || !formData.email || !formData.company) {
+        if (!formData.name || !formData.email || !formData.company || !formData.phone || !formData.inquiry_type || !formData.message) {
           this.showNotification('Por favor complete todos los campos requeridos.', 'error');
           return { success: false, error: 'missing_fields' };
         }
@@ -414,7 +405,10 @@ describe('Contact Form Integration', () => {
     test('should reject form without name', async () => {
       const result = await mockContactHandler.handleContactSubmit({
         email: 'test@example.com',
-        company: 'Test Corp'
+        company: 'Test Corp',
+        phone: '+521234567890',
+        inquiry_type: 'cotizacion',
+        message: 'Solicitud de prueba detallada.'
       });
 
       expect(result.success).toBe(false);
@@ -424,7 +418,10 @@ describe('Contact Form Integration', () => {
     test('should reject form without email', async () => {
       const result = await mockContactHandler.handleContactSubmit({
         name: 'John',
-        company: 'Test Corp'
+        company: 'Test Corp',
+        phone: '+521234567890',
+        inquiry_type: 'cotizacion',
+        message: 'Solicitud de prueba detallada.'
       });
 
       expect(result.success).toBe(false);
@@ -433,7 +430,10 @@ describe('Contact Form Integration', () => {
     test('should reject form without company', async () => {
       const result = await mockContactHandler.handleContactSubmit({
         name: 'John',
-        email: 'test@example.com'
+        email: 'test@example.com',
+        phone: '+521234567890',
+        inquiry_type: 'cotizacion',
+        message: 'Solicitud de prueba detallada.'
       });
 
       expect(result.success).toBe(false);
@@ -443,7 +443,10 @@ describe('Contact Form Integration', () => {
       const result = await mockContactHandler.handleContactSubmit({
         name: 'John',
         email: 'not-an-email',
-        company: 'Test Corp'
+        company: 'Test Corp',
+        phone: '+521234567890',
+        inquiry_type: 'cotizacion',
+        message: 'Solicitud de prueba detallada.'
       });
 
       expect(result.success).toBe(false);
@@ -454,7 +457,10 @@ describe('Contact Form Integration', () => {
       const result = await mockContactHandler.handleContactSubmit({
         name: 'John Doe',
         email: 'john@example.com',
-        company: 'Acme Corp'
+        company: 'Acme Corp',
+        phone: '+521234567890',
+        inquiry_type: 'cotizacion',
+        message: 'Solicitud de prueba detallada.'
       });
 
       expect(result.success).toBe(true);
@@ -482,7 +488,10 @@ describe('Contact Form Integration', () => {
         const result = await mockContactHandler.handleContactSubmit({
           name: 'Test',
           email: email,
-          company: 'Test Corp'
+          company: 'Test Corp',
+          phone: '+521234567890',
+          inquiry_type: 'cotizacion',
+          message: 'Solicitud de prueba detallada.'
         });
         expect(result.success).toBe(true);
       });
@@ -493,7 +502,10 @@ describe('Contact Form Integration', () => {
         const result = await mockContactHandler.handleContactSubmit({
           name: 'Test',
           email: email,
-          company: 'Test Corp'
+          company: 'Test Corp',
+          phone: '+521234567890',
+          inquiry_type: 'cotizacion',
+          message: 'Solicitud de prueba detallada.'
         });
         expect(result.success).toBe(false);
       });
@@ -514,7 +526,10 @@ describe('Contact Form Integration', () => {
       await mockContactHandler.handleContactSubmit({
         name: 'John',
         email: 'john@example.com',
-        company: 'Acme'
+        company: 'Acme',
+        phone: '+521234567890',
+        inquiry_type: 'cotizacion',
+        message: 'Solicitud de prueba detallada.'
       });
 
       expect(mockContactHandler.showNotification).toHaveBeenCalledWith(
