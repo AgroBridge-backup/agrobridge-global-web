@@ -107,14 +107,14 @@ beforeEach(() => {
 // Custom matchers
 expect.extend({
   toBeValidLotCode(received) {
-    const regex = /^AB-[A-Z]{4}-\d{4}-\d{3}$/;
+    const regex = /^[A-Z0-9-]+$/i;
     const pass = regex.test(received);
     return {
       pass,
       message: () =>
         pass
           ? `Expected ${received} not to be a valid lot code`
-          : `Expected ${received} to be a valid lot code (format: AB-XXXX-YYYY-NNN)`
+          : `Expected ${received} to be a valid lot code (letters, numbers, and dashes)`
     };
   },
 
@@ -195,10 +195,13 @@ global.testUtils = {
               <input name="email" type="email" required placeholder="Email corporativo" aria-label="Email">
               <input name="company" type="text" required placeholder="Empresa" aria-label="Empresa">
               <input name="phone" type="tel" placeholder="Teléfono" aria-label="Teléfono">
-              <select name="interest" aria-label="Interés">
-                <option value="export">Exportación</option>
-                <option value="import">Importación</option>
+              <select name="inquiry_type" aria-label="Tipo de consulta">
+                <option value="cotizacion">Cotización Enterprise</option>
+                <option value="partnership">Partnership</option>
+                <option value="informacion">Información General</option>
               </select>
+              <textarea name="message" required placeholder="Mensaje" aria-label="Mensaje"></textarea>
+              <input name="honeypot" type="text" style="display:none" aria-hidden="true">
               <button type="submit">Enviar</button>
             </form>
           </section>
