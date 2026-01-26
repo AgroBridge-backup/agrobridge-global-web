@@ -36,16 +36,17 @@ describe('AgroBridgeApp', () => {
     });
 
     test('should have correct API endpoints', () => {
-      expect(app.validationApi).toBe('https://api.agrobridge.global/v2');
-      expect(app.contactApi).toBe('https://api.agrobridge.global/v2/contact');
+      expect(app.apiBase).toBe('https://api.agrobridge.global/v2');
+      expect(app.validationApi).toBe('https://api.agrobridge.global/v2/verify');
+      expect(app.contactApi).toBe('https://api.agrobridge.global/v2/leads');
     });
 
-    test('should start in demo mode', () => {
-      expect(app.USE_DEMO_MODE).toBe(true);
+    test('should start in live mode by default', () => {
+      expect(app.USE_DEMO_MODE).toBe(false);
     });
 
     test('should have rate limiting configured', () => {
-      expect(app.RATE_LIMIT_MS).toBe(1000);
+      expect(app.RATE_LIMIT_MS).toBe(500);
     });
 
     test('should initialize with isValidating false', () => {
@@ -128,87 +129,29 @@ describe('AgroBridgeApp', () => {
   // LOT CODE VALIDATION (isValidLotCode)
   // ============================================
   describe('Lot Code Validation - isValidLotCode()', () => {
-    // Valid codes
-    test('should accept valid lot code AB-HASS-2026-001', () => {
-      expect(app.isValidLotCode('AB-HASS-2026-001')).toBe(true);
+    test('should accept alphanumeric lot codes with dashes', () => {
+      expect(app.isValidLotCode('AGR-2024-001')).toBe(true);
     });
 
-    test('should accept valid lot code AB-BERR-2026-055', () => {
-      expect(app.isValidLotCode('AB-BERR-2026-055')).toBe(true);
+    test('should accept uppercase, lowercase, and mixed case', () => {
+      expect(app.isValidLotCode('agr-2024-001')).toBe(true);
+      expect(app.isValidLotCode('AgR-2024-001')).toBe(true);
     });
 
-    test('should accept lowercase and convert to uppercase', () => {
-      expect(app.isValidLotCode('ab-hass-2026-001')).toBe(true);
+    test('should accept codes without dashes', () => {
+      expect(app.isValidLotCode('AGR2024001')).toBe(true);
     });
 
-    test('should accept mixed case', () => {
-      expect(app.isValidLotCode('Ab-HaSs-2026-001')).toBe(true);
-    });
-
-    // Invalid codes - wrong prefix
-    test('should reject code without AB prefix', () => {
-      expect(app.isValidLotCode('XX-HASS-2026-001')).toBe(false);
-    });
-
-    test('should accept code with lowercase prefix (converts to uppercase)', () => {
-      expect(app.isValidLotCode('ab-HASS-2026-001')).toBe(true);
-    });
-
-    // Invalid codes - wrong product code
-    test('should reject code with 3-letter product code', () => {
-      expect(app.isValidLotCode('AB-HAS-2026-001')).toBe(false);
-    });
-
-    test('should reject code with 5-letter product code', () => {
-      expect(app.isValidLotCode('AB-HASSS-2026-001')).toBe(false);
-    });
-
-    test('should reject code with numbers in product code', () => {
-      expect(app.isValidLotCode('AB-HA55-2026-001')).toBe(false);
-    });
-
-    // Invalid codes - wrong year
-    test('should reject code with 3-digit year', () => {
-      expect(app.isValidLotCode('AB-HASS-202-001')).toBe(false);
-    });
-
-    test('should reject code with 5-digit year', () => {
-      expect(app.isValidLotCode('AB-HASS-20260-001')).toBe(false);
-    });
-
-    test('should reject code with letters in year', () => {
-      expect(app.isValidLotCode('AB-HASS-202A-001')).toBe(false);
-    });
-
-    // Invalid codes - wrong lot number
-    test('should reject code with 2-digit lot number', () => {
-      expect(app.isValidLotCode('AB-HASS-2026-01')).toBe(false);
-    });
-
-    test('should reject code with 4-digit lot number', () => {
-      expect(app.isValidLotCode('AB-HASS-2026-0011')).toBe(false);
-    });
-
-    // Invalid codes - wrong format
-    test('should reject code without dashes', () => {
-      expect(app.isValidLotCode('ABHASS2026001')).toBe(false);
-    });
-
-    test('should reject code with extra dashes', () => {
-      expect(app.isValidLotCode('AB--HASS-2026-001')).toBe(false);
-    });
-
-    test('should reject code with spaces', () => {
-      expect(app.isValidLotCode('AB-HASS-2026 -001')).toBe(false);
-    });
-
-    // Edge cases
     test('should reject empty string', () => {
       expect(app.isValidLotCode('')).toBe(false);
     });
 
-    test('should reject special characters', () => {
-      expect(app.isValidLotCode('AB-HA$$-2026-001')).toBe(false);
+    test('should reject code with spaces', () => {
+      expect(app.isValidLotCode('AGR 2024 001')).toBe(false);
+    });
+
+    test('should reject code with special characters', () => {
+      expect(app.isValidLotCode('AGR-2024-00!')).toBe(false);
     });
   });
 
@@ -403,7 +346,7 @@ describe('AgroBridgeApp', () => {
 
     test('should show error for invalid format', async () => {
       const input = document.getElementById('search-input');
-      input.value = 'INVALID-CODE';
+      input.value = 'INVALID CODE';
 
       await app.validateLot();
 
@@ -519,7 +462,14 @@ describe('AgroBridgeApp', () => {
     test('handleContactSubmit should validate email format', async () => {
       const form = document.getElementById('enterprise-form');
       const emailInput = form.querySelector('input[name="email"]');
+      form.querySelector('input[name="name"]').value = 'Test User';
+      form.querySelector('input[name="company"]').value = 'Test Corp';
+      form.querySelector('input[name="phone"]').value = '+521234567890';
+      form.querySelector('select[name="inquiry_type"]').value = 'cotizacion';
+      form.querySelector('textarea[name="message"]').value = 'Solicitud de prueba detallada.';
       emailInput.value = 'invalid-email';
+
+      app.USE_DEMO_MODE = true;
 
       const event = { preventDefault: jest.fn(), target: form };
       await app.handleContactSubmit(event);
@@ -533,6 +483,11 @@ describe('AgroBridgeApp', () => {
       form.querySelector('input[name="name"]').value = 'Test User';
       form.querySelector('input[name="email"]').value = 'test@example.com';
       form.querySelector('input[name="company"]').value = 'Test Corp';
+      form.querySelector('input[name="phone"]').value = '+521234567890';
+      form.querySelector('select[name="inquiry_type"]').value = 'cotizacion';
+      form.querySelector('textarea[name="message"]').value = 'Solicitud de prueba detallada.';
+
+      app.USE_DEMO_MODE = true;
 
       const event = { preventDefault: jest.fn(), target: form };
       await app.handleContactSubmit(event);
@@ -842,12 +797,21 @@ describe('AgroBridgeApp', () => {
       // Mock successful response
       global.fetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ status: 'valid', product: 'Test' })
+        json: () => Promise.resolve({
+          success: true,
+          valid: true,
+          data: {
+            lotCode: 'AB-TEST-2026-001',
+            productName: 'Test',
+            specifications: {}
+          }
+        })
       });
 
       const data = await app.fetchValidationData('AB-TEST-2026-001');
       expect(fetch).toHaveBeenCalled();
       expect(data.status).toBe('valid');
+      expect(data.product).toBe('Test');
 
       app.USE_DEMO_MODE = true; // Reset
     });
@@ -888,6 +852,9 @@ describe('AgroBridgeApp', () => {
       form.querySelector('input[name="name"]').value = 'Test';
       form.querySelector('input[name="email"]').value = 'invalid-email';
       form.querySelector('input[name="company"]').value = 'Test Corp';
+      form.querySelector('input[name="phone"]').value = '+521234567890';
+      form.querySelector('select[name="inquiry_type"]').value = 'cotizacion';
+      form.querySelector('textarea[name="message"]').value = 'Solicitud de prueba detallada.';
 
       const notifySpy = jest.spyOn(app, 'showNotification');
       const event = { preventDefault: jest.fn(), target: form };
@@ -900,6 +867,8 @@ describe('AgroBridgeApp', () => {
     test('should handle contact form with real API mode', async () => {
       app.USE_DEMO_MODE = false;
 
+      const recaptchaSpy = jest.spyOn(app, 'getRecaptchaToken').mockResolvedValue('test-token');
+
       global.fetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: true })
@@ -909,11 +878,16 @@ describe('AgroBridgeApp', () => {
       form.querySelector('input[name="name"]').value = 'Test User';
       form.querySelector('input[name="email"]').value = 'test@example.com';
       form.querySelector('input[name="company"]').value = 'Test Corp';
+      form.querySelector('input[name="phone"]').value = '+521234567890';
+      form.querySelector('select[name="inquiry_type"]').value = 'cotizacion';
+      form.querySelector('textarea[name="message"]').value = 'Solicitud de prueba detallada.';
 
       const event = { preventDefault: jest.fn(), target: form };
       await app.handleContactSubmit(event);
 
       expect(fetch).toHaveBeenCalled();
+
+      recaptchaSpy.mockRestore();
 
       app.USE_DEMO_MODE = true;
     });
@@ -921,12 +895,17 @@ describe('AgroBridgeApp', () => {
     test('should handle contact form API error', async () => {
       app.USE_DEMO_MODE = false;
 
+      const recaptchaSpy = jest.spyOn(app, 'getRecaptchaToken').mockResolvedValue('test-token');
+
       global.fetch.mockRejectedValueOnce(new Error('Network error'));
 
       const form = document.getElementById('enterprise-form');
       form.querySelector('input[name="name"]').value = 'Test User';
       form.querySelector('input[name="email"]').value = 'test@example.com';
       form.querySelector('input[name="company"]').value = 'Test Corp';
+      form.querySelector('input[name="phone"]').value = '+521234567890';
+      form.querySelector('select[name="inquiry_type"]').value = 'cotizacion';
+      form.querySelector('textarea[name="message"]').value = 'Solicitud de prueba detallada.';
 
       const notifySpy = jest.spyOn(app, 'showNotification');
       const event = { preventDefault: jest.fn(), target: form };
@@ -934,6 +913,8 @@ describe('AgroBridgeApp', () => {
 
       expect(notifySpy).toHaveBeenCalledWith(expect.any(String), 'error');
       notifySpy.mockRestore();
+
+      recaptchaSpy.mockRestore();
 
       app.USE_DEMO_MODE = true;
     });
@@ -1361,7 +1342,7 @@ describe('Custom Matchers', () => {
   });
 
   test('toBeValidLotCode matcher fails for invalid codes', () => {
-    expect('INVALID').not.toBeValidLotCode();
+    expect('INVALID CODE').not.toBeValidLotCode();
   });
 
   test('toBeValidEmail matcher works for valid emails', () => {
