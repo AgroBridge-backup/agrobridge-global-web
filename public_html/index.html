@@ -2466,6 +2466,11 @@
                                 <option value="informacion">Información General</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="contact-message" class="form-label">Mensaje *</label>
+                            <textarea id="contact-message" name="message" placeholder="Describa su solicitud" minlength="10" required></textarea>
+                        </div>
+                        <input type="text" id="contact-honeypot" name="honeypot" style="display:none" autocomplete="off" tabindex="-1" aria-hidden="true">
                         <button type="submit" class="button button--primary button--full type-button">Solicitar Cotización Enterprise</button>
                     </form>
                 </div>
@@ -2504,6 +2509,36 @@
 
     <!-- Confetti Animation Library for Success States -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // API Configuration - switch between local dev and production
+        (function() {
+            const isLocalhost = window.location.hostname === 'localhost' || 
+                                window.location.hostname === '127.0.0.1';
+            
+            // Local development uses localhost:3000, production uses the real API
+            window.AGROBRIDGE_API_BASE = isLocalhost 
+                ? 'http://localhost:3000/v2'
+                : 'https://api.agrobridge.global/v2';
+            
+            // Demo mode off by default - live backend
+            window.AGROBRIDGE_USE_DEMO = false;
+            
+            // reCAPTCHA - Google test key for localhost, real key for production
+            // Test key always passes validation (for development only)
+            window.AGROBRIDGE_RECAPTCHA_SITE_KEY = isLocalhost
+                ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+                : 'REPLACE_WITH_PRODUCTION_RECAPTCHA_SITE_KEY';
+            
+            window.AGROBRIDGE_RECAPTCHA_ACTION = 'enterprise_lead';
+            
+            console.log('[AgroBridge] Config:', {
+                apiBase: window.AGROBRIDGE_API_BASE,
+                demoMode: window.AGROBRIDGE_USE_DEMO,
+                environment: isLocalhost ? 'development' : 'production'
+            });
+        })();
+    </script>
 
     <!-- Main Application Script (consolidated - Bug #4 Fix) -->
     <script src="scripts/main.js" defer></script>
