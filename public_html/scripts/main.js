@@ -18,12 +18,19 @@
 class AgroBridgeApp {
     constructor() {
         this.currentLang = 'es';
-        this.validationApi = 'https://api.agrobridge.global/v2';
-        this.contactApi = 'https://api.agrobridge.global/v2/contact';
+        const globalConfig = typeof window !== 'undefined' ? window : {};
+        this.apiBase = this.normalizeApiBase(
+            globalConfig.AGROBRIDGE_API_BASE || 'https://api.agrobridge.global/v2'
+        );
+        this.validationApi = `${this.apiBase}/verify`;
+        this.contactApi = `${this.apiBase}/leads`;
+        this.recaptchaSiteKey = (globalConfig.AGROBRIDGE_RECAPTCHA_SITE_KEY || '').trim();
+        this.recaptchaAction = globalConfig.AGROBRIDGE_RECAPTCHA_ACTION || 'enterprise_lead';
+        this.recaptchaReady = null;
         this.isValidating = false;
         this.lastValidationTime = 0;
         this.RATE_LIMIT_MS = 500; // 500ms between validations (reduced for demo)
-        this.USE_DEMO_MODE = true; // Set to false when backend is ready
+        this.USE_DEMO_MODE = globalConfig.AGROBRIDGE_USE_DEMO === true;
         this.hasShownConfetti = false; // Confetti cooldown - only show once per session
         this.init();
     }
@@ -110,6 +117,16 @@ class AgroBridgeApp {
         if (element) {
             element.innerHTML = html;
         }
+    }
+
+    /**
+     * Normalize API base URL
+     * @param {string} base - Base URL
+     * @returns {string} Normalized URL without trailing slash
+     */
+    normalizeApiBase(base) {
+        if (typeof base !== 'string') return 'https://api.agrobridge.global/v2';
+        return base.replace(/\/+$/, '');
     }
 
     // ============================================
@@ -299,95 +316,100 @@ class AgroBridgeApp {
                 'hero.title': 'Excelencia Agrícola',
                 'hero.unique': 'Primer sistema ZTD en México 100% desarrollado por Mexicanos',
                 'search.button': 'VERIFICAR ORIGEN',
-                'search.placeholder': 'Ingrese código (Ej: AB-HASS-2026-001)',
+                'search.placeholder': 'Ingrese código (Ej: AGR-2024-001)',
                 'title.initial': 'VERIFICACIÓN ZTD',
                 'status.ready': 'Listo para verificar',
                 'status.verifying': 'Verificando...',
                 'status.verified': 'Origen Verificado',
                 'error.empty': 'Por favor ingrese un código de lote',
-                'error.format': 'Formato inválido. Use: AB-HASS-2026-001',
+                'error.format': 'Formato inválido. Use letras, números y guiones.',
                 'error.connection': 'Error de conexión. Intente nuevamente.',
                 'error.notfound': 'Lote no encontrado en el sistema.',
                 'error.ratelimit': 'Espere un momento antes de verificar nuevamente.',
                 'form.sending': 'Enviando...',
                 'form.success': '¡Solicitud enviada! Nos contactaremos pronto.',
                 'form.error': 'Error al enviar. Intente nuevamente.',
+                'form.recaptcha': 'reCAPTCHA no configurado. Intente más tarde.',
                 'form.submit': 'Solicitar Cotización Enterprise'
             },
             en: {
                 'hero.title': 'Agricultural Excellence',
                 'hero.unique': 'First ZTD System in Mexico 100% Developed by Mexicans',
                 'search.button': 'VERIFY ORIGIN',
-                'search.placeholder': 'Enter code (Ex: AB-HASS-2026-001)',
+                'search.placeholder': 'Enter code (Ex: AGR-2024-001)',
                 'title.initial': 'ZTD VERIFICATION',
                 'status.ready': 'Ready to verify',
                 'status.verifying': 'Verifying...',
                 'status.verified': 'Origin Verified',
                 'error.empty': 'Please enter a lot code',
-                'error.format': 'Invalid format. Use: AB-HASS-2026-001',
+                'error.format': 'Invalid format. Use letters, numbers, and dashes.',
                 'error.connection': 'Connection error. Please try again.',
                 'error.notfound': 'Lot not found in the system.',
                 'error.ratelimit': 'Please wait before verifying again.',
                 'form.sending': 'Sending...',
                 'form.success': 'Request sent! We will contact you soon.',
                 'form.error': 'Error sending. Please try again.',
+                'form.recaptcha': 'reCAPTCHA is not configured. Please try later.',
                 'form.submit': 'Request Enterprise Quote'
             },
             zh: {
                 'hero.title': '农业卓越',
                 'hero.unique': '墨西哥首个100%由墨西哥人开发的ZTD系统',
                 'search.button': '验证来源',
-                'search.placeholder': '输入代码 (例: AB-HASS-2026-001)',
+                'search.placeholder': '输入代码 (例: AGR-2024-001)',
                 'title.initial': 'ZTD验证',
                 'status.ready': '准备验证',
                 'status.verifying': '验证中...',
                 'status.verified': '来源已验证',
                 'error.empty': '请输入批次代码',
-                'error.format': '格式无效。使用: AB-HASS-2026-001',
+                'error.format': '格式无效。请使用字母、数字和连字符。',
                 'error.connection': '连接错误。请重试。',
                 'error.notfound': '系统中未找到批次。',
                 'error.ratelimit': '请稍等再验证。',
                 'form.sending': '发送中...',
                 'form.success': '请求已发送！我们会尽快联系您。',
                 'form.error': '发送错误。请重试。',
+                'form.recaptcha': 'reCAPTCHA 未配置。请稍后再试。',
                 'form.submit': '请求企业报价'
             },
             ar: {
                 'hero.title': 'التميز الزراعي',
                 'hero.unique': 'أول نظام ZTD في المكسيك تم تطويره 100% بواسطة المكسيكيين',
                 'search.button': 'التحقق من المصدر',
-                'search.placeholder': 'أدخل الرمز (مثال: AB-HASS-2026-001)',
+                'search.placeholder': 'أدخل الرمز (مثال: AGR-2024-001)',
                 'title.initial': 'التحقق ZTD',
                 'status.ready': 'جاهز للتحقق',
                 'status.verifying': 'جاري التحقق...',
                 'status.verified': 'تم التحقق من المصدر',
                 'error.empty': 'الرجاء إدخال رمز الدفعة',
-                'error.format': 'تنسيق غير صالح. استخدم: AB-HASS-2026-001',
+                'error.format': 'تنسيق غير صالح. استخدم أحرفًا وأرقامًا وشرطات.',
                 'error.connection': 'خطأ في الاتصال. حاول مرة أخرى.',
                 'error.notfound': 'الدفعة غير موجودة في النظام.',
                 'error.ratelimit': 'يرجى الانتظار قبل التحقق مرة أخرى.',
                 'form.sending': 'جاري الإرسال...',
                 'form.success': 'تم إرسال الطلب! سنتواصل معك قريباً.',
                 'form.error': 'خطأ في الإرسال. حاول مرة أخرى.',
+                'form.recaptcha': 'reCAPTCHA غير مهيأ. حاول لاحقاً.',
                 'form.submit': 'طلب عرض أسعار للشركات'
             },
             ja: {
                 'hero.title': '農業の卓越性',
                 'hero.unique': 'メキシコ人によって100％開発されたメキシコ初のZTDシステム',
                 'search.button': '産地を確認',
-                'search.placeholder': 'コードを入力 (例: AB-HASS-2026-001)',
+                'search.placeholder': 'コードを入力 (例: AGR-2024-001)',
                 'title.initial': 'ZTD検証',
                 'status.ready': '検証準備完了',
                 'status.verifying': '検証中...',
                 'status.verified': '産地確認済み',
                 'error.empty': 'ロットコードを入力してください',
-                'error.format': '無効な形式です。使用: AB-HASS-2026-001',
+                'error.format': '無効な形式です。英数字とハイフンを使用してください。',
                 'error.connection': '接続エラー。もう一度お試しください。',
                 'error.notfound': 'システムにロットが見つかりません。',
                 'error.ratelimit': '再度確認する前にお待ちください。',
                 'form.sending': '送信中...',
                 'form.success': 'リクエストが送信されました！すぐにご連絡いたします。',
                 'form.error': '送信エラー。もう一度お試しください。',
+                'form.recaptcha': 'reCAPTCHA が設定されていません。後でお試しください。',
                 'form.submit': '企業見積もりをリクエスト'
             }
         };
@@ -509,8 +531,8 @@ class AgroBridgeApp {
      * @returns {boolean}
      */
     isValidLotCode(code) {
-        // Updated regex to match format: AB-HASS-2026-001
-        return /^AB-[A-Z]{4}-\d{4}-\d{3}$/.test(code.toUpperCase());
+        if (!code || typeof code !== 'string') return false;
+        return /^[A-Z0-9-]+$/.test(code.toUpperCase());
     }
 
     /**
@@ -654,7 +676,7 @@ class AgroBridgeApp {
         }
 
         // Real API call
-        const response = await fetch(`${this.validationApi}/verify/${encodeURIComponent(lotCode)}`, {
+        const response = await fetch(`${this.validationApi}/${encodeURIComponent(lotCode)}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -663,6 +685,13 @@ class AgroBridgeApp {
             }
         });
 
+        let payload = null;
+        try {
+            payload = await response.json();
+        } catch (error) {
+            payload = null;
+        }
+
         if (!response.ok) {
             if (response.status === 404) {
                 throw new Error('NOT_FOUND');
@@ -670,7 +699,70 @@ class AgroBridgeApp {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        if (!payload || payload.valid === false || payload.success === false) {
+            throw new Error('NOT_FOUND');
+        }
+
+        return this.normalizeVerificationResponse(payload, lotCode);
+    }
+
+    /**
+     * Normalize backend verification payload to UI format
+     * @param {Object} payload - API response
+     * @param {string} lotCode - Lot code
+     * @returns {Object}
+     */
+    normalizeVerificationResponse(payload, lotCode) {
+        const apiData = payload?.data || {};
+        const specs = apiData?.specifications && typeof apiData.specifications === 'object'
+            ? apiData.specifications
+            : {};
+        const placeholder = '--';
+        const originParts = [];
+
+        if (apiData.location?.region) originParts.push(apiData.location.region);
+        if (apiData.location?.country) originParts.push(apiData.location.country);
+
+        const origin = originParts.length
+            ? originParts.join(', ')
+            : (specs.origin || '');
+
+        const timelineSource = specs.timestamps && typeof specs.timestamps === 'object'
+            ? specs.timestamps
+            : {};
+
+        const timestamps = {
+            harvest: timelineSource.harvest || specs.harvest || placeholder,
+            packing: timelineSource.packing || specs.packing || placeholder,
+            cold: timelineSource.cold || specs.cold || placeholder,
+            export: timelineSource.export || specs.export || placeholder
+        };
+
+        const qualityMetrics = specs.qualityMetrics && typeof specs.qualityMetrics === 'object'
+            ? specs.qualityMetrics
+            : {};
+
+        return {
+            status: payload?.valid ? 'valid' : 'invalid',
+            lotCode: apiData.lotCode || lotCode || '',
+            product: apiData.productName || '',
+            variety: specs.variety || '',
+            origin,
+            producer: specs.producer || '',
+            harvestDate: specs.harvestDate || specs.harvest || placeholder,
+            exportDate: specs.exportDate || specs.export || placeholder,
+            destination: specs.destination || placeholder,
+            blockchainHash: specs.blockchainHash || '',
+            avgTemp: specs.avgTemp || '',
+            qualityScore: specs.qualityScore || '',
+            brix: specs.brix || '',
+            ph: specs.ph || '',
+            timestamps,
+            certifications: Array.isArray(specs.certifications) ? specs.certifications : [],
+            qualityMetrics: {
+                dryMatter: qualityMetrics.dryMatter || specs.dryMatter || ''
+            }
+        };
     }
 
     /**
@@ -1943,6 +2035,92 @@ class AgroBridgeApp {
         }
     }
 
+    mapInquiryType(value) {
+        const lookup = {
+            cotizacion: 'product',
+            partnership: 'partnership',
+            informacion: 'other',
+            product: 'product',
+            support: 'support',
+            other: 'other'
+        };
+        return lookup[value] || 'other';
+    }
+
+    buildLeadMessage(data, inquiryType) {
+        const phone = data.phone ? ` ${data.phone}` : '';
+        const company = data.company ? ` ${data.company}` : '';
+        const inquiryLabels = {
+            product: this.currentLang === 'es' ? 'Cotización Enterprise' : 'Enterprise Quote',
+            partnership: this.currentLang === 'es' ? 'Partnership / Alianza Comercial' : 'Partnership',
+            support: this.currentLang === 'es' ? 'Soporte' : 'Support',
+            other: this.currentLang === 'es' ? 'Información General' : 'General Information'
+        };
+        const inquiryLabel = inquiryLabels[inquiryType] || inquiryType;
+
+        if (this.currentLang === 'es') {
+            return `Solicitud enterprise desde el sitio web.\nEmpresa:${company}\nTelefono:${phone}\nTipo:${inquiryLabel}`;
+        }
+
+        return `Enterprise request from website.\nCompany:${company}\nPhone:${phone}\nType:${inquiryLabel}`;
+    }
+
+    loadRecaptchaScript() {
+        if (this.recaptchaReady) return this.recaptchaReady;
+        if (!this.recaptchaSiteKey || this.recaptchaSiteKey.includes('REPLACE_WITH')) {
+            this.recaptchaReady = Promise.resolve(null);
+            return this.recaptchaReady;
+        }
+
+        if (typeof window === 'undefined') {
+            this.recaptchaReady = Promise.resolve(null);
+            return this.recaptchaReady;
+        }
+
+        if (window.grecaptcha && typeof window.grecaptcha.execute === 'function') {
+            this.recaptchaReady = new Promise((resolve) => {
+                window.grecaptcha.ready(() => resolve(window.grecaptcha));
+            });
+            return this.recaptchaReady;
+        }
+
+        this.recaptchaReady = new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(this.recaptchaSiteKey)}`;
+            script.async = true;
+            script.defer = true;
+            script.onload = () => {
+                if (window.grecaptcha && typeof window.grecaptcha.ready === 'function') {
+                    window.grecaptcha.ready(() => resolve(window.grecaptcha));
+                } else {
+                    resolve(null);
+                }
+            };
+            script.onerror = () => resolve(null);
+            document.head.appendChild(script);
+        });
+
+        return this.recaptchaReady;
+    }
+
+    async getRecaptchaToken(action) {
+        if (!this.recaptchaSiteKey || this.recaptchaSiteKey.includes('REPLACE_WITH')) {
+            return null;
+        }
+
+        const recaptcha = await this.loadRecaptchaScript();
+        if (!recaptcha || typeof recaptcha.execute !== 'function') {
+            return null;
+        }
+
+        try {
+            return await recaptcha.execute(this.recaptchaSiteKey, { action });
+        } catch (error) {
+            console.warn('[AgroBridge] reCAPTCHA execute failed:', error);
+            return null;
+        }
+    }
+
     /**
      * Handle contact form submission
      * @param {Event} e - Submit event
@@ -1959,7 +2137,7 @@ class AgroBridgeApp {
         const data = Object.fromEntries(formData.entries());
 
         // Basic validation
-        if (!data.name || !data.email || !data.company) {
+        if (!data.name || !data.email || !data.company || !data.phone || !data.inquiry_type) {
             this.showNotification(
                 this.currentLang === 'es'
                     ? 'Por favor complete todos los campos requeridos.'
@@ -1981,6 +2159,22 @@ class AgroBridgeApp {
             return;
         }
 
+        const inquiryType = this.mapInquiryType(data.inquiry_type);
+        const userMessage = data.message ? data.message.trim() : '';
+        const finalMessage = userMessage.length >= 10
+            ? userMessage
+            : this.buildLeadMessage(data, inquiryType);
+
+        if (!finalMessage || finalMessage.trim().length < 10) {
+            this.showNotification(
+                this.currentLang === 'es'
+                    ? 'Por favor ingrese un mensaje más detallado.'
+                    : 'Please provide a more detailed message.',
+                'error'
+            );
+            return;
+        }
+
         // Disable button and show loading
         if (submitBtn) {
             submitBtn.disabled = true;
@@ -1995,6 +2189,27 @@ class AgroBridgeApp {
                 this.showNotification(this.t('form.success'), 'success');
                 form.reset();
             } else {
+                const recaptchaToken = await this.getRecaptchaToken(this.recaptchaAction);
+                if (!recaptchaToken) {
+                    throw new Error(this.t('form.recaptcha'));
+                }
+
+                const payload = {
+                    name: data.name.trim(),
+                    email: data.email.trim().toLowerCase(),
+                    phone: data.phone.trim(),
+                    company: data.company.trim(),
+                    message: finalMessage,
+                    inquiryType,
+                    source: 'website',
+                    recaptchaToken,
+                    honeypot: data.honeypot || ''
+                };
+
+                if (data.lotCode) {
+                    payload.lotCode = data.lotCode.trim();
+                }
+
                 // Real API call
                 const response = await fetch(this.contactApi, {
                     method: 'POST',
@@ -2002,16 +2217,20 @@ class AgroBridgeApp {
                         'Content-Type': 'application/json',
                         'Accept-Language': this.currentLang
                     },
-                    body: JSON.stringify({
-                        ...data,
-                        source: 'website_contact_form',
-                        timestamp: new Date().toISOString(),
-                        language: this.currentLang
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    let errorMessage = this.t('form.error');
+                    try {
+                        const errorPayload = await response.json();
+                        errorMessage = errorPayload?.message ||
+                            errorPayload?.errors?.[0]?.message ||
+                            errorMessage;
+                    } catch (err) {
+                        errorMessage = this.t('form.error');
+                    }
+                    throw new Error(errorMessage);
                 }
 
                 this.showNotification(this.t('form.success'), 'success');
@@ -2019,7 +2238,8 @@ class AgroBridgeApp {
             }
         } catch (error) {
             console.error('[AgroBridge] Contact form error:', error);
-            this.showNotification(this.t('form.error'), 'error');
+            const message = error?.message || this.t('form.error');
+            this.showNotification(message, 'error');
         } finally {
             // Restore button
             if (submitBtn) {
