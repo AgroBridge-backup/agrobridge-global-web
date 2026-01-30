@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Cookies | AgroBridge ZTD</title>
+    <meta name="description" content="Política de Cookies de AgroBridge ZTD. Gestione sus preferencias de cookies y privacidad.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../styles/legal-base.css">
+    <link rel="stylesheet" href="../styles/legal-components.css">
+    <link rel="stylesheet" href="../styles/legal-layouts.css">
+    <link rel="stylesheet" href="../styles/legal-animations.css">
+    <link rel="stylesheet" href="../styles/legal-print.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+</head>
+<body class="legal-page">
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <!-- Print Header -->
+    <div class="print-header">
+        <div class="print-header__logo">🌱 AgroBridge ZTD</div>
+        <div class="print-header__title">Política de Cookies</div>
+    </div>
+    
+    <!-- Header -->
+    <header class="legal-header">
+        <div class="legal-header__container">
+            <a href="/" class="legal-header__logo">
+                <span class="legal-header__logo-icon">🌱</span>
+                <span>AgroBridge <span style="color: var(--color-gold-500);">ZTD</span></span>
+            </a>
+            <nav class="legal-header__nav" aria-label="Navegación legal">
+                <a href="privacidad.html" class="legal-header__link">Privacidad</a>
+                <a href="terminos.html" class="legal-header__link">Términos</a>
+                <a href="cookies.html" class="legal-header__link active">Cookies</a>
+                <a href="datos.html" class="legal-header__link">Datos</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="legal-hero" role="banner">
+        <div class="legal-hero__content">
+            <span class="legal-hero__badge">
+                <span aria-hidden="true">🍪</span> Transparencia Tecnológica
+            </span>
+            <h1 class="legal-hero__title">
+                Cookies con<br>
+                <span class="text-gold">Propósito</span>
+            </h1>
+            <p class="legal-hero__subtitle">
+                Utilizamos cookies de forma responsable para mejorar su experiencia. 
+                Usted tiene el control total sobre qué cookies desea permitir.
+            </p>
+            <div class="legal-hero__meta">
+                <time datetime="2026-01-29" class="legal-date">
+                    <span class="legal-date__label">Última actualización:</span>
+                    <span class="legal-date__value">29 de enero de 2026</span>
+                </time>
+                <button class="btn btn--primary btn--small" data-action="print" onclick="LegalUtils.downloadPDF('cookies')">
+                    <span aria-hidden="true">📄</span> Descargar PDF
+                </button>
+            </div>
+        </div>
+        <div class="legal-hero__visual" aria-hidden="true">
+            <div style="font-size: 8rem; opacity: 0.3;">🍪</div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <main id="main-content" class="legal-main" tabindex="-1">
+        <div class="legal-container legal-container--narrow">
+            
+            <!-- Cookie Manager -->
+            <section id="preferences" class="animate-on-scroll" style="margin-bottom: var(--space-12);">
+                <div class="cookie-manager">
+                    <h2 style="text-align: center; margin-bottom: var(--space-4);">Centro de Preferencias</h2>
+                    <p class="cookie-manager__subtitle" style="text-align: center;">
+                        Usted tiene el control. Elija qué cookies desea permitir.
+                    </p>
+                    
+                    <div class="cookie-categories">
+                        
+                        <!-- Essential (Locked) -->
+                        <div class="cookie-category cookie-category--essential">
+                            <div class="cookie-category__header">
+                                <div class="cookie-category__info">
+                                    <h3>Esenciales</h3>
+                                    <p>Necesarias para que el sitio funcione. No se pueden desactivar.</p>
+                                </div>
+                                <div class="cookie-toggle cookie-toggle--locked">
+                                    <span class="cookie-toggle__status">Siempre activas</span>
+                                    <span aria-hidden="true" style="font-size: 1.25rem;">🔒</span>
+                                </div>
+                            </div>
+                            <div class="cookie-category__details">
+                                <ul class="cookie-list">
+                                    <li><strong>session_id:</strong> Mantiene su sesión activa mientras navega</li>
+                                    <li><strong>csrf_token:</strong> Protege contra ataques de falsificación</li>
+                                    <li><strong>consent_record:</strong> Guarda sus preferencias de cookies</li>
+                                    <li><strong>legal_version:</strong> Registra qué versión de términos ha aceptado</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Functional -->
+                        <div class="cookie-category">
+                            <div class="cookie-category__header">
+                                <div class="cookie-category__info">
+                                    <h3>Funcionales</h3>
+                                    <p>Mejoran su experiencia recordando preferencias.</p>
+                                </div>
+                                <label class="cookie-toggle">
+                                    <span class="visually-hidden">Permitir cookies funcionales</span>
+                                    <input type="checkbox" class="cookie-toggle__input" data-category="functional" id="toggle-functional">
+                                    <span class="cookie-toggle__slider" aria-hidden="true"></span>
+                                </label>
+                            </div>
+                            <div class="cookie-category__details">
+                                <ul class="cookie-list">
+                                    <li><strong>language_pref:</strong> Recuerda su idioma preferido</li>
+                                    <li><strong>accessibility:</strong> Guarda configuraciones de accesibilidad</li>
+                                    <li><strong>form_data:</strong> Recuerda datos de formularios (temporal)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Analytics -->
+                        <div class="cookie-category">
+                            <div class="cookie-category__header">
+                                <div class="cookie-category__info">
+                                    <h3>Analíticas</h3>
+                                    <p>Nos ayudan a mejorar el sitio. Datos completamente anónimos.</p>
+                                </div>
+                                <label class="cookie-toggle">
+                                    <span class="visually-hidden">Permitir cookies analíticas</span>
+                                    <input type="checkbox" class="cookie-toggle__input" data-category="analytics" id="toggle-analytics">
+                                    <span class="cookie-toggle__slider" aria-hidden="true"></span>
+                                </label>
+                            </div>
+                            <div class="cookie-category__details">
+                                <ul class="cookie-list">
+                                    <li><strong>_ga:</strong> Google Analytics - estadísticas de uso</li>
+                                    <li><strong>_gid:</strong> Identificador de sesión anónimo</li>
+                                    <li><strong>_gat:</strong> Limita la frecuencia de recopilación</li>
+                                </ul>
+                                <div class="info-box info-box--info" style="margin-top: var(--space-4);">
+                                    <p style="margin: 0; font-size: var(--text-sm);">
+                                        <strong>Nota:</strong> Utilizamos Google Analytics 4 con anonimización de IP. 
+                                        No recopilamos información personal identificable.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Marketing (Future) -->
+                        <div class="cookie-category cookie-category--disabled">
+                            <div class="cookie-category__header">
+                                <div class="cookie-category__info">
+                                    <h3>Marketing</h3>
+                                    <p>Actualmente no utilizamos cookies de marketing ni publicidad.</p>
+                                </div>
+                                <div class="cookie-toggle cookie-toggle--disabled">
+                                    <span class="cookie-toggle__status">No disponible</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="cookie-actions">
+                        <button id="btn-reject-all" class="btn btn--secondary">
+                            Solo esenciales
+                        </button>
+                        <button id="btn-save" class="btn btn--primary">
+                            Guardar preferencias
+                        </button>
+                    </div>
+                    
+                    <div id="save-confirmation" class="info-box info-box--success" style="margin-top: var(--space-6); display: none;">
+                        <div class="info-box__title">✓ Preferencias guardadas</div>
+                        <p style="margin: 0;">Sus preferencias de cookies han sido actualizadas exitosamente.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- What are Cookies -->
+            <section class="legal-section expanded animate-on-scroll" aria-labelledby="what-heading">
+                <button class="legal-section__header" aria-expanded="true" aria-controls="what-content" id="what-heading">
+                    <h2 class="legal-section__title">
+                        <span class="legal-section__icon" aria-hidden="true">❓</span>
+                        ¿Qué son las Cookies?
+                    </h2>
+                    <span class="legal-section__toggle" aria-hidden="true">
+                        <span class="legal-section__toggle-icon"></span>
+                    </span>
+                </button>
+                <div id="what-content" class="legal-section__content" role="region">
+                    <div class="legal-section__inner">
+                        <p style="margin-bottom: var(--space-4);">
+                            Las cookies son pequeños archivos de texto que se almacenan en su dispositivo cuando visita un sitio web. 
+                            Sirven para recordar información sobre su visita, como su idioma preferido y otras configuraciones.
+                        </p>
+                        
+                        <div class="card" style="margin-bottom: var(--space-4);">
+                            <div class="card__body">
+                                <h3 style="margin-bottom: var(--space-3);">Analogía Simple</h3>
+                                <p style="margin: 0;">
+                                    Imagine que las cookies son como la tarjeta de membresía de una biblioteca. 
+                                    La biblioteca no necesita saber su nombre cada vez que visita; la tarjeta la identifica 
+                                    y recuerda sus preferencias (como su sección favorita). Las cookies funcionan de manera similar 
+                                    en los sitios web.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <h3>Tipos de Cookies que Utilizamos</h3>
+                        <table class="data-table" style="margin-top: var(--space-4);">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Duración</th>
+                                    <th>Propósito</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Sesión</strong></td>
+                                    <td>Hasta cerrar navegador</td>
+                                    <td>Mantener sesión activa</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Persistentes</strong></td>
+                                    <td>30 días - 1 año</td>
+                                    <td>Recordar preferencias</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Primera parte</strong></td>
+                                    <td>Variable</td>
+                                    <td>Funcionalidad del sitio</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Terceros</strong></td>
+                                    <td>Variable</td>
+                                    <td>Análisis (Google Analytics)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- How to Manage -->
+            <section class="legal-section animate-on-scroll" aria-labelledby="manage-heading">
+                <button class="legal-section__header" aria-expanded="false" aria-controls="manage-content" id="manage-heading">
+                    <h2 class="legal-section__title">
+                        <span class="legal-section__icon" aria-hidden="true">⚙️</span>
+                        Cómo Gestionar Cookies
+                    </h2>
+                    <span class="legal-section__toggle" aria-hidden="true">
+                        <span class="legal-section__toggle-icon"></span>
+                    </span>
+                </button>
+                <div id="manage-content" class="legal-section__content" role="region" hidden>
+                    <div class="legal-section__inner">
+                        <p style="margin-bottom: var(--space-4);">
+                            Además de nuestro Centro de Preferencias, puede gestionar cookies directamente desde su navegador:
+                        </p>
+                        
+                        <div style="display: grid; gap: var(--space-4);">
+                            <div class="card">
+                                <div class="card__body">
+                                    <h4 style="margin-bottom: var(--space-2);">🌐 Google Chrome</h4>
+                                    <ol style="margin: 0; font-size: var(--text-sm);">
+                                        <li>Configuración → Privacidad y seguridad</li>
+                                        <li>Cookies y otros datos de sitios</li>
+                                        <li>Ver todas las cookies y datos del sitio</li>
+                                        <li>Buscar "agrobridge" y eliminar</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card__body">
+                                    <h4 style="margin-bottom: var(--space-2);">🦊 Mozilla Firefox</h4>
+                                    <ol style="margin: 0; font-size: var(--text-sm);">
+                                        <li>Configuración → Privacidad y seguridad</li>
+                                        <li>Cookies y datos del sitio → Gestionar datos</li>
+                                        <li>Buscar "agrobridge" y eliminar</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card__body">
+                                    <h4 style="margin-bottom: var(--space-2);">🧭 Safari</h4>
+                                    <ol style="margin: 0; font-size: var(--text-sm);">
+                                        <li>Preferencias → Privacidad</li>
+                                        <li>Administrar datos de sitios web</li>
+                                        <li>Buscar "agrobridge" y eliminar</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card__body">
+                                    <h4 style="margin-bottom: var(--space-2);">🌊 Microsoft Edge</h4>
+                                    <ol style="margin: 0; font-size: var(--text-sm);">
+                                        <li>Configuración → Cookies y permisos del sitio</li>
+                                        <li>Administrar y eliminar cookies</li>
+                                        <li>Buscar "agrobridge" y eliminar</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-box info-box--warning" style="margin-top: var(--space-6);">
+                            <div class="info-box__title">⚠️ Advertencia</div>
+                            <p style="margin: 0;">
+                                Si bloquea todas las cookies, incluidas las esenciales, es posible que nuestro sitio 
+                                no funcione correctamente. Algunas funcionalidades podrían no estar disponibles.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Do Not Track -->
+            <section class="legal-section animate-on-scroll" aria-labelledby="dnt-heading">
+                <button class="legal-section__header" aria-expanded="false" aria-controls="dnt-content" id="dnt-heading">
+                    <h2 class="legal-section__title">
+                        <span class="legal-section__icon" aria-hidden="true">🚫</span>
+                        Señal de No Rastrear (DNT)
+                    </h2>
+                    <span class="legal-section__toggle" aria-hidden="true">
+                        <span class="legal-section__toggle-icon"></span>
+                    </span>
+                </button>
+                <div id="dnt-content" class="legal-section__content" role="region" hidden>
+                    <div class="legal-section__inner">
+                        <p>
+                            Respetamos la señal de "No Rastrear" (Do Not Track, DNT) de su navegador. 
+                            Si ha habilitado DNT en su configuración de navegador, automáticamente:
+                        </p>
+                        <ul>
+                            <li>Desactivamos cookies analíticas de terceros</li>
+                            <li>No cargamos scripts de seguimiento</li>
+                            <li>Limitamos la recopilación de datos de navegación</li>
+                        </ul>
+                        <p>
+                            Para habilitar DNT en su navegador, consulte la sección de privacidad en la configuración 
+                            de su navegador preferido.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Updates -->
+            <section class="legal-section animate-on-scroll" aria-labelledby="updates-heading">
+                <button class="legal-section__header" aria-expanded="false" aria-controls="updates-content" id="updates-heading">
+                    <h2 class="legal-section__title">
+                        <span class="legal-section__icon" aria-hidden="true">🔄</span>
+                        Actualizaciones de esta Política
+                    </h2>
+                    <span class="legal-section__toggle" aria-hidden="true">
+                        <span class="legal-section__toggle-icon"></span>
+                    </span>
+                </button>
+                <div id="updates-content" class="legal-section__content" role="region" hidden>
+                    <div class="legal-section__inner">
+                        <p>
+                            Podemos actualizar esta política de cookies ocasionalmente para reflejar cambios en las 
+                            tecnologías que utilizamos o por requisitos legales. Cualquier cambio significativo le 
+                            será notificado mediante:
+                        </p>
+                        <ul>
+                            <li>Banner informativo en el sitio web</li>
+                            <li>Correo electrónico (si nos ha proporcionado uno)</li>
+                            <li>Actualización de la fecha en esta página</li>
+                        </ul>
+                        <p>
+                            La fecha de última actualización siempre se muestra en la parte superior de esta página.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="legal-footer">
+        <div class="legal-container">
+            <div class="legal-footer__container">
+                <div class="legal-footer__brand">
+                    <a href="/" class="legal-footer__logo">
+                        <span aria-hidden="true">🌱</span> AgroBridge ZTD
+                    </a>
+                    <p class="legal-footer__tagline">
+                        La certidumbre es nuestro lote. Trazabilidad criptográfica inviolable desde Michoacán al mundo.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="legal-footer__section-title">Legal</h3>
+                    <ul class="legal-footer__links">
+                        <li><a href="privacidad.html" class="legal-footer__link">Privacidad</a></li>
+                        <li><a href="terminos.html" class="legal-footer__link">Términos</a></li>
+                        <li><a href="cookies.html" class="legal-footer__link">Cookies</a></li>
+                        <li><a href="datos.html" class="legal-footer__link">Datos</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="legal-footer__section-title">Contacto</h3>
+                    <ul class="legal-footer__links">
+                        <li><a href="mailto:dpo@agrobridge.global" class="legal-footer__link">DPO</a></li>
+                        <li><a href="mailto:ceo@agrobridge.global" class="legal-footer__link">CEO</a></li>
+                        <li><a href="https://wa.me/523526142847" class="legal-footer__link">WhatsApp</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="legal-footer__bottom">
+                <span>© 2026 AgroBridge ZTD. Todos los derechos reservados.</span>
+                <span>Versión 1.0 | Última actualización: 29 de enero de 2026</span>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Print Footer -->
+    <div class="print-footer">
+        Documento impreso desde agrobridge.global/legal/cookies.html
+    </div>
+    
+    <!-- Scripts -->
+    <script src="../scripts/legal-core.js"></script>
+    <script src="../scripts/legal-animations.js"></script>
+    <script src="../scripts/legal-utils.js"></script>
+    <script src="../scripts/legal-consent.js"></script>
+    
+    <!-- Cookie Preferences Page Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get current preferences
+            const manager = window.cookieConsentManager;
+            if (manager && manager.consent) {
+                document.getElementById('toggle-functional').checked = manager.consent.preferences.functional || false;
+                document.getElementById('toggle-analytics').checked = manager.consent.preferences.analytics || false;
+            }
+            
+            // Save button handler
+            document.getElementById('btn-save').addEventListener('click', function() {
+                const preferences = {
+                    essential: true, // Always true
+                    functional: document.getElementById('toggle-functional').checked,
+                    analytics: document.getElementById('toggle-analytics').checked,
+                    marketing: false // Not available yet
+                };
+                
+                if (manager) {
+                    manager.customize(preferences);
+                    
+                    // Show confirmation
+                    const confirmation = document.getElementById('save-confirmation');
+                    confirmation.style.display = 'block';
+                    setTimeout(() => {
+                        confirmation.style.display = 'none';
+                    }, 3000);
+                }
+            });
+            
+            // Reject all button handler
+            document.getElementById('btn-reject-all').addEventListener('click', function() {
+                document.getElementById('toggle-functional').checked = false;
+                document.getElementById('toggle-analytics').checked = false;
+                
+                if (manager) {
+                    manager.rejectOptional();
+                    
+                    // Show confirmation
+                    const confirmation = document.getElementById('save-confirmation');
+                    confirmation.querySelector('.info-box__title').textContent = '✓ Solo cookies esenciales activadas';
+                    confirmation.style.display = 'block';
+                    setTimeout(() => {
+                        confirmation.style.display = 'none';
+                    }, 3000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+/**
+ * AgroBridge Legal Pages - Print Styles
+ * Print optimization for legal documents
+ * Version: 1.0.0
+ */
+
+@media print {
+  /* ==========================================================================
+     BASE PRINT RESET
+     ========================================================================== */
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* ==========================================================================
+     PAGE SETUP
+     ========================================================================== */
+  @page {
+    margin: 2cm 1.5cm;
+    size: A4;
+  }
+  
+  body {
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+  
+  /* ==========================================================================
+     HIDE NON-PRINT ELEMENTS
+     ========================================================================== */
+  .legal-header,
+  .legal-footer,
+  .cookie-banner,
+  .btn,
+  .legal-hero__visual,
+  .encryption-visual,
+  .legal-section__toggle,
+  .tabs,
+  .legal-sidebar,
+  .cookie-manager,
+  .skip-link,
+  .toast,
+  nav,
+  .nav,
+  .whatsapp-float,
+  .demo-btn,
+  .example-chip,
+  .reset-btn,
+  .print-hide {
+    display: none !important;
+  }
+  
+  /* ==========================================================================
+     SHOW EXPANDED CONTENT
+     ========================================================================== */
+  .legal-section__content {
+    display: block !important;
+    grid-template-rows: none !important;
+  }
+  
+  .legal-section__inner {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  .tab-panel {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  /* ==========================================================================
+     HERO SECTION PRINT
+     ========================================================================== */
+  .legal-hero {
+    background: none !important;
+    color: #000 !important;
+    padding: 0 0 2cm 0 !important;
+    min-height: auto !important;
+    page-break-after: avoid;
+  }
+  
+  .legal-hero::before {
+    display: none !important;
+  }
+  
+  .legal-hero__title {
+    color: #000 !important;
+    font-size: 24pt !important;
+    margin-bottom: 0.5cm;
+  }
+  
+  .legal-hero__subtitle {
+    color: #333 !important;
+    font-size: 12pt !important;
+  }
+  
+  .legal-hero__badge {
+    border: 1px solid #000 !important;
+    background: none !important;
+    color: #000 !important;
+    margin-bottom: 0.5cm;
+  }
+  
+  .text-gold {
+    color: #000 !important;
+  }
+  
+  /* ==========================================================================
+     MAIN CONTENT PRINT
+     ========================================================================== */
+  .legal-main {
+    padding: 0 !important;
+  }
+  
+  .legal-content {
+    max-width: 100% !important;
+  }
+  
+  .legal-content h2 {
+    font-size: 16pt !important;
+    margin-top: 1cm !important;
+    margin-bottom: 0.5cm !important;
+    page-break-after: avoid;
+  }
+  
+  .legal-content h3 {
+    font-size: 14pt !important;
+    margin-top: 0.8cm !important;
+    margin-bottom: 0.4cm !important;
+    page-break-after: avoid;
+  }
+  
+  .legal-content p {
+    margin-bottom: 0.3cm !important;
+    orphans: 3;
+    widows: 3;
+  }
+  
+  .legal-content ul,
+  .legal-content ol {
+    margin-bottom: 0.3cm !important;
+    padding-left: 1cm !important;
+  }
+  
+  .legal-content li {
+    margin-bottom: 0.2cm !important;
+  }
+  
+  /* ==========================================================================
+     CARDS PRINT
+     ========================================================================== */
+  .card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    margin-bottom: 0.5cm !important;
+    page-break-inside: avoid;
+  }
+  
+  .card__header,
+  .card__body,
+  .card__footer {
+    padding: 0.5cm !important;
+  }
+  
+  /* ==========================================================================
+     TABLES PRINT
+     ========================================================================== */
+  .data-table {
+    font-size: 10pt !important;
+    page-break-inside: avoid;
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: 0.3cm !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  .data-table th {
+    background: #f0f0f0 !important;
+  }
+  
+  /* ==========================================================================
+     INFO BOXES PRINT
+     ========================================================================== */
+  .info-box {
+    border: 1px solid #ccc !important;
+    background: #f9f9f9 !important;
+    padding: 0.5cm !important;
+    margin-bottom: 0.5cm !important;
+    page-break-inside: avoid;
+  }
+  
+  .info-box--info,
+  .info-box--success,
+  .info-box--warning,
+  .info-box--error {
+    border-left: 3px solid #000 !important;
+  }
+  
+  /* ==========================================================================
+     CONTACT CARD PRINT
+     ========================================================================== */
+  .contact-card {
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid;
+  }
+  
+  .contact-card__header {
+    background: none !important;
+    color: #000 !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+  
+  .contact-card__avatar {
+    border: 1px solid #ccc !important;
+    background: #f0f0f0 !important;
+  }
+  
+  /* ==========================================================================
+     DPA PRINT
+     ========================================================================== */
+  .dpa-header {
+    border-bottom: 2px solid #000 !important;
+    padding-bottom: 1cm !important;
+    margin-bottom: 1cm !important;
+  }
+  
+  .dpa-header__version {
+    border: 1px solid #000 !important;
+    background: none !important;
+  }
+  
+  .dpa-party {
+    border: 1px solid #ccc !important;
+    background: #f9f9f9 !important;
+    page-break-inside: avoid;
+  }
+  
+  .annex {
+    border-top: 2px solid #000 !important;
+    page-break-before: always;
+  }
+  
+  .annex__badge {
+    border: 1px solid #000 !important;
+    background: none !important;
+  }
+  
+  /* ==========================================================================
+     LINKS PRINT
+     ========================================================================== */
+  a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+  
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+    word-break: break-all;
+  }
+  
+  /* Don't show URLs for internal anchors */
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+  
+  /* ==========================================================================
+     CODE PRINT
+     ========================================================================== */
+  code {
+    font-family: 'Courier New', monospace !important;
+    font-size: 9pt !important;
+    background: #f0f0f0 !important;
+    padding: 0.1cm 0.2cm !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  /* ==========================================================================
+     PAGE BREAKS
+     ========================================================================== */
+  .legal-section {
+    page-break-inside: avoid;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  
+  img, svg, .encryption-visual {
+    page-break-inside: avoid;
+    max-width: 100% !important;
+  }
+  
+  /* ==========================================================================
+     PRINT HEADER/FOOTER
+     ========================================================================== */
+  .print-header {
+    display: block !important;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.5cm;
+    margin-bottom: 1cm;
+  }
+  
+  .print-header__logo {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 0.3cm;
+  }
+  
+  .print-header__title {
+    font-size: 14pt;
+    color: #333;
+  }
+  
+  .print-footer {
+    display: block !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9pt;
+    color: #666;
+    border-top: 1px solid #ccc;
+    padding-top: 0.3cm;
+  }
+  
+  /* Print URL at bottom */
+  .print-footer::after {
+    content: "Documento impreso desde agrobridge.global/legal/";
+    display: block;
+    margin-top: 0.2cm;
+  }
+}
+
+/* ==========================================================================
+   PRINT UTILITIES (screen only)
+   ========================================================================== */
+@media screen {
+  .print-header,
+  .print-footer {
+    display: none;
+  }
+}

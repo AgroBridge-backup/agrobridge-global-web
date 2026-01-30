@@ -1919,6 +1919,168 @@
             }
         }
     </style>
+
+    <script>
+        window.AGROBRIDGE_CONFIG = {
+            apiBase: window.AGROBRIDGE_API_BASE || 'http://localhost:3000/v2',
+            useDemo: window.AGROBRIDGE_USE_DEMO || false,
+            recaptchaSiteKey: window.AGROBRIDGE_RECAPTCHA_SITE_KEY || '',
+            sentryDsn: 'https://xxxxxxxxxxxx@xxxxx.ingest.sentry.io/xxxxx',
+            sentryEnvironment: 'production',
+            release: '2.0.0',
+            gitCommit: 'unknown'
+        };
+
+        var SENTRY_DSN_PLACEHOLDER = 'https://xxxxxxxxxxxx@xxxxx.ingest.sentry.io/xxxxx';
+
+        window.Sentry = window.Sentry || {
+            init: function(config) {},
+            captureException: function(err) {},
+            captureMessage: function(msg) {},
+            addBreadcrumb: function(breadcrumb) {},
+            withScope: function(callback) { callback && callback(this); },
+            setTag: function(key, value) {},
+            setUser: function(user) {},
+            configureScope: function(callback) { callback && callback(this); },
+            BrowserTracing: function() {},
+            Replay: function() {}
+        };
+
+        window.__SENTRY_INITIALIZED__ = false;
+
+        (function() {
+            var config = window.AGROBRIDGE_CONFIG;
+            var isSentryConfigured = config.sentryDsn && config.sentryDsn !== SENTRY_DSN_PLACEHOLDER;
+
+            if (isSentryConfigured) {
+                var sentryScript = document.createElement('script');
+                sentryScript.src = 'https://browser.sentry-cdn.com/8.15.0/bundle.tracing.min.js';
+                sentryScript.crossOrigin = 'anonymous';
+                sentryScript.async = true;
+                
+                sentryScript.onload = function() {
+                    if (window.Sentry && window.Sentry.init) {
+                        try {
+                            window.Sentry.init({
+                                dsn: config.sentryDsn,
+                                environment: config.sentryEnvironment,
+                                release: config.release + '@' + config.gitCommit,
+                                integrations: [
+                                    new window.Sentry.BrowserTracing({
+                                        tracingOrigins: ['api.agrobridge.global', 'staging-api.agrobridge.global', 'localhost', /^\//],
+                                    }),
+                                    new window.Sentry.Replay({
+                                        maskAllText: true,
+                                        blockAllMedia: true,
+                                    }),
+                                ],
+                                tracesSampleRate: 0.1,
+                                replaysSessionSampleRate: 0.01,
+                                replaysOnErrorSampleRate: 1.0,
+                                beforeSend: function(event, hint) {
+                                    if (event.request) {
+                                        delete event.request.cookies;
+                                        var headers = {};
+                                        for (var key in event.request.headers) {
+                                            if (key !== 'authorization' && key !== 'cookie') {
+                                                headers[key] = event.request.headers[key];
+                                            }
+                                        }
+                                        event.request.headers = headers;
+                                    }
+                                    return event;
+                                },
+                            });
+                            window.__SENTRY_INITIALIZED__ = true;
+                        } catch (e) {
+                            console.warn('Failed to initialize Sentry:', e);
+                        }
+                    } else {
+                        console.warn('Sentry script loaded but Sentry not available');
+                    }
+                };
+
+                sentryScript.onerror = function() {
+                    console.warn('Failed to load Sentry SDK');
+                };
+
+                document.head.appendChild(sentryScript);
+            }
+        })();
+    </script>
+
+    <script type="module" id="web-vitals">
+        (function() {
+            var config = window.AGROBRIDGE_CONFIG;
+            
+            if (!('sendBeacon' in navigator) || !('PerformanceObserver' in window)) {
+                return;
+            }
+
+            var vitals = {};
+
+            try {
+                var observer = new PerformanceObserver(function(list) {
+                    list.getEntries().forEach(function(entry) {
+                        try {
+                            if (entry.entryType === 'largest-contentful-paint') {
+                                vitals.lcp = Math.round(entry.startTime);
+                            } else if (entry.entryType === 'layout-shift' && !entry.hadRecentInput) {
+                                vitals.cls = (vitals.cls || 0) + entry.value;
+                            } else if (entry.entryType === 'first-input') {
+                                vitals.fid = Math.round(entry.processingStart - entry.startTime);
+                            } else if (entry.entryType === 'paint' && entry.name === 'first-paint') {
+                                vitals.fp = Math.round(entry.startTime);
+                            } else if (entry.entryType === 'paint' && entry.name === 'first-contentful-paint') {
+                                vitals.fcp = Math.round(entry.startTime);
+                            }
+                        } catch (e) {
+                        }
+                    });
+                });
+                observer.observe({ entryTypes: ['largest-contentful-paint', 'layout-shift', 'first-input', 'paint'] });
+            } catch (e) {
+                console.warn('PerformanceObserver not supported:', e);
+                return;
+            }
+
+            var sendVitals = function() {
+                if (Object.keys(vitals).length > 0 && config && config.apiBase) {
+                    try {
+                        var data = new Blob([JSON.stringify(vitals)], { type: 'application/json' });
+                        var success = navigator.sendBeacon(config.apiBase + '/vitals', data);
+                        if (!success) {
+                            console.warn('Web vitals send failed: sendBeacon returned false');
+                        }
+                    } catch (e) {
+                        console.error('Failed to send web vitals:', e);
+                    }
+                }
+            };
+
+            var vitalsSent = false;
+            window.addEventListener('beforeunload', function() {
+                if (!vitalsSent) {
+                    sendVitals();
+                    vitalsSent = true;
+                }
+            });
+
+            window.addEventListener('pagehide', function() {
+                if (!vitalsSent) {
+                    sendVitals();
+                    vitalsSent = true;
+                }
+            });
+            
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'hidden' && !vitalsSent) {
+                    sendVitals();
+                    vitalsSent = true;
+                }
+            });
+        })();
+    </script>
 </head>
 <body id="body-main">
     
@@ -2490,7 +2652,10 @@
                    aria-label="Síguenos en Instagram">
                    Síguenos en Instagram
                 </a> |
-                <a href="#proceso" aria-label="Acerca de nuestra tecnología ZTD">ZTD Protocol</a>
+                <a href="#proceso" aria-label="Acerca de nuestra tecnología ZTD">ZTD Protocol</a> |
+                <a href="legal/privacidad.html" aria-label="Política de Privacidad">Privacidad</a> |
+                <a href="legal/terminos.html" aria-label="Términos y Condiciones">Términos</a> |
+                <a href="legal/cookies.html" aria-label="Política de Cookies">Cookies</a>
             </div>
         </div> 
     </footer>
@@ -2542,6 +2707,9 @@
 
     <!-- Main Application Script (consolidated - Bug #4 Fix) -->
     <script src="scripts/main.js" defer></script>
+
+    <!-- Legal Pages Scripts - Cookie Consent -->
+    <script src="scripts/legal-consent.js" defer></script>
 
     <!-- Minimal inline script for critical rendering -->
     <script>

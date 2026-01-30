@@ -1,0 +1,310 @@
+/**
+ * AgroBridge Legal Pages - Base Styles
+ * Jony Ive Philosophy × Agricultural Excellence × Digital Trust
+ * Version: 1.0.0
+ */
+
+/* ==========================================================================
+   CSS CUSTOM PROPERTIES - DESIGN TOKENS
+   ========================================================================== */
+:root {
+  /* Primary: Agricultural Excellence */
+  --color-primary-900: #052e1c;
+  --color-primary-800: #064e32;
+  --color-primary-700: #0a5c36;
+  --color-primary-600: #0d7a4a;
+  --color-primary-500: #10b981;
+  --color-primary-100: #d1fae5;
+  
+  /* Accent: Premium Gold (Use Sparingly) */
+  --color-gold-600: #b8941f;
+  --color-gold-500: #d4af37;
+  --color-gold-400: #e6c657;
+  --color-gold-100: #fbf2d5;
+  --color-gold-50: #fffbeb;
+  
+  /* Neutrals: Sophisticated Grayscale */
+  --color-gray-950: #030712;
+  --color-gray-900: #111827;
+  --color-gray-800: #1f2937;
+  --color-gray-700: #374151;
+  --color-gray-600: #4b5563;
+  --color-gray-500: #6b7280;
+  --color-gray-400: #9ca3af;
+  --color-gray-300: #d1d5db;
+  --color-gray-200: #e5e7eb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-50: #f9fafb;
+  --color-white: #ffffff;
+  
+  /* Semantic Colors */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
+  
+  /* Transparency Scale */
+  --opacity-hover: 0.8;
+  --opacity-disabled: 0.4;
+  --opacity-subtle: 0.6;
+  
+  /* Font Families */
+  --font-display: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace;
+  
+  /* Type Scale (Perfect Fourth Ratio: 1.333) */
+  --text-3xs: clamp(0.5rem, 0.5rem + 0vw, 0.5rem);
+  --text-2xs: clamp(0.625rem, 0.6rem + 0.125vw, 0.75rem);
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3rem);
+  
+  /* Font Weights */
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  
+  /* Line Heights (Golden Ratio: 1.618 for body) */
+  --leading-tight: 1.2;
+  --leading-snug: 1.4;
+  --leading-normal: 1.618;
+  --leading-relaxed: 1.75;
+  
+  /* Letter Spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.1em;
+  
+  /* Spacing System (8px Grid) */
+  --space-px: 1px;
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  
+  /* Component-specific */
+  --section-padding-y: var(--space-24);
+  --container-padding-x: var(--space-6);
+  --card-padding: var(--space-8);
+  --card-gap: var(--space-6);
+  
+  /* Shadows (Simulating light from top-left at 45°) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  /* Special Shadows */
+  --shadow-gold: 0 0 40px rgba(212, 175, 55, 0.15);
+  --shadow-gold-lg: 0 0 60px rgba(212, 175, 55, 0.2);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Animation Durations */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  
+  /* Easings (Physics-based) */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Stagger delays */
+  --stagger-fast: 50ms;
+  --stagger-normal: 100ms;
+  --stagger-slow: 150ms;
+  
+  /* Z-Index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-cookie-banner: 9999;
+}
+
+/* ==========================================================================
+   CSS RESET - MODERN NORMALIZE
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  color: var(--color-gray-800);
+  background-color: var(--color-white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ==========================================================================
+   TYPOGRAPHY SYSTEM
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-gray-900);
+}
+
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
+h4 { font-size: var(--text-xl); }
+h5 { font-size: var(--text-lg); }
+h6 { font-size: var(--text-base); }
+
+p {
+  max-width: 65ch;
+  orphans: 2;
+  widows: 2;
+}
+
+a {
+  color: var(--color-primary-700);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+a:hover {
+  color: var(--color-primary-600);
+  text-decoration-thickness: 2px;
+}
+
+code, kbd, samp, pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-feature-settings: 'zero' 1, 'ss01' 1;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-gold {
+  color: var(--color-gold-500);
+}
+
+.text-primary {
+  color: var(--color-primary-700);
+}
+
+.text-gray {
+  color: var(--color-gray-600);
+}
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary-700);
+  color: var(--color-white);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  z-index: 10000;
+  text-decoration: none;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-base);
+  border: 2px solid var(--color-gold-500);
+  transition: top var(--duration-normal) var(--ease-out);
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+/* ==========================================================================
+   ACCESSIBILITY - REDUCED MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   SELECTION STYLES
+   ========================================================================== */
+::selection {
+  background-color: var(--color-gold-500);
+  color: var(--color-primary-900);
+}
+
+::-moz-selection {
+  background-color: var(--color-gold-500);
+  color: var(--color-primary-900);
+}
