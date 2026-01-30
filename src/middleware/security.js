@@ -1,0 +1,151 @@
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import csrf from 'csurf';
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+const helmetMiddleware = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: true,
+  crossOriginOpenerPolicy: true,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  dnsPrefetchControl: true,
+  frameguard: { action: 'deny' },
+  hidePoweredBy: true,
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
+  ieNoOpen: true,
+  noSniff: true,
+  originAgentCluster: true,
+  permittedCrossDomainPolicies: true,
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  xssFilter: true,
+});
+
+const corsMiddleware = cors({
+  origin: (origin, callback) => {
+    const allowedOrigins = isProduction
+      ? [process.env.FRONTEND_URL, process.env.ADMIN_URL].filter(Boolean)
+      : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080'];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Requested-With'],
+  exposedHeaders: ['X-CSRF-Token'],
+  credentials: true,
+  maxAge: 86400,
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+});
+
+const rateLimitMiddleware = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS',
+  handler: (req, res) => {
+    res.status(429).json({
+      error: 'Too many requests, please try again later.',
+      retryAfter: Math.ceil(req.rateLimit.resetTime / 1000),
+    });
+  },
+  keyGenerator: (req) => {
+    return req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  },
+});
+
+const mongoSanitizeMiddleware = mongoSanitize({
+  replaceWith: '_',
+  onSanitize: ({ req, key }) => {
+    console.warn(`[SECURITY] MongoDB sanitization triggered: ${key} in ${req.method} ${req.path}`);
+  },
+});
+
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 3600,
+  },
+  value: (req) => {
+    return req.headers['x-csrf-token'] || req.headers['X-CSRF-Token'];
+  },
+});
+
+const csrfErrorHandler = (err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN') {
+    console.error(`[SECURITY] CSRF validation failed: ${req.method} ${req.path} - ${req.ip}`);
+    return res.status(403).json({
+      error: 'Invalid or missing CSRF token',
+      code: 'CSRF_ERROR',
+    });
+  }
+  next(err);
+};
+
+const stateChangingMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+
+const conditionalCsrf = (req, res, next) => {
+  if (stateChangingMethods.includes(req.method)) {
+    return csrfProtection(req, res, next);
+  }
+  next();
+};
+
+const setupSecurity = (app) => {
+  app.use(helmetMiddleware);
+  
+  app.use(corsMiddleware);
+  
+  app.use(rateLimitMiddleware);
+  
+  app.use(mongoSanitizeMiddleware);
+  
+  app.use(conditionalCsrf);
+  
+  app.use(csrfErrorHandler);
+  
+  app.get('/api/csrf-token', csrfProtection, (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+  });
+  
+  console.log('[SECURITY] Security middleware initialized successfully');
+};
+
+export {
+  helmetMiddleware,
+  corsMiddleware,
+  rateLimitMiddleware,
+  mongoSanitizeMiddleware,
+  csrfProtection,
+  conditionalCsrf,
+  csrfErrorHandler,
+  setupSecurity,
+};
+
+export default setupSecurity;
