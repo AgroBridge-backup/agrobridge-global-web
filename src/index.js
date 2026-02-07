@@ -14,6 +14,7 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { randomUUID } from 'crypto';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 
@@ -70,6 +71,14 @@ const app = express();
 // Trust first proxy (required for correct req.ip behind load balancers)
 app.set('trust proxy', 1);
 
+// Request ID middleware — assigns a unique correlation ID to every request
+const requestIdMiddleware = (req, res, next) => {
+  req.id = req.headers['x-request-id'] || randomUUID();
+  res.setHeader('X-Request-ID', req.id);
+  next();
+};
+app.use(requestIdMiddleware);
+
 // Body parsers
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
@@ -89,9 +98,14 @@ const require = createRequire(import.meta.url);
 const adminRouter = require('./routes/admin.js');
 app.use('/api/admin', adminRouter);
 
-// Health-check endpoint
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', env: NODE_ENV, timestamp: new Date().toISOString() });
+// Health-check endpoint (no auth required — used by load balancers)
+app.get('/health', (_req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    version: process.env.npm_package_version || '2.0.0',
+  });
 });
 
 // ---------- Global error handler — MUST be last app.use() ----------
