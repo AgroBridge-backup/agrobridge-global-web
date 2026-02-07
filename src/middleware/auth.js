@@ -16,9 +16,11 @@ const authenticate = async (req, res, next) => {
         path: req.path,
         method: req.method
       });
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Authentication required. Please provide a valid Bearer token.'
+        message: 'Authentication required. Please provide a valid Bearer token.',
+        code: 'AUTH_REQUIRED',
+        requestId: req.id,
       });
     }
 
@@ -30,9 +32,11 @@ const authenticate = async (req, res, next) => {
         path: req.path,
         method: req.method
       });
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Authentication required. Token cannot be empty.'
+        message: 'Authentication required. Token cannot be empty.',
+        code: 'AUTH_REQUIRED',
+        requestId: req.id,
       });
     }
 
@@ -57,9 +61,11 @@ const authenticate = async (req, res, next) => {
       method: req.method
     });
     
-    return res.status(401).json({ 
+    return res.status(401).json({
       success: false,
-      message: 'Invalid or expired token. Please log in again.'
+      message: 'Invalid or expired token. Please log in again.',
+      code: 'AUTH_INVALID_TOKEN',
+      requestId: req.id,
     });
   }
 };
@@ -72,9 +78,11 @@ const authorize = (roles) => {
         path: req.path,
         method: req.method
       });
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Authentication required before authorization.'
+        message: 'Authentication required before authorization.',
+        code: 'AUTH_REQUIRED',
+        requestId: req.id,
       });
     }
 
@@ -89,9 +97,11 @@ const authorize = (roles) => {
         path: req.path,
         method: req.method
       });
-      return res.status(403).json({ 
+      return res.status(403).json({
         success: false,
-        message: `Access denied. Required role(s): ${roles.join(', ')}`
+        message: `Access denied. Required role(s): ${roles.join(', ')}`,
+        code: 'AUTH_FORBIDDEN',
+        requestId: req.id,
       });
     }
 

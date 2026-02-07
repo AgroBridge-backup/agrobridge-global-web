@@ -31,6 +31,7 @@ const errorHandler = (err, req, res, _next) => {
     path: req.path,
     method: req.method,
     ip: req.ip,
+    requestId: req.id,
     ...(prod ? {} : { stack: err.stack }),
   };
 
@@ -48,6 +49,8 @@ const errorHandler = (err, req, res, _next) => {
   res.status(statusCode).json({
     success: false,
     message: prod ? 'An unexpected error occurred' : err.message,
+    code: err.code || 'INTERNAL_ERROR',
+    requestId: req.id,
     ...(prod ? {} : { stack: err.stack }),
   });
 };

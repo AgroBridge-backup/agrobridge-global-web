@@ -34,7 +34,9 @@ export const validate = (req, res, next) => {
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
-      errors: formattedErrors
+      code: 'VALIDATION_ERROR',
+      errors: formattedErrors,
+      requestId: req.id,
     });
   }
   
