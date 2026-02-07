@@ -33,7 +33,7 @@ const helmetMiddleware = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com"],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: ["'self'"],
@@ -67,16 +67,23 @@ const corsMiddleware = cors({
     const allowedOrigins = isProduction
       ? [process.env.FRONTEND_URL, process.env.ADMIN_URL].filter(Boolean)
       : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080'];
-    
-    if (!origin || allowedOrigins.includes(origin)) {
+
+    // Allow requests with no origin ONLY in development (for curl, Postman, etc.)
+    if (!origin) {
+      return isProduction
+        ? callback(new Error('Origin header is required'))
+        : callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Requested-With'],
-  exposedHeaders: ['X-CSRF-Token'],
+  exposedHeaders: ['X-CSRF-Token', 'X-Request-ID'],
   credentials: true,
   maxAge: 86400,
   preflightContinue: false,
@@ -92,13 +99,14 @@ const rateLimitMiddleware = rateLimit({
   skip: (req) => req.method === 'OPTIONS',
   handler: (req, res) => {
     res.status(429).json({
-      error: 'Too many requests, please try again later.',
+      success: false,
+      message: 'Too many requests, please try again later.',
+      code: 'RATE_LIMIT',
       retryAfter: Math.ceil(req.rateLimit.resetTime / 1000),
+      requestId: req.id,
     });
   },
-  keyGenerator: (req) => {
-    return req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  },
+  keyGenerator: (req) => req.ip,
 });
 
 const mongoSanitizeMiddleware = mongoSanitize({
@@ -125,8 +133,10 @@ const csrfErrorHandler = (err, req, res, next) => {
   if (err.message === 'invalid csrf token' || err.code === 'EBADCSRFTOKEN') {
     console.error(`[SECURITY] CSRF validation failed: ${req.method} ${req.path} - ${req.ip}`);
     return res.status(403).json({
-      error: 'Invalid or missing CSRF token',
+      success: false,
+      message: 'Invalid or missing CSRF token',
       code: 'CSRF_ERROR',
+      requestId: req.id,
     });
   }
   next(err);
