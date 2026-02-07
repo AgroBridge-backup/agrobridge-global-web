@@ -1,10 +1,33 @@
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import RedisStore from 'rate-limit-redis';
+import Redis from 'ioredis';
 import mongoSanitize from 'express-mongo-sanitize';
-import csrf from 'csurf';
+import { doubleCsrf } from 'csrf-csrf';
 
 const isProduction = process.env.NODE_ENV === 'production';
+
+// Redis-backed rate limiting with graceful fallback to in-memory store
+let rateLimitStore;
+try {
+  if (process.env.REDIS_URL) {
+    const redisClient = new Redis(process.env.REDIS_URL, {
+      enableOfflineQueue: false,
+      maxRetriesPerRequest: 1,
+      connectTimeout: 5000,
+    });
+    redisClient.on('error', (err) => {
+      console.warn(`[SECURITY] Redis error: ${err.message}. Rate limiting falling back to in-memory.`);
+    });
+    rateLimitStore = new RedisStore({
+      sendCommand: (...args) => redisClient.call(...args),
+    });
+    console.log('[SECURITY] Rate limiting backed by Redis');
+  }
+} catch (err) {
+  console.warn('[SECURITY] Redis unavailable, using in-memory rate limiting (not suitable for multi-instance)', err.message);
+}
 
 const helmetMiddleware = helmet({
   contentSecurityPolicy: {
@@ -65,6 +88,7 @@ const rateLimitMiddleware = rateLimit({
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
+  store: rateLimitStore, // undefined gracefully falls back to MemoryStore
   skip: (req) => req.method === 'OPTIONS',
   handler: (req, res) => {
     res.status(429).json({
@@ -84,21 +108,21 @@ const mongoSanitizeMiddleware = mongoSanitize({
   },
 });
 
-const csrfProtection = csrf({
-  cookie: {
+const { doubleCsrfProtection, generateToken } = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET || 'default-csrf-secret',
+  cookieName: '_csrf',
+  cookieOptions: {
     httpOnly: true,
     secure: isProduction,
     sameSite: 'strict',
     path: '/',
     maxAge: 3600,
   },
-  value: (req) => {
-    return req.headers['x-csrf-token'] || req.headers['X-CSRF-Token'];
-  },
+  getTokenFromRequest: (req) => req.headers['x-csrf-token'] || req.headers['X-CSRF-Token'],
 });
 
 const csrfErrorHandler = (err, req, res, next) => {
-  if (err.code === 'EBADCSRFTOKEN') {
+  if (err.message === 'invalid csrf token' || err.code === 'EBADCSRFTOKEN') {
     console.error(`[SECURITY] CSRF validation failed: ${req.method} ${req.path} - ${req.ip}`);
     return res.status(403).json({
       error: 'Invalid or missing CSRF token',
@@ -112,7 +136,7 @@ const stateChangingMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
 const conditionalCsrf = (req, res, next) => {
   if (stateChangingMethods.includes(req.method)) {
-    return csrfProtection(req, res, next);
+    return doubleCsrfProtection(req, res, next);
   }
   next();
 };
@@ -130,8 +154,9 @@ const setupSecurity = (app) => {
   
   app.use(csrfErrorHandler);
   
-  app.get('/api/csrf-token', csrfProtection, (req, res) => {
-    res.json({ csrfToken: req.csrfToken() });
+  app.get('/api/csrf-token', (req, res) => {
+    const token = generateToken(req, res);
+    res.json({ csrfToken: token });
   });
   
   console.log('[SECURITY] Security middleware initialized successfully');
@@ -142,7 +167,8 @@ export {
   corsMiddleware,
   rateLimitMiddleware,
   mongoSanitizeMiddleware,
-  csrfProtection,
+  doubleCsrfProtection,
+  generateToken,
   conditionalCsrf,
   csrfErrorHandler,
   setupSecurity,
