@@ -13,6 +13,7 @@
 /public/scripts/*.min.js
 *.log
 npm-debug.log
+logs/
 .npm/
 .yarn/
 
