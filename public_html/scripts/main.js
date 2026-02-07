@@ -1925,11 +1925,11 @@ class AgroBridgeApp {
         }
 
         const badgesHtml = certifications.map(cert => {
-            const config = certConfig[cert.type] || { icon: '✓', color: '#666', name: cert.type };
+            const config = certConfig[cert.type] || { icon: '&#10003;', color: '#666', name: this.escapeHtml(cert.type) };
             return `
-                <div class="cert-badge" style="--cert-color: ${config.color}" title="${cert.type}: ${cert.number}">
+                <div class="cert-badge" style="--cert-color: ${this.escapeHtml(config.color)}" title="${this.escapeHtml(cert.type)}: ${this.escapeHtml(cert.number)}">
                     <span class="cert-badge__icon">${config.icon}</span>
-                    <span class="cert-badge__name">${config.name}</span>
+                    <span class="cert-badge__name">${this.escapeHtml(config.name)}</span>
                     <span class="cert-badge__status">Verificado</span>
                 </div>
             `;
@@ -2010,9 +2010,9 @@ class AgroBridgeApp {
                 <div class="error-content">
                     <span class="error-icon">&#9888;</span>
                     <div class="error-text">
-                        <strong>${error.title}</strong>
-                        <p>${error.message}</p>
-                        ${error.suggestion ? `<small class="error-suggestion">${error.suggestion}</small>` : ''}
+                        <strong>${this.escapeHtml(error.title)}</strong>
+                        <p>${this.escapeHtml(error.message)}</p>
+                        ${error.suggestion ? `<small class="error-suggestion">${this.escapeHtml(error.suggestion)}</small>` : ''}
                     </div>
                 </div>
             `;

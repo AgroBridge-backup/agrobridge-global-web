@@ -400,9 +400,13 @@ class CookieConsentManager {
     const toast = document.createElement('div');
     toast.className = `toast toast--${type}`;
     toast.setAttribute('role', 'status');
+    const safeMessage = String(message).replace(/[&<>"'`=\/]/g, char => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+      "'": '&#39;', '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
+    })[char]);
     toast.innerHTML = `
       <span class="toast__icon">${type === 'success' ? '✓' : 'ℹ'}</span>
-      <span class="toast__message">${message}</span>
+      <span class="toast__message">${safeMessage}</span>
     `;
     
     document.body.appendChild(toast);
