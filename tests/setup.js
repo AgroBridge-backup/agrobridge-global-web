@@ -201,7 +201,7 @@ global.testUtils = {
                 <option value="informacion">Información General</option>
               </select>
               <textarea name="message" required placeholder="Mensaje" aria-label="Mensaje"></textarea>
-              <input name="honeypot" type="text" style="display:none" aria-hidden="true">
+              <input name="honeypot" type="text" style="display:none" aria-hidden="true" aria-label="Do not fill this field">
               <button type="submit">Enviar</button>
             </form>
           </section>
@@ -236,6 +236,33 @@ global.testUtils = {
     element.dispatchEvent(event);
   }
 };
+
+/**
+ * Load AgroBridge modules in order for testing.
+ * Each module exposes functionality via window.AgroBridgeXxx globals.
+ * app.js creates the AgroBridgeApp class that delegates to all modules.
+ * We import them sequentially to mirror the browser script load order.
+ */
+async function loadAgroBridgeModules() {
+  // 1. Utils - shared utility functions (window.AgroBridgeUtils)
+  await import('../public_html/scripts/utils.js');
+  // 2. Demo data - demo database (window.AgroBridgeDemoData)
+  await import('../public_html/scripts/demo-data.js');
+  // 3. i18n - translations and language switching (window.AgroBridgeI18n)
+  await import('../public_html/scripts/i18n.js');
+  // 4. UI - mobile menu, notifications, animations (window.AgroBridgeUI)
+  await import('../public_html/scripts/ui.js');
+  // 5. Validation - lot validation engine (window.AgroBridgeValidation)
+  await import('../public_html/scripts/validation.js');
+  // 6. Contact - contact form handling (window.AgroBridgeContact)
+  await import('../public_html/scripts/contact.js');
+  // 7. App - main orchestrator class (window.AgroBridge.App)
+  await import('../public_html/scripts/app.js');
+
+  return window.AgroBridge.App;
+}
+
+global.loadAgroBridgeModules = loadAgroBridgeModules;
 
 // Export for ES modules
 export default global.testUtils;

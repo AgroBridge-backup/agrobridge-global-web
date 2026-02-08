@@ -79,454 +79,20 @@
     <link rel="dns-prefetch" href="https://api.agrobridge.global">
     <link rel="dns-prefetch" href="https://wa.me">
 
+    <!-- Development: unminified CSS for debugging -->
+    <!-- Production: use minified versions from dist/ (run: npm run build) -->
+    <!--   Replace "assets/" with "dist/assets/" for minified output -->
     <!-- EXTERNAL STYLESHEET (Issue #8 - CSS Consolidation) -->
     <link rel="stylesheet" href="assets/main.css">
     <link rel="stylesheet" href="assets/accesibility.css">
 
-    <!-- CRITICAL INLINE CSS (only page-specific overrides) -->
-    <style>
-        /* SISTEMA DE DISEÑO AGROBRIDGE ZTD V14 */
-        :root {
-            --primary-green: #0a5c36;
-            --deep-green: #064e32;
-            --gold: #d4af37;
-            --light-gold: #fbf2d5;
-            --dark-gold: #b8941f;
-            --white: #ffffff;
-            --light-bg: #f8faf9;
-            --gray-100: #f3f4f6;
-            --gray-800: #1f2937;
-            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            --shadow-xl: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
-            --shadow-gold: 0 0 40px rgba(212, 175, 55, 0.3);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.7;
-            color: var(--gray-800);
-            background: var(--white);
-            overflow-x: hidden;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-        
-        body.ready {
-            opacity: 1;
-        }
+    <!-- EXTERNAL CSS (extracted from inline for CSP compliance) -->
+    <link rel="stylesheet" href="assets/critical.css">
+    <link rel="stylesheet" href="assets/utilities.css">
 
-        /* PERFORMANCE OPTIMIZATIONS */
-        .lazy-loading {
-            opacity: 0.6;
-            transition: opacity 0.3s ease;
-        }
-        
-        .lazy-loaded {
-            opacity: 1;
-            animation: fadeInUp 0.6s ease;
-        }
-        
-        .lazy-error {
-            opacity: 0.3;
-            background: #f5f5f5;
-        }
-        
-        .save-data-mode [data-save-data="hide"] {
-            display: none !important;
-        }
-        
-        .low-bandwidth-mode .high-res-image {
-            display: none;
-        }
-        
-        .low-bandwidth-mode .low-res-image {
-            display: block;
-        }
-
-        /* ACCESIBILIDAD CRÍTICA */
-        .skip-link {
-            position: absolute;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--deep-green), var(--primary-green));
-            color: var(--white);
-            padding: 16px 32px;
-            border-radius: 12px;
-            z-index: 10000;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            border: 2px solid var(--gold);
-            box-shadow: var(--shadow-lg);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-        }
-
-        .skip-link:focus {
-            top: 20px;
-            opacity: 1;
-            transform: translateX(-50%) scale(1.05);
-        }
-        
-        /* TYPOGRAPHY SYSTEM */
-        .text-display {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            line-height: 1.1;
-        }
-        
-        .text-title {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-        
-        /* HEADER & NAVIGATION */
-        .nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(10, 92, 54, 0.95);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        .nav.scrolled {
-            background: rgba(10, 92, 54, 0.98);
-            box-shadow: var(--shadow-lg);
-            padding: 0.5rem 0;
-        }
-        
-        .nav__container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .nav__logo {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--white);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .nav__logo:hover {
-            transform: translateY(-2px);
-        }
-        
-        .nav__logo-accent {
-            color: var(--gold);
-            font-weight: 800;
-            position: relative;
-        }
-        
-        .nav__logo-accent::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--gold);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        
-        .nav__logo:hover .nav__logo-accent::after {
-            transform: scaleX(1);
-        }
-        
-        .nav__menu {
-            display: flex;
-            list-style: none;
-            gap: 3rem;
-        }
-        
-        .nav__link {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            font-size: 0.95rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .nav__link:hover {
-            color: var(--gold);
-        }
-        
-        .nav__link::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--gold);
-            transition: width 0.3s ease;
-        }
-        
-        .nav__link:hover::after {
-            width: 100%;
-        }
-        
-        /* HERO SECTION */
-        .hero {
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--deep-green) 0%, var(--primary-green) 50%, #0f766e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(10, 92, 54, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(6, 78, 50, 0.15) 0%, transparent 50%);
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .hero__content {
-            text-align: center;
-            color: var(--white);
-            position: relative;
-            z-index: 2;
-            max-width: 900px;
-            padding: 0 2rem;
-        }
-        
-        .hero__title {
-            font-size: clamp(3rem, 6vw, 5rem);
-            margin-bottom: 2rem;
-            line-height: 1.1;
-        }
-        
-        .hero__title-accent {
-            background: linear-gradient(135deg, var(--gold), #fef3c7, var(--gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 200% 200%;
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        .hero__subtitle {
-            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-            margin-bottom: 3rem;
-            opacity: 0.9;
-            font-weight: 400;
-            line-height: 1.6;
-        }
-        
-        .hero__cta-group {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        /* BUTTON SYSTEM */
-        .button {
-            padding: 1.2rem 3rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            border: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .button:hover::before {
-            left: 100%;
-        }
-        
-        .button--primary {
-            background: var(--gold);
-            color: var(--deep-green);
-            box-shadow: var(--shadow-gold);
-        }
-        
-        .button--primary:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.4);
-        }
-        
-        .button--secondary {
-            background: transparent;
-            color: var(--white);
-            border: 2px solid var(--gold);
-        }
-        
-        .button--secondary:hover {
-            background: var(--gold);
-            color: var(--deep-green);
-            transform: translateY(-3px);
-        }
-        
-        .button--producer {
-            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
-            color: var(--deep-green);
-            box-shadow: var(--shadow-gold);
-            font-size: 1.2rem;
-            padding: 1.5rem 4rem;
-        }
-        
-        /* SECTION SYSTEM */
-        .section {
-            padding: 8rem 0;
-            position: relative;
-        }
-        
-        .section--light {
-            background: var(--light-bg);
-        }
-        
-        .section--pattern {
-            background: linear-gradient(135deg, var(--light-bg) 0%, var(--white) 100%);
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .section__title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            margin-bottom: 1.5rem;
-            color: var(--deep-green);
-        }
-        
-        .section__title--center {
-            text-align: center;
-        }
-        
-        .section__subtitle {
-            font-size: 1.3rem;
-            color: #6b7280;
-            max-width: 700px;
-            line-height: 1.6;
-        }
-        
-        .section__subtitle--center {
-            text-align: center;
-            margin: 0 auto 4rem;
-        }
-        
-        /* FEATURES GRID */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
-            margin-top: 4rem;
-        }
-        
-        .feature-card {
-            background: var(--white);
-            padding: 3rem 2.5rem;
-            border-radius: 24px;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(229, 231, 235, 0.8);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 6px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--gold), var(--dark-gold));
-        }
-        
-        .feature-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
-            border-radius: 0 0 0 100px;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: var(--shadow-xl);
-        }
-        
-        .feature-card__icon {
-            font-size: 3.5rem;
-            margin-bottom: 2rem;
-            display: block;
-            opacity: 0.9;
-        }
-        
-        .feature-card__title {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--deep-green);
-            line-height: 1.3;
-        }
-        
-        .feature-card__text {
-            color: #6b7280;
-            line-height: 1.7;
-            font-size: 1.1rem;
-        }
-        
-        /* PRODUCTS SHOWCASE */
+    <!-- CSS content moved to assets/critical.css - DO NOT re-add inline styles -->
+    <!-- Original <style> block removed for CSP compliance -->
+    <!--
         .product-item {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -1908,25 +1474,16 @@
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-
-            .verification-seal {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .seal-content {
-                text-align: center;
-            }
-        }
-    </style>
+    -->
+    <!-- Orphaned CSS above has been commented out; it is already in assets/critical.css -->
 
     <script>
         window.AGROBRIDGE_CONFIG = {
             apiBase: window.AGROBRIDGE_API_BASE || 'http://localhost:3000/v2',
             useDemo: window.AGROBRIDGE_USE_DEMO || false,
             recaptchaSiteKey: window.AGROBRIDGE_RECAPTCHA_SITE_KEY || '',
-            sentryDsn: 'https://xxxxxxxxxxxx@xxxxx.ingest.sentry.io/xxxxx',
-            sentryEnvironment: 'production',
+            sentryDsn: window.AGROBRIDGE_SENTRY_DSN || '',
+            sentryEnvironment: window.AGROBRIDGE_ENV || 'production',
             release: '2.0.0',
             gitCommit: 'unknown'
         };
@@ -2122,10 +1679,10 @@
                     <h1 class="type-hero hero__title animate-fadeIn">
                         La Certidumbre es Nuestro Lote. <span class="hero__title-accent">Trazabilidad Inviolable.</span>
                     </h1>
-                    <p class="hero__subtitle type-body-lg animate-fadeIn" style="animation-delay: 0.2s;">
+                    <p class="hero__subtitle type-body-lg animate-fadeIn anim-delay-200">
                         Integración de Michoacán con el Ledger Criptográfico. Máxima eficiencia de Supply Chain para clientes B2B globales.
                     </p>
-                    <div class="hero__cta-group animate-fadeIn" style="animation-delay: 0.4s;">
+                    <div class="hero__cta-group animate-fadeIn anim-delay-400">
                         <a href="#contacto" class="button button--primary type-button">Solicitar Cotización Enterprise</a>
                         <a href="#casos-exito" class="button button--secondary type-button">Ver Casos de Éxito</a>
                     </div>
@@ -2218,7 +1775,7 @@
                             <label for="lang-select" class="sr-only">Seleccionar idioma</label>
                             <select id="lang-select"
                                     aria-label="Seleccionar idioma de la interfaz"
-                                    style="background: transparent; border: 2px solid rgba(255,255,255,0.2); color: white; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem;">
+                                    class="lang-select-custom">
                                 <option value="es">🇲🇽 ES</option>
                                 <option value="en">🇺🇸 EN</option>
                                 <option value="zh">🇨🇳 ZH</option>
@@ -2268,7 +1825,7 @@
                     </div>
 
                     <!-- Loading Skeleton (shown during validation) -->
-                    <div class="validation-skeleton" id="validation-skeleton" style="display: none;">
+                    <div class="validation-skeleton hidden" id="validation-skeleton">
                         <div class="skeleton-product-header">
                             <div class="skeleton-icon skeleton-loader"></div>
                             <div class="skeleton-text-group">
@@ -2496,12 +2053,12 @@
         <section class="section tech-edge" id="tecnologia">
             <div class="container">
                 <h2 class="type-display section__title tech-edge__title animate-fadeIn">Our Technology Edge</h2>
-                <p class="tech-edge__subtitle animate-fadeIn" style="animation-delay: 0.2s;">
+                <p class="tech-edge__subtitle animate-fadeIn anim-delay-200">
                     Tecnología propietaria que garantiza cero pérdida de trazabilidad desde el campo hasta su destino final.
                 </p>
 
                 <!-- Tech Flow Diagram -->
-                <div class="tech-flow animate-fadeIn" style="animation-delay: 0.3s;">
+                <div class="tech-flow animate-fadeIn anim-delay-300">
                     <div class="tech-flow__step">
                         <div class="tech-flow__icon">🌱</div>
                         <div class="tech-flow__label">Farm</div>
@@ -2557,7 +2114,7 @@
         <section class="section success-cases" id="casos-exito">
             <div class="container">
                 <h2 class="type-display section__title section__title--center animate-fadeIn">Casos de Éxito</h2>
-                <p class="section__subtitle section__subtitle--center animate-fadeIn" style="animation-delay: 0.2s;">
+                <p class="section__subtitle section__subtitle--center animate-fadeIn anim-delay-200">
                     Clientes enterprise que confían en AgroBridge para sus operaciones globales.
                 </p>
                 <div class="cases-grid">
@@ -2586,7 +2143,7 @@
         <section class="section section--light" id="productores">
             <div class="container producer-cta">
                 <h2 class="type-display section__title animate-fadeIn">+40 Socios. <span class="producer-title-accent">La Verdadera Extensión de AgroBridge.</span></h2>
-                <p class="hero__subtitle animate-fadeIn" style="animation-delay: 0.2s;">
+                <p class="hero__subtitle animate-fadeIn anim-delay-200">
                     Nuestra red de +40 Productores Certificados es la base de nuestra trazabilidad. Invertimos en su éxito con AgroBridge ZeroLoss™ Protocol para garantizar la remuneración justa por la calidad y la certificación.
                 </p>
                 <a href="#contacto" class="button button--producer type-button">Convertirse en Socio Certificado</a>
@@ -2632,7 +2189,7 @@
                             <label for="contact-message" class="form-label">Mensaje *</label>
                             <textarea id="contact-message" name="message" placeholder="Describa su solicitud" minlength="10" required></textarea>
                         </div>
-                        <input type="text" id="contact-honeypot" name="honeypot" style="display:none" autocomplete="off" tabindex="-1" aria-hidden="true">
+                        <input type="text" id="contact-honeypot" name="honeypot" class="honeypot-field" autocomplete="off" tabindex="-1" aria-hidden="true" aria-label="Do not fill this field">
                         <button type="submit" class="button button--primary button--full type-button">Solicitar Cotización Enterprise</button>
                     </form>
                 </div>
@@ -2696,17 +2253,28 @@
                 : 'REPLACE_WITH_PRODUCTION_RECAPTCHA_SITE_KEY';
             
             window.AGROBRIDGE_RECAPTCHA_ACTION = 'enterprise_lead';
-            
+
+            // Sentry APM (optional - set via deployment pipeline to enable)
+            // window.AGROBRIDGE_SENTRY_DSN = ''; // Set to a real DSN to enable Sentry
+            window.AGROBRIDGE_ENV = isLocalhost ? 'development' : 'production';
+
             console.log('[AgroBridge] Config:', {
                 apiBase: window.AGROBRIDGE_API_BASE,
                 demoMode: window.AGROBRIDGE_USE_DEMO,
-                environment: isLocalhost ? 'development' : 'production'
+                environment: isLocalhost ? 'development' : 'production',
+                sentryEnabled: !!window.AGROBRIDGE_SENTRY_DSN
             });
         })();
     </script>
 
-    <!-- Main Application Script (consolidated - Bug #4 Fix) -->
-    <script src="scripts/main.js" defer></script>
+    <!-- Main Application Scripts (P2 Refactor - focused modules) -->
+    <script src="scripts/utils.js" defer></script>
+    <script src="scripts/demo-data.js" defer></script>
+    <script src="scripts/i18n.js" defer></script>
+    <script src="scripts/ui.js" defer></script>
+    <script src="scripts/validation.js" defer></script>
+    <script src="scripts/contact.js" defer></script>
+    <script src="scripts/app.js" defer></script>
 
     <!-- Legal Pages Scripts - Cookie Consent -->
     <script src="scripts/legal-consent.js" defer></script>

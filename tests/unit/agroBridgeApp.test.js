@@ -5,16 +5,16 @@
 
 import { jest } from '@jest/globals';
 
-// We test by importing the actual class, but the init() method is called in constructor
-// which requires DOM. We'll mock the init method to prevent side effects during testing.
+// We test by loading all modules in order, which extends window.AgroBridge.App prototype.
+// The modules use IIFEs that run immediately when imported.
 
-// First, set up DOM before importing the class
+// First, set up DOM before importing the modules
 beforeAll(() => {
   global.testUtils.createMockDOM();
 });
 
-// Import the actual class from main.js
-const { AgroBridgeApp } = await import('../../public_html/scripts/main.js');
+// Load all modules in order and get the AgroBridgeApp class
+const AgroBridgeApp = await global.loadAgroBridgeModules();
 
 describe('AgroBridgeApp', () => {
   let app;
@@ -23,8 +23,9 @@ describe('AgroBridgeApp', () => {
     // Reset DOM
     global.testUtils.createMockDOM();
 
-    // Create app instance - init() will run but should work with our mock DOM
+    // Create app instance and call constructor - init() will run but should work with our mock DOM
     app = new AgroBridgeApp();
+    app._construct();
   });
 
   // ============================================
