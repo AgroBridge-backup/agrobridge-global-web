@@ -1,10 +1,24 @@
 /**
  * AgroBridge Legal Pages - Utilities
  * Helper functions for legal pages
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 
 const LegalUtils = {
+  /**
+   * Internal: tracked event listeners for cleanup
+   */
+  _elementHandlers: [],
+  _boundHandlers: {},
+
+  /**
+   * Track an element event listener for cleanup
+   */
+  _trackListener: function(element, event, handler, options) {
+    element.addEventListener(event, handler, options);
+    this._elementHandlers.push({ element, event, handler, options });
+  },
+
   /**
    * Download page as PDF
    */
@@ -15,12 +29,12 @@ const LegalUtils = {
       'cookies': 'Politica-de-Cookies',
       'dpa': 'Acuerdo-de-Tratamiento-de-Datos'
     };
-    
+
     const filename = `${pageNames[pageType] || 'Documento'}-AgroBridge.pdf`;
-    
+
     // Trigger print dialog with PDF option
     window.print();
-    
+
     // Track event
     this.trackEvent('pdf_download', { page: pageType });
   },
@@ -31,22 +45,26 @@ const LegalUtils = {
   copyToClipboard: async function(text, buttonElement) {
     try {
       await navigator.clipboard.writeText(text);
-      
+
       // Visual feedback
       if (buttonElement) {
         const originalText = buttonElement.textContent;
-        buttonElement.textContent = '¡Copiado!';
+        buttonElement.textContent = 'Copiado!';
         buttonElement.classList.add('btn--success');
-        
+
         setTimeout(() => {
           buttonElement.textContent = originalText;
           buttonElement.classList.remove('btn--success');
         }, 2000);
       }
-      
+
       return true;
     } catch (err) {
-      console.error('Failed to copy:', err);
+      if (window.AgroBridgeUtils && window.AgroBridgeUtils.error) {
+        window.AgroBridgeUtils.error('Failed to copy:', err);
+      } else {
+        console.error('[AgroBridge] Failed to copy:', err);
+      }
       return false;
     }
   },
@@ -72,7 +90,7 @@ const LegalUtils = {
       'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
     ];
-    
+
     return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()}`;
   },
 
@@ -122,7 +140,7 @@ const LegalUtils = {
     window.dispatchEvent(new CustomEvent('legal:track', {
       detail: { event: eventName, data }
     }));
-    
+
     // Send to dataLayer for GTM
     if (window.dataLayer) {
       window.dataLayer.push({
@@ -130,10 +148,10 @@ const LegalUtils = {
         ...data
       });
     }
-    
-    // Console log for debugging
-    if (window.location.hostname === 'localhost') {
-      console.log('[LegalUtils] Event:', eventName, data);
+
+    // Debug log for development
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('LegalUtils Event:', eventName, data);
     }
   },
 
@@ -197,14 +215,14 @@ const LegalUtils = {
   generateTOC: function(containerSelector, headingSelector = 'h2, h3') {
     const container = document.querySelector(containerSelector);
     if (!container) return [];
-    
+
     const headings = container.querySelectorAll(headingSelector);
     const toc = [];
-    
+
     headings.forEach((heading, index) => {
       const id = heading.id || `section-${index}`;
       heading.id = id;
-      
+
       toc.push({
         id,
         text: heading.textContent,
@@ -212,7 +230,7 @@ const LegalUtils = {
         element: heading
       });
     });
-    
+
     return toc;
   },
 
@@ -222,29 +240,30 @@ const LegalUtils = {
   renderTOC: function(toc, containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container || toc.length === 0) return;
-    
+
     const ul = document.createElement('ul');
     ul.className = 'toc-list';
-    
+
     toc.forEach(item => {
       const li = document.createElement('li');
       li.className = `toc-item toc-item--level-${item.level}`;
-      
+
       const a = document.createElement('a');
       a.href = `#${item.id}`;
       a.textContent = item.text;
       a.className = 'toc-link';
-      
-      a.addEventListener('click', (e) => {
+
+      const handler = (e) => {
         e.preventDefault();
         this.scrollTo(`#${item.id}`);
         history.pushState(null, '', `#${item.id}`);
-      });
-      
+      };
+      this._trackListener(a, 'click', handler);
+
       li.appendChild(a);
       ul.appendChild(li);
     });
-    
+
     container.innerHTML = '';
     container.appendChild(ul);
   },
@@ -255,32 +274,33 @@ const LegalUtils = {
   highlightActiveTOC: function(tocContainerSelector, offset = 100) {
     const tocContainer = document.querySelector(tocContainerSelector);
     if (!tocContainer) return;
-    
+
     const links = tocContainer.querySelectorAll('.toc-link');
     const sections = [];
-    
+
     links.forEach(link => {
       const target = document.querySelector(link.getAttribute('href'));
       if (target) {
         sections.push({ link, target });
       }
     });
-    
+
     const onScroll = this.throttle(() => {
       const scrollPos = window.pageYOffset + offset;
-      
+
       sections.forEach(({ link, target }) => {
         const top = target.offsetTop;
         const bottom = top + target.offsetHeight;
-        
+
         if (scrollPos >= top && scrollPos < bottom) {
           links.forEach(l => l.classList.remove('active'));
           link.classList.add('active');
         }
       });
     }, 100);
-    
-    window.addEventListener('scroll', onScroll, { passive: true });
+
+    this._boundHandlers.tocScroll = onScroll;
+    this._trackListener(window, 'scroll', onScroll, { passive: true });
     onScroll(); // Initial check
   },
 
@@ -304,13 +324,13 @@ const LegalUtils = {
    */
   formatBytes: function(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    
+
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   },
 
@@ -340,27 +360,33 @@ const LegalUtils = {
         const item = localStorage.getItem(key);
         return item ? JSON.parse(item) : null;
       } catch (e) {
-        console.warn('Storage get error:', e);
+        if (window.AgroBridgeUtils && window.AgroBridgeUtils.warn) {
+          window.AgroBridgeUtils.warn('Storage get error:', e);
+        }
         return null;
       }
     },
-    
+
     set: function(key, value) {
       try {
         localStorage.setItem(key, JSON.stringify(value));
         return true;
       } catch (e) {
-        console.warn('Storage set error:', e);
+        if (window.AgroBridgeUtils && window.AgroBridgeUtils.warn) {
+          window.AgroBridgeUtils.warn('Storage set error:', e);
+        }
         return false;
       }
     },
-    
+
     remove: function(key) {
       try {
         localStorage.removeItem(key);
         return true;
       } catch (e) {
-        console.warn('Storage remove error:', e);
+        if (window.AgroBridgeUtils && window.AgroBridgeUtils.warn) {
+          window.AgroBridgeUtils.warn('Storage remove error:', e);
+        }
         return false;
       }
     }
@@ -370,22 +396,46 @@ const LegalUtils = {
    * Initialize all utility features
    */
   init: function() {
+    // Reset tracked handlers from any previous init
+    this._elementHandlers = [];
+    this._boundHandlers = {};
+
     // Add print button handlers
     document.querySelectorAll('[data-action="print"]').forEach(btn => {
-      btn.addEventListener('click', () => window.print());
+      const handler = () => window.print();
+      this._trackListener(btn, 'click', handler);
     });
-    
+
     // Add copy button handlers
     document.querySelectorAll('[data-action="copy"]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const handler = () => {
         const text = btn.dataset.copyText;
         if (text) {
           this.copyToClipboard(text, btn);
         }
-      });
+      };
+      this._trackListener(btn, 'click', handler);
     });
-    
-    console.log('[LegalUtils] Initialized');
+
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('LegalUtils initialized');
+    }
+  },
+
+  /**
+   * Remove all event listeners and clean up resources
+   */
+  destroy: function() {
+    // Remove all tracked element listeners
+    this._elementHandlers.forEach(({ element, event, handler, options }) => {
+      element.removeEventListener(event, handler, options);
+    });
+    this._elementHandlers = [];
+    this._boundHandlers = {};
+
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('LegalUtils destroyed');
+    }
   }
 };
 

@@ -1,11 +1,13 @@
 /**
  * AgroBridge Legal Pages - Core Module
  * Shared functionality for all legal pages
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 
 class LegalCore {
   constructor() {
+    this._boundHandlers = {};
+    this._elementHandlers = [];
     this.currentPage = this.detectCurrentPage();
     this.init();
   }
@@ -18,8 +20,18 @@ class LegalCore {
     this.setupTabs();
     this.setupPrintHandler();
     this.setupAccessibility();
-    
-    console.log('[LegalCore] Initialized for page:', this.currentPage);
+
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('LegalCore initialized for page:', this.currentPage);
+    }
+  }
+
+  /**
+   * Track an element event listener for cleanup
+   */
+  _trackListener(element, event, handler, options) {
+    element.addEventListener(event, handler, options);
+    this._elementHandlers.push({ element, event, handler, options });
   }
 
   /**
@@ -40,14 +52,15 @@ class LegalCore {
   setupSkipLink() {
     const skipLink = document.querySelector('.skip-link');
     if (skipLink) {
-      skipLink.addEventListener('click', (e) => {
+      this._boundHandlers.skipLinkClick = (e) => {
         e.preventDefault();
         const target = document.getElementById('main-content');
         if (target) {
           target.focus();
           target.scrollIntoView({ behavior: 'smooth' });
         }
-      });
+      };
+      this._trackListener(skipLink, 'click', this._boundHandlers.skipLinkClick);
     }
   }
 
@@ -59,7 +72,7 @@ class LegalCore {
     if (!header) return;
 
     let ticking = false;
-    
+
     const updateHeader = () => {
       if (window.scrollY > 50) {
         header.classList.add('scrolled');
@@ -69,12 +82,13 @@ class LegalCore {
       ticking = false;
     };
 
-    window.addEventListener('scroll', () => {
+    this._boundHandlers.headerScroll = () => {
       if (!ticking) {
         requestAnimationFrame(updateHeader);
         ticking = true;
       }
-    }, { passive: true });
+    };
+    this._trackListener(window, 'scroll', this._boundHandlers.headerScroll, { passive: true });
   }
 
   /**
@@ -82,10 +96,10 @@ class LegalCore {
    */
   setupSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', (e) => {
+      const handler = (e) => {
         const href = anchor.getAttribute('href');
         if (href === '#') return;
-        
+
         const target = document.querySelector(href);
         if (target) {
           e.preventDefault();
@@ -93,11 +107,12 @@ class LegalCore {
             behavior: 'smooth',
             block: 'start'
           });
-          
+
           // Update URL without jumping
           history.pushState(null, '', href);
         }
-      });
+      };
+      this._trackListener(anchor, 'click', handler);
     });
   }
 
@@ -106,42 +121,36 @@ class LegalCore {
    */
   setupProgressiveDisclosure() {
     const sections = document.querySelectorAll('.legal-section');
-    
+
     sections.forEach(section => {
       const header = section.querySelector('.legal-section__header');
       const content = section.querySelector('.legal-section__content');
-      
+
       if (!header || !content) return;
 
-      header.addEventListener('click', () => {
+      const clickHandler = () => {
         const isExpanded = section.classList.contains('expanded');
-        
-        // Close all other sections (optional - remove for multiple open)
-        // sections.forEach(s => {
-        //   if (s !== section) {
-        //     s.classList.remove('expanded');
-        //     s.querySelector('.legal-section__header')?.setAttribute('aria-expanded', 'false');
-        //   }
-        // });
-        
+
         // Toggle current section
         section.classList.toggle('expanded');
         header.setAttribute('aria-expanded', !isExpanded);
-        
+
         // Track interaction
         this.trackEvent('section_toggle', {
           section: header.textContent.trim(),
           expanded: !isExpanded
         });
-      });
+      };
+      this._trackListener(header, 'click', clickHandler);
 
       // Keyboard support
-      header.addEventListener('keydown', (e) => {
+      const keydownHandler = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           header.click();
         }
-      });
+      };
+      this._trackListener(header, 'keydown', keydownHandler);
     });
   }
 
@@ -150,25 +159,25 @@ class LegalCore {
    */
   setupTabs() {
     const tabContainers = document.querySelectorAll('.tabs');
-    
+
     tabContainers.forEach(container => {
       const tabs = container.querySelectorAll('.tab');
       const panels = document.querySelectorAll('.tab-panel');
-      
+
       tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
+        const handler = () => {
           const targetId = tab.getAttribute('aria-controls');
-          
+
           // Deactivate all tabs
           tabs.forEach(t => {
             t.classList.remove('active');
             t.setAttribute('aria-selected', 'false');
           });
-          
+
           // Activate clicked tab
           tab.classList.add('active');
           tab.setAttribute('aria-selected', 'true');
-          
+
           // Hide all panels
           panels.forEach(panel => {
             if (panel.id === targetId) {
@@ -177,12 +186,13 @@ class LegalCore {
               panel.classList.remove('active');
             }
           });
-          
+
           // Track interaction
           this.trackEvent('tab_switch', {
             tab: tab.textContent.trim()
           });
-        });
+        };
+        this._trackListener(tab, 'click', handler);
       });
     });
   }
@@ -193,21 +203,23 @@ class LegalCore {
   setupPrintHandler() {
     // Add print button functionality
     document.querySelectorAll('[data-action="print"]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const handler = () => {
         window.print();
         this.trackEvent('print_page');
-      });
+      };
+      this._trackListener(btn, 'click', handler);
     });
 
     // Handle before/after print events
-    window.addEventListener('beforeprint', () => {
+    this._boundHandlers.beforePrint = () => {
       document.body.classList.add('printing');
       this.trackEvent('print_initiated');
-    });
-
-    window.addEventListener('afterprint', () => {
+    };
+    this._boundHandlers.afterPrint = () => {
       document.body.classList.remove('printing');
-    });
+    };
+    this._trackListener(window, 'beforeprint', this._boundHandlers.beforePrint);
+    this._trackListener(window, 'afterprint', this._boundHandlers.afterPrint);
   }
 
   /**
@@ -216,7 +228,7 @@ class LegalCore {
   setupAccessibility() {
     // Focus management for modals/dialogs
     this.setupFocusManagement();
-    
+
     // Announce page changes for screen readers
     this.announcePageLoad();
   }
@@ -227,20 +239,20 @@ class LegalCore {
   setupFocusManagement() {
     // Trap focus in modal containers
     const modals = document.querySelectorAll('[role="dialog"]');
-    
+
     modals.forEach(modal => {
       const focusableElements = modal.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
-      
+
       if (focusableElements.length === 0) return;
-      
+
       const firstFocusable = focusableElements[0];
       const lastFocusable = focusableElements[focusableElements.length - 1];
-      
-      modal.addEventListener('keydown', (e) => {
+
+      const handler = (e) => {
         if (e.key !== 'Tab') return;
-        
+
         if (e.shiftKey && document.activeElement === firstFocusable) {
           e.preventDefault();
           lastFocusable.focus();
@@ -248,7 +260,8 @@ class LegalCore {
           e.preventDefault();
           firstFocusable.focus();
         }
-      });
+      };
+      this._trackListener(modal, 'keydown', handler);
     });
   }
 
@@ -260,10 +273,10 @@ class LegalCore {
     announcement.setAttribute('role', 'status');
     announcement.setAttribute('aria-live', 'polite');
     announcement.className = 'visually-hidden';
-    announcement.textContent = `Página cargada: ${document.title}`;
-    
+    announcement.textContent = `Pagina cargada: ${document.title}`;
+
     document.body.appendChild(announcement);
-    
+
     setTimeout(() => {
       announcement.remove();
     }, 1000);
@@ -277,10 +290,10 @@ class LegalCore {
     window.dispatchEvent(new CustomEvent('legal:track', {
       detail: { event: eventName, data, page: this.currentPage }
     }));
-    
-    // Console log for debugging
-    if (window.location.hostname === 'localhost') {
-      console.log('[LegalCore] Event:', eventName, data);
+
+    // Debug log for development
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('LegalCore Event:', eventName, data);
     }
   }
 
@@ -311,6 +324,22 @@ class LegalCore {
         setTimeout(() => inThrottle = false, limit);
       }
     };
+  }
+
+  /**
+   * Remove all event listeners and clean up resources
+   */
+  destroy() {
+    // Remove all tracked element listeners
+    this._elementHandlers.forEach(({ element, event, handler, options }) => {
+      element.removeEventListener(event, handler, options);
+    });
+    this._elementHandlers = [];
+    this._boundHandlers = {};
+
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('LegalCore destroyed');
+    }
   }
 }
 

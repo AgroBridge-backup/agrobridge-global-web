@@ -3,8 +3,8 @@
  * 
  * These tests validate the full integration between the frontend
  * and the backend API. They require:
- * 1. Backend running on localhost:3000
- * 2. Frontend served (e.g., via npx serve public_html)
+ * 1. Backend running on BACKEND_URL (default: http://localhost:3000)
+ * 2. Frontend served on FRONTEND_URL (default: http://localhost:3000)
  * 3. MongoDB with seeded test data
  * 
  * Run with: npx playwright test tests/e2e/integration.spec.js
@@ -12,8 +12,8 @@
 
 import { test, expect } from '@playwright/test';
 
-const BACKEND_URL = 'http://localhost:3000';
-const FRONTEND_URL = 'http://localhost:5000'; // Default serve port
+const BACKEND_URL = (process.env.BACKEND_URL || 'http://localhost:3000').replace(/\/$/, '');
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 test.describe('Full Integration Flow', () => {
   test.beforeAll(async ({ request }) => {

@@ -1,7 +1,7 @@
 /**
  * AgroBridge Legal Pages - Cookie Consent Manager
  * GDPR/LFPDPPP compliant cookie consent
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 
 class CookieConsentManager {
@@ -10,39 +10,52 @@ class CookieConsentManager {
     this.CATEGORIES = ['essential', 'functional', 'analytics', 'marketing'];
     this.VERSION = '1.0';
     this.EXPIRY_DAYS = 180;
-    
+
+    this._boundHandlers = {};
+    this._elementHandlers = [];
+
     this.consent = null;
     this.banner = null;
     this.preferencesModal = null;
-    
+
     this.init();
   }
 
   init() {
     // Check if we need to show banner
     this.consent = this.loadConsent();
-    
+
     if (!this.consent || this.isConsentExpired()) {
       // Delay banner display for better UX
-      setTimeout(() => {
+      this._bannerTimeout = setTimeout(() => {
         this.showBanner();
       }, 1500);
     } else {
       this.applyPreferences(this.consent.preferences);
     }
-    
+
     // Bind events
     this.bindEvents();
-    
+
     // Respect Do Not Track
     if (this.isDoNotTrackEnabled()) {
       this.rejectAll();
     }
-    
+
     // Make instance globally available
     window.cookieConsentManager = this;
-    
-    console.log('[CookieConsent] Initialized');
+
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('CookieConsent initialized');
+    }
+  }
+
+  /**
+   * Track an element event listener for cleanup
+   */
+  _trackListener(element, event, handler, options) {
+    element.addEventListener(event, handler, options);
+    this._elementHandlers.push({ element, event, handler, options });
   }
 
   /**
@@ -55,7 +68,9 @@ class CookieConsentManager {
         return JSON.parse(stored);
       }
     } catch (e) {
-      console.warn('[CookieConsent] Failed to load consent:', e);
+      if (window.AgroBridgeUtils && window.AgroBridgeUtils.warn) {
+        window.AgroBridgeUtils.warn('CookieConsent: Failed to load consent:', e);
+      }
     }
     return null;
   }
@@ -70,21 +85,25 @@ class CookieConsentManager {
       version: this.VERSION,
       userAgent: navigator.userAgent.substring(0, 100)
     };
-    
+
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(consent));
       this.consent = consent;
-      
+
       // Set cookie for server-side access
       this.setCookie('agrobridge_consent', JSON.stringify(preferences), this.EXPIRY_DAYS);
-      
+
       this.hideBanner();
       this.applyPreferences(preferences);
       this.fireEvent('consent:updated', consent);
-      
+
       return true;
     } catch (e) {
-      console.error('[CookieConsent] Failed to save consent:', e);
+      if (window.AgroBridgeUtils && window.AgroBridgeUtils.error) {
+        window.AgroBridgeUtils.error('CookieConsent: Failed to save consent:', e);
+      } else {
+        console.error('[AgroBridge] CookieConsent: Failed to save consent:', e);
+      }
       return false;
     }
   }
@@ -114,11 +133,11 @@ class CookieConsentManager {
    */
   isConsentExpired() {
     if (!this.consent?.timestamp) return true;
-    
+
     const consentDate = new Date(this.consent.timestamp);
     const now = new Date();
     const daysSince = (now - consentDate) / (1000 * 60 * 60 * 24);
-    
+
     return daysSince > this.EXPIRY_DAYS;
   }
 
@@ -126,7 +145,7 @@ class CookieConsentManager {
    * Check if Do Not Track is enabled
    */
   isDoNotTrackEnabled() {
-    return navigator.doNotTrack === '1' || 
+    return navigator.doNotTrack === '1' ||
            navigator.doNotTrack === 'yes' ||
            window.doNotTrack === '1' ||
            navigator.msDoNotTrack === '1';
@@ -137,11 +156,11 @@ class CookieConsentManager {
    */
   showBanner() {
     this.banner = document.getElementById('cookie-banner');
-    
+
     if (!this.banner) {
       this.createBanner();
     }
-    
+
     if (this.banner) {
       this.banner.classList.add('visible');
       this.banner.setAttribute('aria-hidden', 'false');
@@ -156,10 +175,10 @@ class CookieConsentManager {
     if (this.banner) {
       this.banner.classList.remove('visible');
       this.banner.setAttribute('aria-hidden', 'true');
-      
+
       // Remove from DOM after animation
       setTimeout(() => {
-        if (!this.banner.classList.contains('visible')) {
+        if (this.banner && !this.banner.classList.contains('visible')) {
           this.banner.style.display = 'none';
         }
       }, 500);
@@ -177,16 +196,16 @@ class CookieConsentManager {
     banner.setAttribute('aria-modal', 'true');
     banner.setAttribute('aria-labelledby', 'cookie-banner-title');
     banner.setAttribute('aria-describedby', 'cookie-banner-desc');
-    
+
     banner.innerHTML = `
       <div class="cookie-banner__container">
         <div class="cookie-banner__icon" aria-hidden="true">🍪</div>
         <div class="cookie-banner__content">
           <h2 id="cookie-banner-title" class="cookie-banner__title">Respetamos su privacidad</h2>
           <p id="cookie-banner-desc" class="cookie-banner__text">
-            Utilizamos cookies esenciales para el funcionamiento del sitio y, con su consentimiento, 
-            cookies analíticas para mejorar su experiencia. 
-            <a href="/legal/cookies.html" class="text-primary">Más información</a>
+            Utilizamos cookies esenciales para el funcionamiento del sitio y, con su consentimiento,
+            cookies analiticas para mejorar su experiencia.
+            <a href="/legal/cookies.html" class="text-primary">Mas informacion</a>
           </p>
         </div>
         <div class="cookie-banner__actions">
@@ -202,10 +221,10 @@ class CookieConsentManager {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(banner);
     this.banner = banner;
-    
+
     // Bind new buttons
     this.bindBannerEvents();
   }
@@ -217,19 +236,22 @@ class CookieConsentManager {
     const acceptAllBtn = document.getElementById('cookie-accept-all');
     const rejectOptionalBtn = document.getElementById('cookie-reject-optional');
     const customizeBtn = document.getElementById('cookie-customize');
-    
+
     if (acceptAllBtn) {
-      acceptAllBtn.addEventListener('click', () => this.acceptAll());
+      this._boundHandlers.acceptAll = () => this.acceptAll();
+      this._trackListener(acceptAllBtn, 'click', this._boundHandlers.acceptAll);
     }
-    
+
     if (rejectOptionalBtn) {
-      rejectOptionalBtn.addEventListener('click', () => this.rejectOptional());
+      this._boundHandlers.rejectOptional = () => this.rejectOptional();
+      this._trackListener(rejectOptionalBtn, 'click', this._boundHandlers.rejectOptional);
     }
-    
+
     if (customizeBtn) {
-      customizeBtn.addEventListener('click', () => {
+      this._boundHandlers.customize = () => {
         window.location.href = '/legal/cookies.html#preferences';
-      });
+      };
+      this._trackListener(customizeBtn, 'click', this._boundHandlers.customize);
     }
   }
 
@@ -238,16 +260,18 @@ class CookieConsentManager {
    */
   bindEvents() {
     // Listen for preference changes from cookies page
-    document.addEventListener('cookie-preferences-changed', (e) => {
+    this._boundHandlers.preferencesChanged = (e) => {
       this.saveConsent(e.detail.preferences);
-    });
-    
+    };
+    this._trackListener(document, 'cookie-preferences-changed', this._boundHandlers.preferencesChanged);
+
     // Handle escape key
-    document.addEventListener('keydown', (e) => {
+    this._boundHandlers.escapeKey = (e) => {
       if (e.key === 'Escape' && this.banner?.classList.contains('visible')) {
         this.rejectOptional();
       }
-    });
+    };
+    this._trackListener(document, 'keydown', this._boundHandlers.escapeKey);
   }
 
   /**
@@ -258,7 +282,7 @@ class CookieConsentManager {
       acc[cat] = true;
       return acc;
     }, {});
-    
+
     this.saveConsent(preferences);
     this.fireEvent('consent:accept-all');
     this.showToast('Preferencias guardadas', 'success');
@@ -272,7 +296,7 @@ class CookieConsentManager {
       acc[cat] = cat === 'essential';
       return acc;
     }, {});
-    
+
     this.saveConsent(preferences);
     this.fireEvent('consent:reject-optional');
     this.showToast('Solo cookies esenciales activadas', 'info');
@@ -306,14 +330,14 @@ class CookieConsentManager {
     } else {
       this.disableAnalytics();
     }
-    
+
     // Enable functional features if consented
     if (preferences.functional) {
       this.enableFunctionalFeatures();
     } else {
       this.disableFunctionalFeatures();
     }
-    
+
     // Marketing cookies (future use)
     if (preferences.marketing) {
       this.loadMarketing();
@@ -325,27 +349,29 @@ class CookieConsentManager {
    */
   loadAnalytics() {
     if (window.gtag || window.gaLoaded) return;
-    
+
     // Google Analytics 4
     const script = document.createElement('script');
     script.async = true;
     script.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX'; // Replace with actual ID
-    
+
     script.onload = () => {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function() { dataLayer.push(arguments); };
       gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX', { 
+      gtag('config', 'G-XXXXXXXXXX', {
         anonymize_ip: true,
         allow_google_signals: false,
         allow_ad_personalization_signals: false
       });
     };
-    
+
     document.head.appendChild(script);
     window.gaLoaded = true;
-    
-    console.log('[CookieConsent] Analytics loaded');
+
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('CookieConsent: Analytics loaded');
+    }
   }
 
   /**
@@ -354,7 +380,7 @@ class CookieConsentManager {
   disableAnalytics() {
     // Disable Google Analytics
     window['ga-disable-G-XXXXXXXXXX'] = true;
-    
+
     // Remove any existing analytics cookies
     this.deleteCookie('_ga');
     this.deleteCookie('_gid');
@@ -383,7 +409,9 @@ class CookieConsentManager {
    */
   loadMarketing() {
     // Reserved for future marketing/personalization cookies
-    console.log('[CookieConsent] Marketing cookies enabled (reserved)');
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('CookieConsent: Marketing cookies enabled (reserved)');
+    }
   }
 
   /**
@@ -408,14 +436,14 @@ class CookieConsentManager {
       <span class="toast__icon">${type === 'success' ? '✓' : 'ℹ'}</span>
       <span class="toast__message">${safeMessage}</span>
     `;
-    
+
     document.body.appendChild(toast);
-    
+
     // Trigger animation
     requestAnimationFrame(() => {
       toast.classList.add('visible');
     });
-    
+
     // Auto remove
     setTimeout(() => {
       toast.classList.remove('visible');
@@ -428,7 +456,7 @@ class CookieConsentManager {
    */
   fireEvent(eventName, detail = {}) {
     window.dispatchEvent(new CustomEvent(eventName, { detail }));
-    
+
     // Also send to dataLayer for GTM if available
     if (window.dataLayer) {
       window.dataLayer.push({
@@ -459,6 +487,34 @@ class CookieConsentManager {
       timestamp: this.consent?.timestamp || null,
       version: this.consent?.version || null
     };
+  }
+
+  /**
+   * Remove all event listeners and clean up resources
+   */
+  destroy() {
+    // Clear the banner show timeout if still pending
+    if (this._bannerTimeout) {
+      clearTimeout(this._bannerTimeout);
+      this._bannerTimeout = null;
+    }
+
+    // Remove all tracked element listeners
+    this._elementHandlers.forEach(({ element, event, handler, options }) => {
+      element.removeEventListener(event, handler, options);
+    });
+    this._elementHandlers = [];
+    this._boundHandlers = {};
+
+    // Remove banner from DOM if it was dynamically created
+    if (this.banner && this.banner.parentNode) {
+      this.banner.parentNode.removeChild(this.banner);
+      this.banner = null;
+    }
+
+    if (window.AgroBridgeUtils && window.AgroBridgeUtils.log) {
+      window.AgroBridgeUtils.log('CookieConsent destroyed');
+    }
   }
 }
 

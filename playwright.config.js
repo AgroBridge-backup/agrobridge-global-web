@@ -5,6 +5,9 @@
 
 import { defineConfig, devices } from '@playwright/test';
 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const SHOULD_START_LOCAL_SERVER = !process.env.FRONTEND_URL;
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -14,7 +17,7 @@ export default defineConfig({
   reporter: 'html',
 
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: FRONTEND_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -42,10 +45,12 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: 'npm run start',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  webServer: SHOULD_START_LOCAL_SERVER
+    ? {
+        command: 'npm run start',
+        url: FRONTEND_URL,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+      }
+    : undefined,
 });

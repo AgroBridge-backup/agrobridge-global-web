@@ -16,14 +16,12 @@ const config = {
   },
 
   database: {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT, 10) || 5432,
-    name: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    ssl: process.env.DB_SSL === 'true',
-    poolSize: parseInt(process.env.DB_POOL_SIZE, 10) || 10,
-    connectionTimeout: parseInt(process.env.DB_CONNECTION_TIMEOUT, 10) || 5000,
+    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/agrobridge',
+    options: {
+      maxPoolSize: parseInt(process.env.DB_POOL_SIZE, 10) || 20,
+      socketTimeoutMS: parseInt(process.env.DB_CONNECTION_TIMEOUT, 10) || 45000,
+      serverSelectionTimeoutMS: 5000,
+    },
   },
 
   jwt: {
@@ -32,8 +30,8 @@ const config = {
       if (!secret) {
         throw new Error('FATAL: JWT_ACCESS_SECRET must be set in environment variables');
       }
-      if (secret.length < 32) {
-        throw new Error('FATAL: JWT_ACCESS_SECRET must be at least 32 characters');
+      if (secret.length < 64) {
+        throw new Error('FATAL: JWT secret must be at least 64 characters for HMAC-SHA256 security');
       }
       return secret;
     })(),
@@ -42,8 +40,8 @@ const config = {
       if (!secret) {
         throw new Error('FATAL: JWT_REFRESH_SECRET must be set in environment variables');
       }
-      if (secret.length < 32) {
-        throw new Error('FATAL: JWT_REFRESH_SECRET must be at least 32 characters');
+      if (secret.length < 64) {
+        throw new Error('FATAL: JWT secret must be at least 64 characters for HMAC-SHA256 security');
       }
       if (secret === process.env.JWT_ACCESS_SECRET) {
         throw new Error('FATAL: JWT_REFRESH_SECRET must be different from JWT_ACCESS_SECRET');
@@ -63,7 +61,7 @@ const config = {
         throw new Error('FATAL: CSRF_SECRET must be set in environment variables');
       }
       if (secret.length < 32) {
-        throw new Error('FATAL: CSRF_SECRET must be at least 32 characters');
+        throw new Error('FATAL: CSRF_SECRET must be at least 32 characters for security');
       }
       return secret;
     })(),
@@ -77,21 +75,21 @@ const config = {
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 12,
     maxLoginAttempts: parseInt(process.env.MAX_LOGIN_ATTEMPTS, 10) || 5,
     lockoutDuration: parseInt(process.env.LOCKOUT_DURATION, 10) || 900,
-    passwordMinLength: parseInt(process.env.PASSWORD_MIN_LENGTH, 10) || 8,
+    passwordMinLength: parseInt(process.env.PASSWORD_MIN_LENGTH, 10) || 12,
     requireStrongPassword: process.env.REQUIRE_STRONG_PASSWORD !== 'false',
     sessionTimeout: parseInt(process.env.SESSION_TIMEOUT, 10) || 3600,
   },
 
   cors: {
     origin: (() => {
-      const origin = process.env.CORS_ORIGIN;
+      const origin = process.env.CORS_ORIGIN || process.env.CORS_ORIGINS;
       if (!origin) {
         return process.env.NODE_ENV === 'production' ? false : '*';
       }
       if (origin === '*') {
         return origin;
       }
-      return origin.split(',').map(o => o.trim());
+      return origin.split(',').map(o => o.trim()).filter(Boolean);
     })(),
     credentials: process.env.CORS_CREDENTIALS === 'true',
     methods: (process.env.CORS_METHODS || 'GET,POST,PUT,DELETE,PATCH,OPTIONS').split(','),
@@ -115,9 +113,8 @@ const config = {
 function validateRequiredSecrets() {
   const requiredSecrets = [
     { name: 'CSRF_SECRET', value: process.env.CSRF_SECRET, minLength: 32 },
-    { name: 'JWT_ACCESS_SECRET', value: process.env.JWT_ACCESS_SECRET, minLength: 32 },
-    { name: 'JWT_REFRESH_SECRET', value: process.env.JWT_REFRESH_SECRET, minLength: 32 },
-    { name: 'DB_PASSWORD', value: process.env.DB_PASSWORD, minLength: 1 },
+    { name: 'JWT_ACCESS_SECRET', value: process.env.JWT_ACCESS_SECRET, minLength: 64 },
+    { name: 'JWT_REFRESH_SECRET', value: process.env.JWT_REFRESH_SECRET, minLength: 64 },
   ];
 
   const errors = [];

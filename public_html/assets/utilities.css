@@ -1,0 +1,167 @@
+/* ============================================================
+   UTILITY CLASSES - CSP COMPLIANCE
+   Replaces ALL inline style="..." attributes across HTML files
+   ============================================================ */
+
+/* === DISPLAY UTILITIES === */
+.hidden { display: none; }
+.invisible { opacity: 0; }
+
+/* === ANIMATION DELAY UTILITIES === */
+/* Replaces style="animation-delay: Xs" on .animate-fadeIn elements */
+.anim-delay-200 { animation-delay: 0.2s; }
+.anim-delay-300 { animation-delay: 0.3s; }
+.anim-delay-400 { animation-delay: 0.4s; }
+
+/* === INDEX.HTML UTILITIES === */
+
+/* Language select custom styling (replaces inline style on #lang-select) */
+.lang-select-custom {
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+/* Honeypot field (replaces style="display:none" on anti-spam input) */
+.honeypot-field { display: none; }
+
+/* === LEGAL PAGES - SHARED UTILITIES === */
+
+/* Brand accent color - replaces style="color: var(--color-gold-500);" on ZTD span in header */
+.text-gold-brand {
+    color: var(--color-gold-500);
+}
+
+/* Hero visual icon - replaces style="font-size: 8rem; opacity: 0.3;" */
+.legal-hero__icon-large {
+    font-size: 8rem;
+    opacity: 0.3;
+}
+
+/* === SPACING UTILITIES === */
+
+/* Margin-top variants */
+.mt-space-2 { margin-top: var(--space-2); }
+.mt-space-3 { margin-top: var(--space-3); }
+.mt-space-4 { margin-top: var(--space-4); }
+.mt-space-6 { margin-top: var(--space-6); }
+.mt-space-8 { margin-top: var(--space-8); }
+
+/* Margin-bottom variants */
+.mb-space-2 { margin-bottom: var(--space-2); }
+.mb-space-3 { margin-bottom: var(--space-3); }
+.mb-space-4 { margin-bottom: var(--space-4); }
+.mb-space-6 { margin-bottom: var(--space-6); }
+.mb-space-8 { margin-bottom: var(--space-8); }
+.mb-space-12 { margin-bottom: var(--space-12); }
+
+/* Margin vertical (top + bottom) */
+.my-space-4 { margin: var(--space-4) 0; }
+.my-space-2-0 { margin: var(--space-2) 0 0 0; }
+
+/* === TEXT UTILITIES === */
+.text-center { text-align: center; }
+.text-sm { font-size: var(--text-sm); }
+.text-lg { font-size: var(--text-lg); }
+
+/* Text size with color combinations */
+.text-sm-muted {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+}
+
+/* No margin reset */
+.m-0 { margin: 0; }
+
+/* Margin reset with text-sm */
+.m-0-text-sm {
+    margin: 0;
+    font-size: var(--text-sm);
+}
+
+/* === LAYOUT UTILITIES === */
+
+/* Grid with gap (replaces style="display: grid; gap: var(--space-4);") */
+.grid-gap-4 {
+    display: grid;
+    gap: var(--space-4);
+}
+
+/* Security grid (replaces auto-fit minmax grid) */
+.grid-security-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+}
+
+/* Flex row with center alignment and gap */
+.flex-center-gap-3 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.flex-center-gap-2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+/* === ICON UTILITIES === */
+
+/* Decorative icon sizing (replaces style="font-size: 1.5rem;") */
+.icon-md {
+    font-size: 1.5rem;
+}
+
+/* Lock icon (replaces style="font-size: 1.25rem;") */
+.icon-sm {
+    font-size: 1.25rem;
+}
+
+/* === COMPONENT-SPECIFIC UTILITIES === */
+
+/* Width full (replaces style="width: 100%;") */
+.w-full {
+    width: 100%;
+}
+
+/* Reduced opacity (replaces style="opacity: 0.9;") */
+.opacity-90 {
+    opacity: 0.9;
+}
+
+/* === TERMINOS.HTML SPECIFIC === */
+
+/* Sidebar card with dark background (replaces inline bg/color styles) */
+.legal-sidebar__card--dark {
+    background: var(--color-primary-900);
+    color: var(--color-white);
+}
+
+/* Sidebar title gold color variant */
+.legal-sidebar__title--gold {
+    color: var(--color-gold-400);
+}
+
+/* Sidebar text with specific styling */
+.legal-sidebar__text {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+}
+
+.legal-sidebar__text--faded {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+    opacity: 0.9;
+}
+
+/* === COOKIES.HTML - SAVE CONFIRMATION === */
+/* Combined: margin-top: var(--space-6); display: none; */
+.save-confirmation-box {
+    margin-top: var(--space-6);
+    display: none;
+}
