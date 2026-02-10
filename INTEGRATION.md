@@ -239,8 +239,8 @@ After running `npm run seed:products`:
 
 ### Form submission fails
 
-- Ensure all required fields: name, email, company, phone, inquiry_type, message
-- Message must be at least 10 characters
+- Ensure all required fields: name, email, company, phone, inquiry_type
+- Message is optional (auto-generated from inquiry type if omitted or under 10 characters)
 - Check backend reCAPTCHA secret matches frontend site key
 
 ## Running E2E Tests
@@ -268,5 +268,5 @@ npx playwright test tests/e2e/integration.spec.js
 - [ ] Set real MongoDB connection string
 - [ ] Set real reCAPTCHA secret key
 - [ ] Configure email service (Resend)
-- [ ] Set secure JWT secret
+- [ ] Set secure JWT secrets (access and refresh)
 - [ ] Enable Redis for rate limiting (optional)

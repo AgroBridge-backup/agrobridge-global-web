@@ -29,19 +29,9 @@
 ### 2. Monitoring & Observability
 
 #### Sentry Error Tracking
-- ✅ Backend: `@sentry/node` and `@sentry/tracing` installed
 - ✅ Frontend: Sentry Browser SDK configured in index.html
-- ✅ Request tracing enabled
 - ✅ Error sanitization (cookies, headers removed)
 - ✅ Session replay configured for errors
-
-#### New Relic APM
-- ✅ `newrelic` agent installed
-- ✅ Configuration file created (`newrelic.js`)
-- ✅ Initialized in backend (index.js)
-- ✅ Distributed tracing enabled
-- ✅ SQL query tracing
-- ✅ Security agent enabled
 
 #### Core Web Vitals (Frontend)
 - ✅ PerformanceObserver configured
@@ -54,13 +44,10 @@
 
 #### Backend
 - ✅ `.env.production.example` template created
-- ✅ Production setup helper script created (`tools/setup-production.js`)
 - ✅ Generated secrets:
-  - JWT_SECRET
-  - SESSION_SECRET
-  - ADMIN_PASSWORD_HASH
-  - ENCRYPTION_KEY
-  - AGROBRIDGE_API_KEY
+  - JWT_ACCESS_SECRET (64+ chars)
+  - JWT_REFRESH_SECRET (64+ chars, different from access)
+  - CSRF_SECRET (32+ chars)
 
 #### Frontend
 - ✅ Production configuration template (`config-production.js`)
@@ -100,13 +87,6 @@
 - [ ] Create Backend project (Node.js)
 - [ ] Get DSNs
 - [ ] Update frontend config and backend .env
-- [ ] Configure alert rules
-
-#### New Relic
-- [ ] Visit https://newrelic.com
-- [ ] Create account
-- [ ] Get license key
-- [ ] Add to backend environment
 - [ ] Configure alert rules
 
 #### Resend (Email)
@@ -248,7 +228,7 @@ You are done when:
 1. ✅ CI/CD Pipeline: Green, automatic on main push, blocks broken builds
 2. ✅ Staging: Accessible, all tests pass, team can test before production
 3. ⏳ Production: Live at https://agrobridge.global, all features work
-4. ⏳ Monitoring: APM receiving metrics, errors tracked, alerts configured
+4. ⏳ Monitoring: Sentry error tracking configured, alerts set up
 5. ⏳ Data: At least 1 real product seeded with correct traceability
 6. ⏳ Performance: LCP < 2.5s, API p95 latency < 500ms
 7. ⏳ Reliability: Uptime > 99%, error rate < 0.1%
@@ -271,10 +251,9 @@ You are done when:
 - ✅ Have rollback plan ready
 
 ### Monitoring
-- 📊 Check Sentry for errors daily
-- 📊 Check New Relic for performance daily
-- 📊 Set up alert notifications
-- 📊 Review logs weekly
+- Check Sentry for errors daily
+- Set up alert notifications
+- Review logs weekly
 
 ---
 
@@ -282,7 +261,7 @@ You are done when:
 
 - **Full Deployment Guide**: `DEPLOYMENT_NOTES.md`
 - **Integration Guide**: `INTEGRATION.md`
-- **Production Setup**: `tools/setup-production.js`
+- **Production Setup**: See `DEPLOYMENT_NOTES.md`
 - **E2E Tests**: `tests/e2e/integration.spec.js`
 - **API Documentation**: `/api-docs` (when backend is running)
 
@@ -294,8 +273,7 @@ For deployment issues:
 - Review `DEPLOYMENT_NOTES.md` troubleshooting section
 - Check GitHub Actions logs
 - Check Sentry for errors
-- Check New Relic for performance issues
-- Contact team leads
+- Contact: ceo@agrobridge.global
 
 ---
 

@@ -47,6 +47,15 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Screenshots (no binary assets in repo)
+screenshots/
+
+# Python scripts (not part of this Node.js project)
+*.py
+
+# Prompt files (ephemeral, not source code)
+PROMPT_*.md
+
 # Visual Studio Code
 .vscode/
 

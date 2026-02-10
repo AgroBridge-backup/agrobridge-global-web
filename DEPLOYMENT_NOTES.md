@@ -20,7 +20,6 @@
 - [MongoDB Atlas](https://www.mongodb.com/atlas) - Database
 - [Google reCAPTCHA](https://www.google.com/recaptcha/admin) - Bot protection
 - [Sentry](https://sentry.io) - Error tracking
-- [New Relic](https://newrelic.com) - APM monitoring
 - [Resend](https://resend.com) - Email service
 
 ### Required Tools
@@ -55,8 +54,9 @@ OWNER_PHONE=+523511689122
 RECAPTCHA_SECRET_KEY=6LfxXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 RECAPTCHA_MIN_SCORE=0.5
 
-# JWT Secret (64-character random string)
-JWT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# JWT Secrets (64+ character random strings, must differ)
+JWT_ACCESS_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+JWT_REFRESH_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # CORS Origin (Production Frontend URL)
 CORS_ORIGIN=https://agrobridge.global
@@ -65,25 +65,12 @@ CORS_ORIGIN=https://agrobridge.global
 SENTRY_DSN=https://xxxxxxxxxxxx@xxxxx.ingest.sentry.io/xxxxx
 SENTRY_ENVIRONMENT=production
 
-# New Relic APM
-NEW_RELIC_LICENSE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-NEW_RELIC_AGENT_ENABLED=true
-
-# Redis (Optional, for caching)
+# Redis (Optional, for rate limiting)
 REDIS_URL=redis://default:xxxxxxxxxxxxxxxxxxxxxx@xxxxxxxx.redis.cloud.com:6379
 
 # Rate Limiting
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
-
-# Admin Credentials (hashed using bcryptjs)
-ADMIN_PASSWORD_HASH=$2a$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-# Admin Email (for admin dashboard access)
-ADMIN_EMAIL=admin@agrobridge.global
-
-# Session Secret for Admin Dashboard
-SESSION_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **IMPORTANT**: Never commit `.env.production` to the repository!
@@ -207,7 +194,6 @@ export const config = defineConfig({
    - `RECAPTCHA_SECRET_KEY` (from Google reCAPTCHA console)
    - `RESEND_API_KEY` (from Resend console)
    - `SENTRY_DSN` (from Sentry console)
-   - `NEW_RELIC_LICENSE_KEY` (from New Relic console)
 4. Get the deployment hook URL
 5. Add to GitHub secrets as `RENDER_DEPLOY_HOOK_PRODUCTION`
 6. Push to `main` branch
@@ -248,21 +234,6 @@ api.agrobridge.global → Render servers
 - Alert on any error with tag `production`
 - Alert on error rate > 5 errors/minute
 - Alert on unhandled promise rejections
-
-### New Relic APM
-
-**Setup:**
-1. Create New Relic account
-2. Get license key
-3. Add `NEW_RELIC_LICENSE_KEY` to environment variables
-4. Enable agent in backend code
-
-**Alerting Rules:**
-- Alert on API error rate > 1%
-- Alert on response time p95 > 1000ms
-- Alert on database query time p95 > 500ms
-- Alert on memory usage > 80%
-- Alert on CPU usage > 80%
 
 ### Core Web Vitals (Frontend)
 
@@ -307,7 +278,6 @@ npx playwright test tests/e2e/integration.spec.js
 - [ ] Contact form submits successfully
 - [ ] Email notifications are received
 - [ ] Sentry dashboard shows no errors
-- [ ] New Relic dashboard shows healthy metrics
 - [ ] No warnings in browser console
 
 ### Performance Verification
@@ -353,11 +323,6 @@ Target scores:
 - Check Sentry project settings
 - Ensure environment matches
 
-**6. New Relic Not Showing Data**
-- Verify `NEW_RELIC_LICENSE_KEY` is correct
-- Check New Relic application name matches
-- Ensure agent is enabled
-
 ---
 
 ## Rollback Plan
@@ -392,7 +357,7 @@ git push origin main
 
 **Daily:**
 - Check Sentry for new errors
-- Review New Relic performance metrics
+- Review performance metrics
 
 **Weekly:**
 - Review error logs
@@ -427,7 +392,7 @@ You are done when:
 1. ✅ CI/CD Pipeline: Green, automatic on main push, blocks broken builds
 2. ✅ Staging: Accessible, all tests pass, team can test before production
 3. ✅ Production: Live at https://agrobridge.global, all features work
-4. ✅ Monitoring: APM receiving metrics, errors tracked, alerts configured
+4. ✅ Monitoring: Sentry error tracking configured, alerts set up
 5. ✅ Data: At least 1 real product seeded with correct traceability
 6. ✅ Performance: LCP < 2.5s, API p95 latency < 500ms
 7. ✅ Reliability: Uptime > 99%, error rate < 0.1%
@@ -437,7 +402,4 @@ You are done when:
 ## Contact
 
 For deployment issues:
-- Tech Lead: [email]
-- DevOps Lead: [email]
-- Backend Team: [email]
-- Frontend Team: [email]
+- Alejandro Navarro Ayala - CEO & Founder: ceo@agrobridge.global

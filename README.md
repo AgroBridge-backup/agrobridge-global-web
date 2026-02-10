@@ -1,81 +1,148 @@
-Este README.md es su Manifiesto Técnico y de Marca.
-🌉 AGRO BRIDGE ZTD: PROTOCOLO DE TRAZABILIDAD CRIPTOGRÁFICA (V4.0)
-🎯 PROPÓSITO DEL PROYECTO
-El proyecto Agro Bridge ZTD (Zero-Trust Data) es el sistema Enterprise de trazabilidad que garantiza la inmutabilidad y la certificación de calidad de los lotes de productos (Berries, Aguacates) desde la Cosecha Cero en Michoacán hasta el cliente final B2B.
-Utiliza tecnología Blockchain Privada (Ledger Inmutable) con encadenamiento criptográfico SHA-256 para crear un "Sello de Confianza" auditable matemáticamente.
-Principios de Ingeniería (Zero-Trust)
- * Inmutabilidad: Los datos de calidad (Brix, pH, Fecha de Cosecha) son sellados con un Hash que no puede ser alterado.
- * Arquitectura Limpia (ZTD 13.0): Separación estricta entre la lógica de negocio (src/) y la capa de presentación (public_html/).
- * Seguridad: Herramientas de despliegue y prueba (tools/) están aisladas del acceso público.
-🏗️ ARQUITECTURA DEL REPOSITORIO
-El repositorio está organizado en tres capas primarias (Público, Backend Core, Herramientas) para asegurar la seguridad y la modularidad del código.
-1. Capa Pública (public_html/) - FRONT-END ZTD 13.0
-Contiene el código visible y purificado (estética Jony Ive).
-| Archivo/Carpeta | Propósito |
-|---|---|
-| index.html | Estructura principal del sitio web (ZTD 13.0). Carga el CSS, el main.js y la lógica ztd-demo.js. |
-| styles/ | Contiene los estilos purificados. style.css alberga todos los tokens de diseño Enterprise. |
-| scripts/ | Contiene el código JavaScript que se ejecuta en el navegador. |
-| scripts/ztd-demo.js | Lógica de Trazabilidad del Cliente. Simula la consulta y verificación del Hash SHA-256 con la interfaz de usuario. |
-| assets/ | Recursos estáticos (imágenes, scripts optimizados). |
-2. Capa Backend Core (src/) - EL LEDGER CRIPTOGRÁFICO
-Contiene la propiedad intelectual del Blockchain. Esta lógica se ejecuta en el servidor (Node.js).
-| Archivo/Carpeta | Propósito Criptográfico |
-|---|---|
-| src/blockchain/ | Núcleo de la Cadena. Contiene las clases centrales del Ledger. |
-| BlockChain.js | Ledger Principal. Gestiona la cadena (array de bloques), el Genesis Block y la validación SHA-256 (isChainValid). |
-| Block.js | Unidad de Lote Inmutable. Clase que sella los datos del lote y ejecuta la función calculateHash() (SHA-256). |
-| Transaction.js | Modelo de Datos. Define la estructura de los datos del lote (HuertoID, Brix, Cosecha Time) antes de ser sellados en un bloque. |
-| src/core/api.js | Lógica para exponer la funcionalidad del Blockchain a través de un API REST. |
-3. Capa de Herramientas (tools/) - DEVOPS Y SEGURIDAD
-Directorios aislados que contienen scripts de alto riesgo/mantenimiento.
-| Archivo/Carpeta | Propósito de Zero-Trust |
-|---|---|
-| tools/deploy/ | Scripts de Despliegue (deploy-masterpiece.sh, verify-hash.sh). |
-| tools/tests/ | Pruebas Unitarias de Lógica y Criptografía (test-hash-integrity.js). |
-| tools/monitor/ | Scripts de Monitoreo de Integridad (hash-monitor.js). |
-💻 GUÍA DE USO Y OPERACIONES
-1. Pre-Requisitos de Backend
-Para ejecutar el Blockchain y las herramientas de desarrollo, se requiere:
- * Node.js: Entorno de ejecución para JavaScript fuera del navegador.
- * npm: Gestor de paquetes.
- * Librería Criptográfica: El proyecto requiere la librería crypto-js para el cálculo del SHA-256 en el backend.
-<!-- end list -->
-# Instalar dependencias requeridas (según package.json)
+# AgroBridge Global - Plataforma ZTD de Trazabilidad Agricola
+
+Sistema de trazabilidad Zero-Trust Data (ZTD) para exportaciones agricolas mexicanas (aguacates, berries). Utiliza hashing criptografico SHA-256 para crear registros de auditoria inmutables desde la cosecha hasta la exportacion.
+
+## Autor
+
+**Alejandro Navarro Ayala** - CEO & Founder, AgroBridge
+
+## Arquitectura del Repositorio
+
+```
+├── public_html/              # Frontend (servido estaticamente en Netlify)
+│   ├── index.html            # Pagina principal
+│   ├── config-production.js  # Configuracion de produccion
+│   ├── scripts/              # 12 modulos JS del navegador
+│   │   ├── app.js            # Inicializacion de la aplicacion
+│   │   ├── contact.js        # Formulario de contacto y reCAPTCHA
+│   │   ├── demo-data.js      # Datos de demostracion
+│   │   ├── i18n.js           # Internacionalizacion (es/en)
+│   │   ├── main.js           # Punto de entrada principal
+│   │   ├── ui.js             # Componentes de interfaz
+│   │   ├── utils.js          # Utilidades compartidas
+│   │   ├── validation.js     # Validacion de lotes
+│   │   ├── legal-core.js     # Motor de paginas legales
+│   │   ├── legal-utils.js    # Utilidades legales
+│   │   ├── legal-animations.js # Animaciones legales
+│   │   └── legal-consent.js  # Gestion de consentimiento
+│   ├── styles/               # CSS de paginas legales
+│   │   ├── legal-base.css
+│   │   ├── legal-components.css
+│   │   ├── legal-layouts.css
+│   │   ├── legal-animations.css
+│   │   ├── legal-print.css
+│   │   └── legal-utilities.css
+│   ├── assets/               # CSS principal + recursos estaticos
+│   │   ├── main.css          # Estilos principales
+│   │   ├── critical.css      # CSS critico (above-the-fold)
+│   │   ├── utilities.css     # Clases utilitarias
+│   │   ├── accesibility.css  # Estilos de accesibilidad
+│   │   └── compatibility.css # Compatibilidad entre navegadores
+│   ├── legal/                # Paginas legales (privacidad, terminos, etc.)
+│   └── dist/                 # Archivos minificados (generados por esbuild)
+├── src/                      # Backend (Node.js/Express)
+│   ├── index.js              # Punto de entrada del servidor
+│   ├── config/index.js       # Configuracion con validacion de secretos
+│   ├── middleware/
+│   │   ├── auth.js           # Autenticacion JWT
+│   │   ├── security.js       # Helmet, CORS, rate limiting, CSRF
+│   │   ├── validation.js     # Validacion de requests
+│   │   └── errorHandler.js   # Manejo centralizado de errores
+│   ├── routes/admin.js       # Rutas API admin
+│   ├── services/authService.js # Logica de autenticacion
+│   └── utils/
+│       ├── logger.js         # Logging con Winston
+│       └── shutdown.js       # Graceful shutdown
+└── tests/
+    ├── unit/                 # Tests unitarios (Jest)
+    ├── integration/          # Tests de integracion
+    ├── accessibility/        # Tests de accesibilidad
+    └── e2e/                  # Tests E2E (Playwright)
+```
+
+## Requisitos
+
+- Node.js >= 18.0.0
+- npm >= 9.0.0
+
+## Instalacion
+
+```bash
 npm install
+```
 
-2. Despliegue del Front-End (ZTD 13.0)
-El Front-end ya está purificado y listo:
- * Asegúrese de que el contenido de public_html/ esté cargado en la raíz web de https://mexicanberries.com.
- * La lógica de trazabilidad se activa a través de los scripts en /public_html/scripts/.
-3. Operaciones ZTD (Consola Node.js)
-Puede interactuar con su Ledger Criptográfico desde la terminal:
-# Desde el directorio raíz del repositorio:
-# ----------------------------------------------------
-# Ejemplo 1: Iniciar la Cadena de Bloques
-node -e "const Blockchain = require('./src/blockchain/BlockChain'); const agroChain = new Blockchain(); console.log('Blockchain Iniciada y Válida:', agroChain.isChainValid());"
+## Scripts de Desarrollo
 
-# Ejemplo 2: Sellado de un Nuevo Lote (Simulación)
-# (Esto simula la acción que hace la API al registrar una nueva cosecha)
-node -e "
-const Blockchain = require('./src/blockchain/BlockChain');
-const Transaction = require('./src/blockchain/Transaction');
-const agroChain = new Blockchain();
+```bash
+# Servidor de desarrollo (nodemon con auto-restart)
+npm run dev
 
-// 1. Crear un lote (transacción)
-const lote1 = new Transaction('HUE-001', Date.now(), 12.5, 'Aguacate Hass'); 
-agroChain.addLoteData(lote1);
+# Servidor de produccion
+npm run start:prod
 
-// 2. Sellar el lote en el Ledger (crear el bloque)
-agroChain.sealPendingLotes(); 
-"
+# Build (minificacion con esbuild)
+npm run build
 
-# Ejemplo 3: Auditoría Criptográfica Total
-# (Verifica que ningún Hash SHA-256 en la cadena haya sido alterado)
-node -e "
-const Blockchain = require('./src/blockchain/BlockChain');
-const agroChain = new Blockchain(); 
-// (Añadir bloques aquí para probar)
-console.log('Auditoría Completa ZTD:', agroChain.isChainValid());
-"
+# Tests
+npm test                   # Todos los tests con cobertura
+npm run test:unit          # Solo tests unitarios
+npm run test:integration   # Tests de integracion
+npm run test:a11y          # Tests de accesibilidad
+npm run test:e2e           # Tests E2E con Playwright
+npm run test:watch         # Modo watch
+```
 
+## Configuracion
+
+Copia `.env.example` a `.env` y configura:
+
+```bash
+# Secretos requeridos (genera con: openssl rand -base64 64)
+JWT_ACCESS_SECRET=<64+ caracteres>
+JWT_REFRESH_SECRET=<64+ caracteres, diferente al access>
+CSRF_SECRET=<32+ caracteres>
+MONGODB_URI=mongodb://localhost:27017/agrobridge
+```
+
+## Dependencias Principales
+
+| Dependencia | Proposito |
+|---|---|
+| express | Framework web |
+| helmet | Headers de seguridad HTTP |
+| cors | Control de acceso CORS |
+| csrf-csrf | Proteccion CSRF |
+| jsonwebtoken | Autenticacion JWT dual (access + refresh) |
+| express-rate-limit | Limitacion de requests |
+| ioredis + rate-limit-redis | Rate limiting con Redis |
+| mongoose | ODM para MongoDB |
+| winston | Logging |
+| bcryptjs | Hashing de passwords |
+| express-mongo-sanitize | Prevencion de inyeccion NoSQL |
+
+## Seguridad
+
+- JWT dual con secretos de 64+ caracteres (access: 15m, refresh: 7d)
+- Proteccion CSRF con `csrf-csrf`
+- Rate limiting: 100 req/15 min (Redis-backed en produccion)
+- Helmet para CSP, HSTS, XSS protection
+- Sanitizacion MongoDB contra inyeccion NoSQL
+- Passwords: 12+ caracteres con requisitos de complejidad
+
+## Despliegue
+
+- **Frontend**: Netlify (directorio `public_html/`)
+- **Backend API**: El backend separado vive en `~/Documents/agrobridge-global-backend`
+- **CI/CD**: GitHub Actions (lint -> test -> deploy)
+
+## API
+
+Endpoints principales (ver `INTEGRATION.md` para detalles completos):
+
+- `GET /v2/verify/:code` - Verificar trazabilidad de un lote
+- `POST /v2/leads` - Enviar formulario de contacto
+- `GET /api/csrf-token` - Obtener token CSRF
+
+## Licencia
+
+UNLICENSED - Propiedad privada de AGROBRIDGE S.A. de C.V.
