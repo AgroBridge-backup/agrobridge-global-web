@@ -2246,11 +2246,8 @@
             // Demo mode off by default - live backend
             window.AGROBRIDGE_USE_DEMO = false;
             
-            // reCAPTCHA - Google test key for localhost; production key should be injected at deploy time.
-            // Test key always passes validation (for development only).
-            window.AGROBRIDGE_RECAPTCHA_SITE_KEY = isLocalhost
-                ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-                : (window.AGROBRIDGE_RECAPTCHA_SITE_KEY || '');
+            // reCAPTCHA — Set via deployment pipeline (do not hardcode keys here)
+            window.AGROBRIDGE_RECAPTCHA_SITE_KEY = window.AGROBRIDGE_RECAPTCHA_SITE_KEY || '';
             
             window.AGROBRIDGE_RECAPTCHA_ACTION = 'enterprise_lead';
 
@@ -2258,8 +2255,8 @@
             // window.AGROBRIDGE_SENTRY_DSN = ''; // Set to a real DSN to enable Sentry
             window.AGROBRIDGE_ENV = isLocalhost ? 'development' : 'production';
 
-            if (isLocalhost) {
-                console.info('[AgroBridge] Development config loaded');
+            if (isLocalhost && window.AgroBridgeUtils) {
+                window.AgroBridgeUtils.log('Development config loaded');
             }
         })();
     </script>

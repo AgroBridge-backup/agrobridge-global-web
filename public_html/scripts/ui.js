@@ -18,7 +18,7 @@ window.AgroBridgeUI = (function() {
         var navMenu = utils.getElement('navMenu');
 
         if (navToggle && navMenu) {
-            navToggle.addEventListener('click', function() {
+            app._trackListener(navToggle, 'click', function() {
                 var isActive = navMenu.classList.toggle('active');
                 navToggle.classList.toggle('active');
                 navToggle.setAttribute('aria-expanded', isActive.toString());
@@ -31,7 +31,7 @@ window.AgroBridgeUI = (function() {
             });
 
             navMenu.querySelectorAll('.nav__link').forEach(function(link) {
-                link.addEventListener('click', function() {
+                app._trackListener(link, 'click', function() {
                     navMenu.classList.remove('active');
                     navToggle.classList.remove('active');
                     navToggle.setAttribute('aria-expanded', 'false');
@@ -77,7 +77,7 @@ window.AgroBridgeUI = (function() {
 
     function initExampleChips(app) {
         document.querySelectorAll('.example-chip').forEach(function(chip) {
-            chip.addEventListener('click', function(e) {
+            app._trackListener(chip, 'click', function(e) {
                 var code = e.currentTarget.dataset.code;
                 var input = utils.getElement('search-input') || utils.getElement('validation-input');
                 var chipElement = e.currentTarget;

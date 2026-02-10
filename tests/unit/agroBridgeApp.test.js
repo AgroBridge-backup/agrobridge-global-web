@@ -1297,7 +1297,7 @@ describe('AgroBridgeApp', () => {
 
       app.initContactForm();
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith('submit', expect.any(Function));
+      expect(addEventListenerSpy).toHaveBeenCalledWith('submit', expect.any(Function), undefined);
       addEventListenerSpy.mockRestore();
     });
   });

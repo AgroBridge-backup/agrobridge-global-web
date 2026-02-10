@@ -298,32 +298,17 @@ class LegalCore {
   }
 
   /**
-   * Utility: Debounce function
+   * Utility: Debounce function (delegates to shared AgroBridgeUtils)
    */
   debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
+    return window.AgroBridgeUtils.debounce(func, wait);
   }
 
   /**
-   * Utility: Throttle function
+   * Utility: Throttle function (delegates to shared AgroBridgeUtils)
    */
   throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-      if (!inThrottle) {
-        func.apply(this, args);
-        inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
-      }
-    };
+    return window.AgroBridgeUtils.throttle(func, limit);
   }
 
   /**

@@ -92,10 +92,8 @@ setupSecurity(app);
 app.use(express.static(path.join(PROJECT_ROOT, 'public_html')));
 
 // ---------- API routes ----------
-// Admin routes (CommonJS module — use createRequire for interop)
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const adminRouter = require('./routes/admin.js');
+// Admin routes
+import adminRouter from './routes/admin.js';
 app.use('/api/admin', adminRouter);
 
 // Health-check endpoint (no auth required — used by load balancers)

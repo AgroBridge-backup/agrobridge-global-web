@@ -1,0 +1,108 @@
+/* Utility classes replacing inline styles for CSP compliance */
+/* Used by legal pages: terminos.html, cookies.html, datos.html, privacidad.html, _template.html */
+
+/* ========== Common across all legal pages ========== */
+
+/* Logo ZTD gold accent (replaces style="color: var(--color-gold-500);") */
+.legal-header__logo-ztd {
+    color: var(--color-gold-500);
+}
+
+/* Hero visual icon (replaces style="font-size: 8rem; opacity: 0.3;") */
+.legal-hero__visual-icon {
+    font-size: 8rem;
+    opacity: 0.3;
+}
+
+/* ========== Spacing utilities ========== */
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+.mb-12 { margin-bottom: var(--space-12); }
+.my-4 { margin: var(--space-4) 0; }
+.m-0 { margin: 0; }
+
+/* ========== Typography utilities ========== */
+.text-sm { font-size: var(--text-sm); }
+.text-lg { font-size: var(--text-lg); }
+.text-center { text-align: center; }
+
+/* ========== Color utilities ========== */
+.text-gray-600 { color: var(--color-gray-600); }
+.text-gold-400 { color: var(--color-gold-400); }
+
+/* ========== Layout utilities ========== */
+.grid-gap-4 { display: grid; gap: var(--space-4); }
+.security-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+}
+.flex-center-gap-2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+.flex-center-gap-3 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+/* ========== Opacity utility ========== */
+.opacity-90 { opacity: 0.9; }
+
+/* ========== Width utility ========== */
+.w-full { width: 100%; }
+
+/* ========== Font size for icons ========== */
+.icon-md { font-size: 1.25rem; }
+.icon-lg { font-size: 1.5rem; }
+
+/* ========== Display utility ========== */
+.hidden { display: none; }
+
+/* ========== Compound utility: DPA party description ========== */
+.dpa-party__description {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+}
+
+/* ========== Compound utility: sidebar contact text ========== */
+.legal-sidebar__text-sm {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+}
+
+/* ========== Compound utility: sidebar help card ========== */
+.legal-sidebar__card--dark {
+    background: var(--color-primary-900);
+    color: var(--color-white);
+}
+
+.legal-sidebar__card--dark .legal-sidebar__title {
+    color: var(--color-gold-400);
+}
+
+.legal-sidebar__card--dark .legal-sidebar__text-sm {
+    opacity: 0.9;
+}
+
+/* ========== Compound utility: list with top margin ========== */
+.list-mt-2 {
+    margin: var(--space-2) 0 0 0;
+}
+
+/* ========== Compound utility: ordered list compact ========== */
+.list-compact {
+    margin: 0;
+    font-size: var(--text-sm);
+}

@@ -1,6 +1,6 @@
-const express = require('express');
-const { authenticate, authorize } = require('../middleware/auth.js');
-const { validate, validateLeadId, validateLeadStatus, validateLeadNotes, validatePagination } = require('../middleware/validation.js');
+import express from 'express';
+import { authenticate, authorize } from '../middleware/auth.js';
+import { validate, validateLeadId, validateLeadStatus, validateLeadNotes, validatePagination } from '../middleware/validation.js';
 
 const router = express.Router();
 
@@ -34,4 +34,4 @@ router.delete('/leads/:id', authenticate, authorize(['admin']), validateLeadId, 
 
 router.get('/stats', authenticate, authorize(['admin']), getStats);
 
-module.exports = router;
+export default router;

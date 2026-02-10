@@ -67,7 +67,7 @@
         this.initResetButton();
         this.setupErrorHandling();
         this.setupPerformanceMonitoring();
-        console.log('[AgroBridge] App initialized v2.2.0 - Enhanced Demo with P0/P1 Fixes');
+        window.AgroBridgeUtils.log('App initialized v2.2.0 - Enhanced Demo with P0/P1 Fixes');
     };
 
     // ============================================
@@ -128,7 +128,7 @@
 
     AgroBridgeApp.prototype.setupErrorHandling = function() {
         this._boundHandlers.globalError = (e) => {
-            console.error('[AgroBridge] Global error:', e.error);
+            window.AgroBridgeUtils.error('Global error:', e.error);
             if (window.__SENTRY_INITIALIZED__ && window.Sentry && window.Sentry.captureException) {
                 window.Sentry.captureException(e.error);
             }
@@ -136,7 +136,7 @@
         this._trackListener(window, 'error', this._boundHandlers.globalError);
 
         this._boundHandlers.unhandledRejection = (e) => {
-            console.error('[AgroBridge] Unhandled promise rejection:', e.reason);
+            window.AgroBridgeUtils.error('Unhandled promise rejection:', e.reason);
             if (window.__SENTRY_INITIALIZED__ && window.Sentry && window.Sentry.captureException) {
                 window.Sentry.captureException(e.reason instanceof Error ? e.reason : new Error(String(e.reason)));
             }
@@ -154,7 +154,7 @@
                         if (entry.name === 'first-contentful-paint' ||
                             entry.name === 'largest-contentful-paint' ||
                             entry.entryType === 'first-input') {
-                            console.log('[AgroBridge] Performance: ' + entry.name + ':',
+                            window.AgroBridgeUtils.log('Performance: ' + entry.name + ':',
                                 entry.value || entry.startTime);
                         }
                     }
@@ -195,7 +195,7 @@
             this._performanceObserver = null;
         }
 
-        console.log('[AgroBridge] App destroyed');
+        window.AgroBridgeUtils.log('App destroyed');
     };
 
     // ============================================

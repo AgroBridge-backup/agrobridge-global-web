@@ -29,7 +29,7 @@ const generateAccessToken = (user) => {
       algorithm: 'HS256'
     });
     
-    console.log(`[AUTH] Access token generated for user: ${user.email}, jti: ${jti}`);
+    console.log(`[AUTH] Access token generated for user: ${user.id || user._id}, jti: ${jti}`);
     
     return token;
   } catch (error) {
@@ -58,7 +58,7 @@ const generateRefreshToken = (user) => {
       algorithm: 'HS256'
     });
     
-    console.log(`[AUTH] Refresh token generated for user: ${user.email || user.id}, jti: ${jti}`);
+    console.log(`[AUTH] Refresh token generated for user: ${user.id || user._id}, jti: ${jti}`);
     
     return token;
   } catch (error) {
@@ -79,7 +79,7 @@ const verifyAccessToken = (token) => {
       algorithms: ['HS256']
     });
     
-    console.log(`[AUTH] Access token verified for user: ${decoded.email}, jti: ${decoded.jti}`);
+    console.log(`[AUTH] Access token verified for user: ${decoded.id}, jti: ${decoded.jti}`);
     
     return decoded;
   } catch (error) {

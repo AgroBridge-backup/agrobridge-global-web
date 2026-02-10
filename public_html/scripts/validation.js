@@ -22,14 +22,14 @@ window.AgroBridgeValidation = (function() {
         var demoBtn = utils.getElement('demo-btn');
 
         if (searchBtn && searchInput) {
-            searchBtn.addEventListener('click', function() { app.validateLot(); });
-            searchInput.addEventListener('keypress', function(e) {
+            app._trackListener(searchBtn, 'click', function() { app.validateLot(); });
+            app._trackListener(searchInput, 'keypress', function(e) {
                 if (e.key === 'Enter') app.validateLot();
             });
         }
 
         if (demoBtn) {
-            demoBtn.addEventListener('click', function() { runDemo(app); });
+            app._trackListener(demoBtn, 'click', function() { runDemo(app); });
         }
     }
 
@@ -59,7 +59,7 @@ window.AgroBridgeValidation = (function() {
         var validateBtn = utils.getElement('search-button') || utils.getElement('validate-btn');
 
         if (!searchInput) {
-            console.error('[AgroBridge] Search input not found');
+            utils.error('Search input not found');
             return;
         }
 
@@ -110,7 +110,7 @@ window.AgroBridgeValidation = (function() {
             displayValidationResult(app, result);
 
         } catch (error) {
-            console.error('[AgroBridge] Validation error:', error);
+            utils.error('Validation error:', error);
             if (scanningOverlay) scanningOverlay.classList.remove('active');
             if (skeletonDiv) skeletonDiv.style.display = 'none';
 
@@ -416,7 +416,7 @@ window.AgroBridgeValidation = (function() {
     function initResetButton(app) {
         var resetBtn = utils.getElement('reset-validation-btn');
         if (resetBtn) {
-            resetBtn.addEventListener('click', function() { resetValidation(app); });
+            app._trackListener(resetBtn, 'click', function() { resetValidation(app); });
         }
     }
 

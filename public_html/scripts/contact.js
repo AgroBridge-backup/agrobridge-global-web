@@ -27,7 +27,7 @@ window.AgroBridgeContact = (function() {
         var contactForm = utils.getElement('enterprise-form') || document.querySelector('.contact-form');
 
         if (contactForm) {
-            contactForm.addEventListener('submit', function(e) { handleContactSubmit(app, e); });
+            app._trackListener(contactForm, 'submit', function(e) { handleContactSubmit(app, e); });
         }
     }
 

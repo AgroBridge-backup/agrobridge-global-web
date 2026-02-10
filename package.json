@@ -68,20 +68,10 @@
     "export-certification"
   ],
   "author": {
-    "name": "AgroBridge Global Team",
-    "email": "tecnologia@agrobridge.global",
+    "name": "Alejandro Navarro Ayala - CEO & Founder, AgroBridge",
+    "email": "ceo@agrobridge.global",
     "url": "https://agrobridge.global"
   },
-  "contributors": [
-    {
-      "name": "Equipo de Ingeniería AgroBridge",
-      "email": "ingenieria@agrobridge.global"
-    },
-    {
-      "name": "Equipo Blockchain ZTD",
-      "email": "blockchain@agrobridge.global"
-    }
-  ],
   "license": "UNLICENSED",
   "private": true,
   "engines": {
@@ -91,10 +81,11 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "csrf-csrf": "^3.0.6",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2",
+    "express": "^5.2.1",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.1.5",
     "express-validator": "^7.0.1",
