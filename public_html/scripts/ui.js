@@ -1,7 +1,7 @@
 /**
  * AgroBridge UI Module
  * @description Mobile menu, slideshow, example chips, notifications, animations
- * @version 3.0.0
+ * @version 4.0.0
  */
 
 window.AgroBridgeUI = (function() {

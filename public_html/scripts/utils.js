@@ -1,7 +1,7 @@
 /**
  * AgroBridge Global - Shared Utilities
  * @description Single source of truth for common utility functions
- * @version 3.0.0
+ * @version 4.0.0
  *
  * This module provides debounce, throttle, escapeHtml, DOM helpers,
  * and other shared utilities used across all AgroBridge modules.
@@ -135,6 +135,7 @@ window.AgroBridgeUtils = (function() {
 
     /**
      * Generate a random SHA-256-like hash
+     * // DEMO ONLY — NOT cryptographically secure. Uses Math.random for mock hash display.
      * @returns {string} 64-character hex string
      */
     function generateHash() {
@@ -149,13 +150,14 @@ window.AgroBridgeUtils = (function() {
      * @returns {string} Formatted date string
      */
     function formatDateTime(date) {
-        var months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-                       'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        var day = String(date.getDate()).padStart(2, '0');
-        var month = months[date.getMonth()];
-        var hours = String(date.getHours()).padStart(2, '0');
-        var minutes = String(date.getMinutes()).padStart(2, '0');
-        return day + ' ' + month + ' ' + hours + ':' + minutes;
+        var lang = document.documentElement.lang || 'es';
+        return new Intl.DateTimeFormat(lang, {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(date);
     }
 
     // ============================================

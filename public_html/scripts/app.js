@@ -1,6 +1,6 @@
 /**
  * AgroBridge Global - Main Application Controller
- * @version 3.0.0
+ * @version 4.0.0
  * @description Core orchestrator for ZTD verification system
  * @author Alejandro Navarro Ayala - CEO & Founder, AgroBridge
  *
@@ -47,6 +47,7 @@
         this.recaptchaReady = null;
         this.isValidating = false;
         this.lastValidationTime = 0;
+        // 500ms debounce for UI interactions (prevents double-clicks). Not a security measure — server-side rate limiting handles abuse prevention.
         this.RATE_LIMIT_MS = 500;
         this.USE_DEMO_MODE = globalConfig.AGROBRIDGE_USE_DEMO === true;
         this.hasShownConfetti = false;

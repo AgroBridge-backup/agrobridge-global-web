@@ -2,6 +2,9 @@
  * AgroBridge Legal Pages - Animations Module
  * Interaction choreography and scroll animations
  * Version: 1.1.0
+ *
+ * Load order: 3 of 5. Depends on: window.AgroBridgeUtils (from utils.js).
+ * Auto-initializes on DOMContentLoaded -> window.legalAnimations
  */
 
 class LegalAnimations {

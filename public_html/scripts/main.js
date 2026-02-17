@@ -1,6 +1,6 @@
 /**
  * AgroBridge Global - Main Application Controller
- * @version 2.0.0
+ * @version 4.0.0
  * @description Core functionality for ZTD verification system
  * @author Alejandro Navarro Ayala - CEO & Founder, AgroBridge
  *
@@ -16,6 +16,7 @@
  */
 
 (function() {
+    'use strict';
     const AgroBridgeApp = window.AgroBridge.App;
 
     // ============================================

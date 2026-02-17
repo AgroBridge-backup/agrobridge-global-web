@@ -1,6 +1,9 @@
 /**
  * AgroBridge Legal Pages i18n
  * Lightweight ES/EN translator for legal page chrome and hero content.
+ *
+ * Load order: 5 of 5. No hard dependencies. Should load after legal-core.js.
+ * Auto-initializes on DOMContentLoaded -> window.AgroBridgeLegalI18n
  */
 (function() {
     'use strict';

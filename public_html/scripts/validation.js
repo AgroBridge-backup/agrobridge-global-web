@@ -1,7 +1,7 @@
 /**
  * AgroBridge Validation Module
  * @description Validation engine, display, and error handling
- * @version 3.0.0
+ * @version 4.0.0
  */
 
 window.AgroBridgeValidation = (function() {

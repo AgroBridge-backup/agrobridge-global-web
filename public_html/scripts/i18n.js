@@ -507,11 +507,36 @@ window.AgroBridgeI18n = (function() {
 
     function t(currentLang, key) {
         var activeLang = resolveLanguage(currentLang);
-        return (translations[activeLang] && translations[activeLang][key]) ||
-               (translations[currentLang] && translations[currentLang][key]) ||
-               (translations.en && translations.en[key]) ||
-               (translations.es && translations.es[key]) ||
-               key;
+        var value = (translations[activeLang] && translations[activeLang][key]) ||
+                    (translations[currentLang] && translations[currentLang][key]);
+        if (value) return value;
+
+        // Fallback to English
+        value = translations.en && translations.en[key];
+        if (value) {
+            if (typeof window !== 'undefined' && window.AGROBRIDGE_ENV !== 'production' &&
+                typeof console !== 'undefined' && typeof console.warn === 'function') {
+                console.warn('Missing i18n key:', key, '(lang: ' + currentLang + ', fell back to en)');
+            }
+            return value;
+        }
+
+        // Fallback to Spanish (default language)
+        value = translations.es && translations.es[key];
+        if (value) {
+            if (typeof window !== 'undefined' && window.AGROBRIDGE_ENV !== 'production' &&
+                typeof console !== 'undefined' && typeof console.warn === 'function') {
+                console.warn('Missing i18n key:', key, '(lang: ' + currentLang + ', fell back to es)');
+            }
+            return value;
+        }
+
+        // Last resort: return the key itself
+        if (typeof window !== 'undefined' && window.AGROBRIDGE_ENV !== 'production' &&
+            typeof console !== 'undefined' && typeof console.warn === 'function') {
+            console.warn('Missing i18n key:', key, '(lang: ' + currentLang + ', no translation found)');
+        }
+        return key;
     }
 
     function sanitizeHtml(html) {

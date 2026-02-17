@@ -2,6 +2,9 @@
  * AgroBridge Legal Pages - Cookie Consent Manager
  * GDPR/LFPDPPP compliant cookie consent
  * Version: 1.1.0
+ *
+ * Load order: 4 of 5. Depends on: window.AgroBridgeUtils (from utils.js).
+ * Auto-initializes on DOMContentLoaded -> window.cookieConsentManager
  */
 
 class CookieConsentManager {

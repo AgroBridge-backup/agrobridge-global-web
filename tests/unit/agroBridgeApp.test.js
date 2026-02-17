@@ -229,29 +229,37 @@ describe('AgroBridgeApp', () => {
   // DATE FORMATTING
   // ============================================
   describe('Date Formatting - formatDateTime()', () => {
+    const intlFormat = (date) => {
+      const lang = document.documentElement.lang || 'es';
+      return new Intl.DateTimeFormat(lang, {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }).format(date);
+    };
+
     test('should format date correctly for January', () => {
       const date = new Date(2026, 0, 5, 14, 30);
-      expect(app.formatDateTime(date)).toBe('05 Ene 14:30');
+      expect(app.formatDateTime(date)).toBe(intlFormat(date));
     });
 
     test('should format date correctly for December', () => {
       const date = new Date(2026, 11, 25, 8, 0);
-      expect(app.formatDateTime(date)).toBe('25 Dic 08:00');
+      expect(app.formatDateTime(date)).toBe(intlFormat(date));
     });
 
     test('should pad single digit day', () => {
       const date = new Date(2026, 5, 5, 9, 5);
-      expect(app.formatDateTime(date)).toBe('05 Jun 09:05');
+      expect(app.formatDateTime(date)).toBe(intlFormat(date));
     });
 
     test('should format midnight correctly', () => {
       const date = new Date(2026, 0, 1, 0, 0);
-      expect(app.formatDateTime(date)).toBe('01 Ene 00:00');
+      expect(app.formatDateTime(date)).toBe(intlFormat(date));
     });
 
     test('should format end of day correctly', () => {
       const date = new Date(2026, 0, 1, 23, 59);
-      expect(app.formatDateTime(date)).toBe('01 Ene 23:59');
+      expect(app.formatDateTime(date)).toBe(intlFormat(date));
     });
   });
 

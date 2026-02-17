@@ -2,6 +2,9 @@
  * AgroBridge Legal Pages - Core Module
  * Shared functionality for all legal pages
  * Version: 1.1.0
+ *
+ * Load order: 1 of 5. No dependencies. Must load before other legal scripts.
+ * Auto-initializes on DOMContentLoaded -> window.legalCore
  */
 
 class LegalCore {
@@ -273,7 +276,7 @@ class LegalCore {
     announcement.setAttribute('role', 'status');
     announcement.setAttribute('aria-live', 'polite');
     announcement.className = 'visually-hidden';
-    announcement.textContent = `Pagina cargada: ${document.title}`;
+    announcement.textContent = `Página cargada: ${document.title}`;
 
     document.body.appendChild(announcement);
 

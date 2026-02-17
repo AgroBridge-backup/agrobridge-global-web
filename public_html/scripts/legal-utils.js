@@ -2,6 +2,9 @@
  * AgroBridge Legal Pages - Utilities
  * Helper functions for legal pages
  * Version: 1.1.0
+ *
+ * Load order: 2 of 5. Depends on: window.AgroBridgeUtils (from utils.js).
+ * Auto-initializes on DOMContentLoaded -> LegalUtils.init()
  */
 
 const LegalUtils = {
