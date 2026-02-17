@@ -2,12 +2,16 @@
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
-2. [Environment Configuration](#environment-configuration)
-3. [CI/CD Pipeline Setup](#cicd-pipeline-setup)
-4. [Staging Deployment](#staging-deployment)
-5. [Production Deployment](#production-deployment)
-6. [Monitoring & Alerting](#monitoring--alerting)
-7. [Post-Deployment Verification](#post-deployment-verification)
+2. [Service Account Setup](#service-account-setup)
+3. [Environment Configuration](#environment-configuration)
+4. [CI/CD Pipeline Setup](#cicd-pipeline-setup)
+5. [Staging Deployment](#staging-deployment)
+6. [Production Deployment](#production-deployment)
+7. [Production Data Seeding](#production-data-seeding)
+8. [Monitoring & Alerting](#monitoring--alerting)
+9. [Post-Deployment Verification](#post-deployment-verification)
+10. [Quick Start Commands](#quick-start-commands)
+11. [Security Reminders](#security-reminders)
 
 ---
 
@@ -27,6 +31,40 @@
 - npm >= 9.0.0
 - Git
 - Docker (optional, for local testing)
+
+---
+
+## Service Account Setup
+
+### Google reCAPTCHA v3
+- [ ] Visit https://www.google.com/recaptcha/admin
+- [ ] Create production project
+- [ ] Register domains: `agrobridge.global`, `api.agrobridge.global`
+- [ ] Get site key and secret key
+- [ ] Add to frontend config and backend .env
+
+### MongoDB Atlas
+- [ ] Visit https://www.mongodb.com/cloud/atlas
+- [ ] Create production cluster (M0+ tier)
+- [ ] Create database user
+- [ ] Whitelist IP addresses
+- [ ] Get connection string
+- [ ] Add to backend environment
+
+### Sentry
+- [ ] Visit https://sentry.io
+- [ ] Create organization: "AgroBridge"
+- [ ] Create Frontend project (JavaScript/Browser)
+- [ ] Create Backend project (Node.js)
+- [ ] Get DSNs
+- [ ] Update frontend config and backend .env
+- [ ] Configure alert rules
+
+### Resend (Email)
+- [ ] Visit https://resend.com
+- [ ] Create API key
+- [ ] Verify domain `agrobridge.global`
+- [ ] Add to backend environment
 
 ---
 
@@ -206,7 +244,15 @@ export const config = defineConfig({
 3. Netlify will auto-deploy on push to main
 4. Verify deployment at https://agrobridge.global
 
-### Step 3: DNS Configuration
+### Step 3: Production Verification Checklist
+
+- [ ] Verify production backend: `https://api.agrobridge.global/health`
+- [ ] Verify production frontend: `https://agrobridge.global`
+- [ ] Run smoke tests
+- [ ] Run E2E tests
+- [ ] Check monitoring dashboards
+
+### Step 4: DNS Configuration
 
 Ensure DNS records are properly configured:
 
@@ -216,6 +262,23 @@ agrobridge.global → Netlify servers
 
 # Backend API
 api.agrobridge.global → Render servers
+```
+
+---
+
+## Production Data Seeding
+
+After production deployment is verified:
+
+- [ ] Connect to production MongoDB
+- [ ] Run seed script: `npm run seed:products`
+- [ ] Verify product data
+- [ ] Test with lot codes: AGR-2024-001, AGR-2024-002, AGR-2024-003, AGR-2024-004
+
+```bash
+cd /Users/mac/Documents/agrobridge-global-backend
+MONGODB_URI=<production-uri> \
+npm run seed:products
 ```
 
 ---
@@ -396,6 +459,46 @@ You are done when:
 5. ✅ Data: At least 1 real product seeded with correct traceability
 6. ✅ Performance: LCP < 2.5s, API p95 latency < 500ms
 7. ✅ Reliability: Uptime > 99%, error rate < 0.1%
+
+---
+
+## Quick Start Commands
+
+### Generate Production Secrets
+```bash
+cd /Users/mac/Documents/agrobridge-global-backend
+npm run setup:production
+```
+
+### Run Staging Tests
+```bash
+cd /Users/mac/Documents/agrobridge-global-web
+FRONTEND_URL=https://staging-agrobridge.netlify.app \
+BACKEND_URL=https://staging-api.agrobridge.global \
+npx playwright test tests/e2e/integration.spec.js
+```
+
+### Run Production Tests
+```bash
+cd /Users/mac/Documents/agrobridge-global-web
+FRONTEND_URL=https://agrobridge.global \
+BACKEND_URL=https://api.agrobridge.global \
+npx playwright test tests/e2e/integration.spec.js
+```
+
+---
+
+## Security Reminders
+
+- Never commit `.env.production` to git
+- Store secrets in a password manager
+- Use different secrets for staging and production
+- Rotate secrets every 90 days
+- Enable 2FA on all service accounts
+- Always test on staging first
+- Run E2E tests before production deployment
+- Monitor logs during deployment
+- Have rollback plan ready
 
 ---
 
