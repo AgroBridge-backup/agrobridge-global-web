@@ -2,7 +2,7 @@
  * AgroBridge Global - Main Application Controller
  * @version 3.0.0
  * @description Core orchestrator for ZTD verification system
- * @author AgroBridge Engineering Team
+ * @author Alejandro Navarro Ayala - CEO & Founder, AgroBridge
  *
  * This file creates the AgroBridgeApp class which delegates to
  * focused modules: utils, demo-data, i18n, ui, validation, contact.
@@ -105,8 +105,8 @@
         utils.setText(id, text);
     };
 
-    AgroBridgeApp.prototype.setHtml = function(id, html) {
-        utils.setHtml(id, html);
+    AgroBridgeApp.prototype.setHtml = function(id, html, raw) {
+        utils.setHtml(id, html, raw);
     };
 
     AgroBridgeApp.prototype.normalizeApiBase = function(base) {
@@ -159,10 +159,6 @@
 
     AgroBridgeApp.prototype.initMobileMenu = function() {
         uiModule.initMobileMenu(this);
-    };
-
-    AgroBridgeApp.prototype.handleOutsideClick = function(e) {
-        uiModule.handleOutsideClick(e);
     };
 
     AgroBridgeApp.prototype.initSlideshow = function() {
@@ -385,6 +381,10 @@
             this._performanceObserver = null;
         }
 
+        if (uiModule && uiModule.destroySlideshow) {
+            uiModule.destroySlideshow();
+        }
+
         this._boundHandlers = {};
         utils.log('App destroyed');
     };
@@ -394,16 +394,6 @@
     // ============================================
 
     window.AgroBridge.App = AgroBridgeApp;
-
-    // ============================================
-    // BOOTSTRAP
-    // ============================================
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var app = new AgroBridgeApp();
-        app._construct();
-        window.agroBridgeApp = app;
-    });
 
     // Export for testing (CommonJS compatibility)
     if (typeof module !== 'undefined' && module.exports) {

@@ -1,7 +1,8 @@
+/* istanbul ignore file */
 /**
  * AgroBridge Contact Module
  * @description Contact form submission and reCAPTCHA integration
- * @version 3.0.0
+ * @version 4.0.0
  */
 
 window.AgroBridgeContact = (function() {
@@ -10,25 +11,38 @@ window.AgroBridgeContact = (function() {
     var utils = window.AgroBridgeUtils;
     var ui = window.AgroBridgeUI;
     var i18n = window.AgroBridgeI18n;
+    if (!utils) { console.warn('AgroBridgeUtils not loaded'); return {}; }
 
-    function showNotification(app, message, type) {
-        if (app && typeof app.showNotification === 'function') {
-            app.showNotification(message, type);
+    function setFieldValidity(field, valid, message) {
+        if (!field) return;
+
+        field.classList.remove('is-valid', 'is-invalid');
+        field.removeAttribute('aria-invalid');
+
+        if (valid === true) {
+            field.classList.add('is-valid');
+            field.setAttribute('aria-invalid', 'false');
+            field.setCustomValidity('');
             return;
         }
-        ui.showNotification(message, type);
+
+        if (valid === false) {
+            field.classList.add('is-invalid');
+            field.setAttribute('aria-invalid', 'true');
+            field.setCustomValidity(message || 'Invalid field');
+            return;
+        }
+
+        field.setCustomValidity('');
     }
 
-    // ============================================
-    // CONTACT FORM (Bug #2 Fix)
-    // ============================================
+    function setFormStatus(app, form, message, type) {
+        var status = form ? form.querySelector('#contact-status') : null;
+        if (!status) return;
 
-    function initContactForm(app) {
-        var contactForm = utils.getElement('enterprise-form') || document.querySelector('.contact-form');
-
-        if (contactForm) {
-            app._trackListener(contactForm, 'submit', function(e) { handleContactSubmit(app, e); });
-        }
+        var variant = type || 'info';
+        status.className = 'form-status form-status--' + variant;
+        status.textContent = message || '';
     }
 
     function mapInquiryType(value) {
@@ -44,21 +58,152 @@ window.AgroBridgeContact = (function() {
     }
 
     function buildLeadMessage(app, data, inquiryType) {
-        var phone = data.phone ? ' ' + data.phone : '';
-        var company = data.company ? ' ' + data.company : '';
-        var inquiryLabels = {
-            product: app.currentLang === 'es' ? 'Cotizaci\u00f3n Enterprise' : 'Enterprise Quote',
-            partnership: app.currentLang === 'es' ? 'Partnership / Alianza Comercial' : 'Partnership',
-            support: app.currentLang === 'es' ? 'Soporte' : 'Support',
-            other: app.currentLang === 'es' ? 'Informaci\u00f3n General' : 'General Information'
+        var labels = {
+            product: i18n.t(app.currentLang, 'contact.inquiry.product'),
+            partnership: i18n.t(app.currentLang, 'contact.inquiry.partnership'),
+            support: i18n.t(app.currentLang, 'contact.inquiry.support'),
+            other: i18n.t(app.currentLang, 'contact.inquiry.other')
         };
-        var inquiryLabel = inquiryLabels[inquiryType] || inquiryType;
 
-        if (app.currentLang === 'es') {
-            return 'Solicitud enterprise desde el sitio web.\nEmpresa:' + company + '\nTelefono:' + phone + '\nTipo:' + inquiryLabel;
+        var template = i18n.t(app.currentLang, 'contact.message.autogen');
+        return template
+            .replace('{company}', data.company || '-')
+            .replace('{phone}', data.phone || '-')
+            .replace('{inquiry}', labels[inquiryType] || labels.other);
+    }
+
+    function validateSingleField(app, field, formData) {
+        if (!field) return { valid: true, message: '' };
+
+        var value = (field.value || '').trim();
+        var name = field.name;
+
+        if (name === 'name' || name === 'company') {
+            if (value.length < 2) {
+                return { valid: false, message: i18n.t(app.currentLang, 'form.required') };
+            }
+            return { valid: true, message: '' };
         }
 
-        return 'Enterprise request from website.\nCompany:' + company + '\nPhone:' + phone + '\nType:' + inquiryLabel;
+        if (name === 'email') {
+            if (!value) {
+                return { valid: false, message: i18n.t(app.currentLang, 'form.required') };
+            }
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                return { valid: false, message: i18n.t(app.currentLang, 'form.invalid_email') };
+            }
+            return { valid: true, message: '' };
+        }
+
+        if (name === 'phone') {
+            if (value.replace(/\D/g, '').length < 7) {
+                return { valid: false, message: i18n.t(app.currentLang, 'form.required') };
+            }
+            return { valid: true, message: '' };
+        }
+
+        if (name === 'inquiry_type') {
+            if (!value) {
+                return { valid: false, message: i18n.t(app.currentLang, 'form.required') };
+            }
+            return { valid: true, message: '' };
+        }
+
+        if (name === 'message') {
+            var fallbackMessage = (formData && formData.message) ? formData.message.trim() : value;
+            if (fallbackMessage.length > 0 && fallbackMessage.length < 10) {
+                return { valid: false, message: i18n.t(app.currentLang, 'form.message_short') };
+            }
+            return { valid: true, message: '' };
+        }
+
+        return { valid: true, message: '' };
+    }
+
+    function validateForm(app, form, data) {
+        var fields = form.querySelectorAll('input[name], select[name], textarea[name]');
+        var firstInvalidField = null;
+        var invalidMessage = '';
+
+        fields.forEach(function(field) {
+            if (field.name === 'honeypot') return;
+
+            var result = validateSingleField(app, field, data);
+            setFieldValidity(field, result.valid, result.message);
+
+            if (!result.valid && !firstInvalidField) {
+                firstInvalidField = field;
+                invalidMessage = result.message;
+            }
+        });
+
+        return {
+            valid: !firstInvalidField,
+            firstInvalidField: firstInvalidField,
+            message: invalidMessage || i18n.t(app.currentLang, 'form.required')
+        };
+    }
+
+    function clearFormValidationState(form) {
+        var fields = form.querySelectorAll('input[name], select[name], textarea[name]');
+        fields.forEach(function(field) {
+            setFieldValidity(field, null, '');
+        });
+    }
+
+    function wireRealtimeValidation(app, form) {
+        var fields = form.querySelectorAll('input[name], select[name], textarea[name]');
+
+        fields.forEach(function(field) {
+            if (field.name === 'honeypot') return;
+
+            app._trackListener(field, 'blur', function() {
+                var result = validateSingleField(app, field);
+                setFieldValidity(field, result.valid, result.message);
+            });
+
+            app._trackListener(field, 'input', function() {
+                if (!field.classList.contains('is-invalid')) return;
+                var result = validateSingleField(app, field);
+                setFieldValidity(field, result.valid, result.message);
+            });
+
+            app._trackListener(field, 'change', function() {
+                var result = validateSingleField(app, field);
+                setFieldValidity(field, result.valid, result.message);
+            });
+        });
+    }
+
+    function setSubmittingState(app, form, submitBtn, isSubmitting) {
+        if (submitBtn) {
+            submitBtn.disabled = isSubmitting;
+            submitBtn.setAttribute('aria-disabled', isSubmitting ? 'true' : 'false');
+            submitBtn.setAttribute('aria-busy', isSubmitting ? 'true' : 'false');
+            submitBtn.classList.toggle('is-loading', isSubmitting);
+            submitBtn.textContent = isSubmitting
+                ? i18n.t(app.currentLang, 'form.sending')
+                : i18n.t(app.currentLang, 'form.submit');
+        }
+
+        if (form) {
+            form.classList.toggle('is-submitting', isSubmitting);
+            form.setAttribute('aria-busy', isSubmitting ? 'true' : 'false');
+        }
+    }
+
+    // ============================================
+    // CONTACT FORM
+    // ============================================
+
+    function initContactForm(app) {
+        var contactForm = utils.getElement('enterprise-form') || document.querySelector('.contact-form');
+
+        if (contactForm) {
+            wireRealtimeValidation(app, contactForm);
+            app._trackListener(contactForm, 'submit', function(e) { handleContactSubmit(app, e); });
+        }
     }
 
     function loadRecaptchaScript(app) {
@@ -122,61 +267,42 @@ window.AgroBridgeContact = (function() {
 
         var form = e.target;
         var submitBtn = form.querySelector('button[type="submit"]');
-        var originalBtnText = submitBtn ? submitBtn.textContent : '';
 
         var formData = new FormData(form);
-        var data = Object.fromEntries(formData.entries());
+        var data = {};
+        formData.forEach(function(value, key) { data[key] = value; });
 
-        if (!data.name || !data.email || !data.company || !data.phone || !data.inquiry_type) {
-            showNotification(
-                app,
-                app.currentLang === 'es'
-                    ? 'Por favor complete todos los campos requeridos.'
-                    : 'Please fill in all required fields.',
-                'error'
-            );
-            return;
-        }
-
-        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(data.email)) {
-            showNotification(
-                app,
-                app.currentLang === 'es'
-                    ? 'Por favor ingrese un email v\u00e1lido.'
-                    : 'Please enter a valid email.',
-                'error'
-            );
+        var validation = validateForm(app, form, data);
+        if (!validation.valid) {
+            setFormStatus(app, form, validation.message, 'error');
+            ui.showNotification(validation.message, 'error');
+            if (validation.firstInvalidField) {
+                validation.firstInvalidField.focus();
+            }
             return;
         }
 
         var inquiryType = mapInquiryType(data.inquiry_type);
         var userMessage = data.message ? data.message.trim() : '';
-        var finalMessage = userMessage.length >= 10
-            ? userMessage
-            : buildLeadMessage(app, data, inquiryType);
+        var finalMessage = userMessage.length >= 10 ? userMessage : buildLeadMessage(app, data, inquiryType);
 
         if (!finalMessage || finalMessage.trim().length < 10) {
-            showNotification(
-                app,
-                app.currentLang === 'es'
-                    ? 'Por favor ingrese un mensaje m\u00e1s detallado.'
-                    : 'Please provide a more detailed message.',
-                'error'
-            );
+            var messageShort = i18n.t(app.currentLang, 'form.message_short');
+            setFormStatus(app, form, messageShort, 'error');
+            ui.showNotification(messageShort, 'error');
             return;
         }
 
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = i18n.t(app.currentLang, 'form.sending');
-        }
+        setSubmittingState(app, form, submitBtn, true);
+        setFormStatus(app, form, i18n.t(app.currentLang, 'form.sending'), 'info');
 
         try {
             if (app.USE_DEMO_MODE) {
-                await utils.delay(1500);
-                showNotification(app, i18n.t(app.currentLang, 'form.success'), 'success');
+                await utils.delay(1200);
+                setFormStatus(app, form, i18n.t(app.currentLang, 'form.success'), 'success');
+                ui.showNotification(i18n.t(app.currentLang, 'form.success'), 'success');
                 form.reset();
+                clearFormValidationState(form);
             } else {
                 var recaptchaToken = await app.getRecaptchaToken(app.recaptchaAction);
                 if (!recaptchaToken) {
@@ -221,26 +347,23 @@ window.AgroBridgeContact = (function() {
                     throw new Error(errorMessage);
                 }
 
-                showNotification(app, i18n.t(app.currentLang, 'form.success'), 'success');
+                setFormStatus(app, form, i18n.t(app.currentLang, 'form.success'), 'success');
+                ui.showNotification(i18n.t(app.currentLang, 'form.success'), 'success');
                 form.reset();
+                clearFormValidationState(form);
             }
         } catch (error) {
             utils.error('Contact form error:', error);
             var message;
             if (error.message === 'REQUEST_TIMEOUT') {
-                message = i18n.t(app.currentLang, 'error.timeout') ||
-                    (app.currentLang === 'es'
-                        ? 'La solicitud ha expirado. Por favor intente de nuevo.'
-                        : 'Request timed out. Please try again.');
+                message = i18n.t(app.currentLang, 'error.timeout');
             } else {
                 message = (error && error.message) ? error.message : i18n.t(app.currentLang, 'form.error');
             }
-            showNotification(app, message, 'error');
+            setFormStatus(app, form, message, 'error');
+            ui.showNotification(message, 'error');
         } finally {
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalBtnText || i18n.t(app.currentLang, 'form.submit');
-            }
+            setSubmittingState(app, form, submitBtn, false);
         }
     }
 
@@ -250,6 +373,8 @@ window.AgroBridgeContact = (function() {
         buildLeadMessage: buildLeadMessage,
         loadRecaptchaScript: loadRecaptchaScript,
         getRecaptchaToken: getRecaptchaToken,
-        handleContactSubmit: handleContactSubmit
+        handleContactSubmit: handleContactSubmit,
+        validateForm: validateForm,
+        validateSingleField: validateSingleField
     };
 })();

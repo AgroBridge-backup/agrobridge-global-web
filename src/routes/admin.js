@@ -1,37 +1,112 @@
 import express from 'express';
 import { authenticate, authorize } from '../middleware/auth.js';
-import { validate, validateLeadId, validateLeadStatus, validateLeadNotes, validatePagination } from '../middleware/validation.js';
+import {
+  validate,
+  validateLeadId,
+  validateLeadStatus,
+  validateLeadNotes,
+  validatePagination,
+} from '../middleware/validation.js';
+import adminLeadService from '../services/adminLeadService.js';
 
-const router = express.Router();
+const asyncHandler = (handler) => (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
 
-const getLeads = (req, res) => {
-  res.status(200).json({ message: 'Get leads endpoint - placeholder' });
+const createAdminRouter = ({
+  service = adminLeadService,
+  authenticateMiddleware = authenticate,
+  authorizeMiddleware = authorize,
+} = {}) => {
+  const router = express.Router();
+
+  router.get(
+    '/leads',
+    authenticateMiddleware,
+    authorizeMiddleware(['admin']),
+    validatePagination,
+    validate,
+    asyncHandler(async (req, res) => {
+      const result = await service.listLeads(req.query);
+
+      return res.status(200).json({
+        success: true,
+        data: result.leads,
+        pagination: result.pagination,
+      });
+    })
+  );
+
+  router.get(
+    '/leads/:id',
+    authenticateMiddleware,
+    authorizeMiddleware(['admin']),
+    validateLeadId,
+    validate,
+    asyncHandler(async (req, res) => {
+      const lead = await service.getLeadById(req.params.id);
+
+      return res.status(200).json({
+        success: true,
+        data: lead,
+      });
+    })
+  );
+
+  router.patch(
+    '/leads/:id',
+    authenticateMiddleware,
+    authorizeMiddleware(['admin']),
+    validateLeadId,
+    validateLeadStatus,
+    validateLeadNotes,
+    validate,
+    asyncHandler(async (req, res) => {
+      const actorId = req.user?.id || req.user?.userId || 'system';
+      const updatedLead = await service.updateLead(req.params.id, req.body, actorId);
+
+      return res.status(200).json({
+        success: true,
+        data: updatedLead,
+      });
+    })
+  );
+
+  router.delete(
+    '/leads/:id',
+    authenticateMiddleware,
+    authorizeMiddleware(['admin']),
+    validateLeadId,
+    validate,
+    asyncHandler(async (req, res) => {
+      await service.deleteLead(req.params.id);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lead deleted successfully',
+      });
+    })
+  );
+
+  router.get(
+    '/stats',
+    authenticateMiddleware,
+    authorizeMiddleware(['admin']),
+    asyncHandler(async (_req, res) => {
+      const stats = await service.getStats();
+
+      return res.status(200).json({
+        success: true,
+        data: stats,
+      });
+    })
+  );
+
+  return router;
 };
 
-const getLeadById = (req, res) => {
-  res.status(200).json({ message: 'Get lead by ID endpoint - placeholder' });
+const router = createAdminRouter();
+
+export {
+  createAdminRouter,
 };
-
-const updateLead = (req, res) => {
-  res.status(200).json({ message: 'Update lead endpoint - placeholder' });
-};
-
-const deleteLead = (req, res) => {
-  res.status(200).json({ message: 'Delete lead endpoint - placeholder' });
-};
-
-const getStats = (req, res) => {
-  res.status(200).json({ message: 'Get stats endpoint - placeholder' });
-};
-
-router.get('/leads', authenticate, authorize(['admin']), validatePagination, validate, getLeads);
-
-router.get('/leads/:id', authenticate, authorize(['admin']), validateLeadId, validate, getLeadById);
-
-router.patch('/leads/:id', authenticate, authorize(['admin']), validateLeadId, validateLeadStatus, validateLeadNotes, validate, updateLead);
-
-router.delete('/leads/:id', authenticate, authorize(['admin']), validateLeadId, validate, deleteLead);
-
-router.get('/stats', authenticate, authorize(['admin']), getStats);
 
 export default router;

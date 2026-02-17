@@ -24,6 +24,7 @@ const isProduction = () => process.env.NODE_ENV === 'production';
 const errorHandler = (err, req, res, _next) => {
   const statusCode = err.statusCode || err.status || 500;
   const prod = isProduction();
+  const isLocalhost = req.ip === '127.0.0.1' || req.ip === '::1';
 
   const logPayload = {
     message: err.message,
@@ -51,7 +52,7 @@ const errorHandler = (err, req, res, _next) => {
     message: prod ? 'An unexpected error occurred' : err.message,
     code: err.code || 'INTERNAL_ERROR',
     requestId: req.id,
-    ...(prod ? {} : { stack: err.stack }),
+    ...(!prod && isLocalhost ? { stack: err.stack } : {}),
   });
 };
 

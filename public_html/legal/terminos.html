@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-legal-page="terms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +9,16 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap&subset=latin,latin-ext">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap&subset=latin,latin-ext"></noscript>
     
     <!-- Styles -->
     <link rel="stylesheet" href="../styles/legal-base.css">
     <link rel="stylesheet" href="../styles/legal-components.css">
     <link rel="stylesheet" href="../styles/legal-layouts.css">
     <link rel="stylesheet" href="../styles/legal-animations.css">
+    <link rel="stylesheet" href="../styles/legal-utilities.css">
+    <link rel="stylesheet" href="../styles/legal-premium.css">
     <link rel="stylesheet" href="../styles/legal-print.css">
     
     <!-- Favicon -->
@@ -23,12 +26,12 @@
 </head>
 <body class="legal-page">
     <!-- Skip Link -->
-    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    <a href="#main-content" class="skip-link" data-legal-i18n="legal.skip">Saltar al contenido principal</a>
     
     <!-- Print Header -->
     <div class="print-header">
         <div class="print-header__logo">🌱 AgroBridge ZTD</div>
-        <div class="print-header__title">Términos y Condiciones de Servicio</div>
+        <div class="print-header__title" data-legal-i18n="legal.page.{page}.printTitle">Términos y Condiciones de Servicio</div>
     </div>
     
     <!-- Header -->
@@ -38,11 +41,11 @@
                 <span class="legal-header__logo-icon">🌱</span>
                 <span>AgroBridge <span class="text-gold-brand">ZTD</span></span>
             </a>
-            <nav class="legal-header__nav" aria-label="Navegación legal">
-                <a href="privacidad.html" class="legal-header__link">Privacidad</a>
-                <a href="terminos.html" class="legal-header__link active">Términos</a>
-                <a href="cookies.html" class="legal-header__link">Cookies</a>
-                <a href="datos.html" class="legal-header__link">Datos</a>
+            <nav class="legal-header__nav" aria-label="Navegación legal" data-legal-i18n-aria-label="legal.nav.aria">
+                <a href="privacidad.html" class="legal-header__link" data-legal-i18n="legal.nav.privacy">Privacidad</a>
+                <a href="terminos.html" class="legal-header__link active" data-legal-i18n="legal.nav.terms">Términos</a>
+                <a href="cookies.html" class="legal-header__link" data-legal-i18n="legal.nav.cookies">Cookies</a>
+                <a href="datos.html" class="legal-header__link" data-legal-i18n="legal.nav.data">Datos</a>
             </nav>
         </div>
     </header>
@@ -51,23 +54,23 @@
     <section class="legal-hero" role="banner">
         <div class="legal-hero__content">
             <span class="legal-hero__badge">
-                <span aria-hidden="true">📋</span> Marco Contractual
+                <span aria-hidden="true">📋</span> <span data-legal-i18n="legal.page.{page}.badge">Marco Contractual</span>
             </span>
             <h1 class="legal-hero__title">
-                Términos y<br>
-                <span class="text-gold">Condiciones</span>
+                <span data-legal-i18n="legal.page.{page}.titleMain">Términos y</span><br>
+                <span class="text-gold" data-legal-i18n="legal.page.{page}.titleAccent">Condiciones</span>
             </h1>
-            <p class="legal-hero__subtitle">
+            <p class="legal-hero__subtitle" data-legal-i18n="legal.page.{page}.subtitle">
                 Establecemos relaciones comerciales claras y justas. 
                 Nuestros términos protegen tanto a nuestros clientes como a nuestros productores.
             </p>
             <div class="legal-hero__meta">
                 <time datetime="2026-01-29" class="legal-date">
-                    <span class="legal-date__label">Última actualización:</span>
+                    <span class="legal-date__label" data-legal-i18n="legal.page.{page}.dateLabel">Última actualización:</span>
                     <span class="legal-date__value">29 de enero de 2026</span>
                 </time>
-                <button class="btn btn--primary btn--small" data-action="print" onclick="LegalUtils.downloadPDF('terms')">
-                    <span aria-hidden="true">📄</span> Descargar PDF
+                <button class="btn btn--primary btn--small" data-action="print">
+                    <span aria-hidden="true">📄</span> <span data-legal-i18n="legal.downloadPdf">Descargar PDF</span>
                 </button>
             </div>
         </div>
@@ -474,16 +477,16 @@
                     </p>
                 </div>
                 <div>
-                    <h3 class="legal-footer__section-title">Legal</h3>
+                    <h3 class="legal-footer__section-title" data-legal-i18n="legal.footer.legal">Legal</h3>
                     <ul class="legal-footer__links">
-                        <li><a href="privacidad.html" class="legal-footer__link">Privacidad</a></li>
-                        <li><a href="terminos.html" class="legal-footer__link">Términos</a></li>
-                        <li><a href="cookies.html" class="legal-footer__link">Cookies</a></li>
-                        <li><a href="datos.html" class="legal-footer__link">Datos</a></li>
+                        <li><a href="privacidad.html" class="legal-footer__link" data-legal-i18n="legal.nav.privacy">Privacidad</a></li>
+                        <li><a href="terminos.html" class="legal-footer__link" data-legal-i18n="legal.nav.terms">Términos</a></li>
+                        <li><a href="cookies.html" class="legal-footer__link" data-legal-i18n="legal.nav.cookies">Cookies</a></li>
+                        <li><a href="datos.html" class="legal-footer__link" data-legal-i18n="legal.nav.data">Datos</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="legal-footer__section-title">Contacto</h3>
+                    <h3 class="legal-footer__section-title" data-legal-i18n="legal.footer.contact">Contacto</h3>
                     <ul class="legal-footer__links">
                         <li><a href="mailto:dpo@agrobridge.global" class="legal-footer__link">DPO</a></li>
                         <li><a href="mailto:ceo@agrobridge.global" class="legal-footer__link">CEO</a></li>
@@ -504,6 +507,7 @@
     </div>
     
     <!-- Scripts -->
+    <script src="../scripts/legal-i18n.js"></script>
     <script src="../scripts/legal-core.js"></script>
     <script src="../scripts/legal-animations.js"></script>
     <script src="../scripts/legal-utils.js"></script>

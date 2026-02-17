@@ -8,6 +8,7 @@ window.AgroBridgeDemoData = (function() {
     'use strict';
 
     var utils = window.AgroBridgeUtils;
+    if (!utils) { console.warn('AgroBridgeUtils not loaded'); return {}; }
 
     // ==========================================
     // DEMO DATABASE

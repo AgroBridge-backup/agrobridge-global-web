@@ -1,0 +1,186 @@
+/*
+  AgroBridge Premium Tokens v1
+  Week 3 base system
+  Safe to add without replacing current variables.
+*/
+
+:root {
+  /* Route control
+     Supported values:
+     - editorial-luxury
+     - institutional-tech (default)
+     - agro-heritage-modern
+  */
+
+  /* Brand core (default = institutional-tech) */
+  --abp-color-brand-900: #064e32;
+  --abp-color-brand-800: #0a5c36;
+  --abp-color-brand-700: #0f766e;
+  --abp-color-accent-600: #b9963a;
+  --abp-color-accent-500: #d4af37;
+  --abp-color-accent-100: #f9f2db;
+  --abp-color-success-600: #1f7a4a;
+  --abp-color-warning-600: #b7791f;
+  --abp-color-danger-600: #b53a2d;
+
+  /* Neutrals */
+  --abp-color-white: #ffffff;
+  --abp-color-black: #000000;
+  --abp-color-neutral-50: #f8faf9;
+  --abp-color-neutral-100: #f3f4f6;
+  --abp-color-neutral-200: #e5e7eb;
+  --abp-color-neutral-300: #d1d5db;
+  --abp-color-neutral-500: #6b7280;
+  --abp-color-neutral-700: #374151;
+  --abp-color-neutral-900: #111827;
+
+  /* Semantic aliases */
+  --abp-color-bg-page: var(--abp-color-neutral-50);
+  --abp-color-bg-surface: var(--abp-color-white);
+  --abp-color-bg-emphasis: var(--abp-color-brand-900);
+  --abp-color-text-primary: var(--abp-color-neutral-900);
+  --abp-color-text-secondary: var(--abp-color-neutral-700);
+  --abp-color-text-inverse: var(--abp-color-white);
+  --abp-color-border-subtle: var(--abp-color-neutral-200);
+  --abp-color-border-strong: var(--abp-color-neutral-300);
+  --abp-color-link: var(--abp-color-brand-700);
+  --abp-color-link-hover: var(--abp-color-brand-800);
+  --abp-color-focus-ring: rgba(25, 73, 102, 0.35);
+
+  /* Typography */
+  --abp-font-display: "Sora", "Helvetica Neue", Arial, sans-serif;
+  --abp-font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --abp-font-mono: "IBM Plex Mono", "SF Mono", Consolas, "Courier New", monospace;
+
+  --abp-type-hero: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+  --abp-type-h1: clamp(2rem, 1.75rem + 1.25vw, 3rem);
+  --abp-type-h2: clamp(1.5rem, 1.3rem + 1vw, 2.25rem);
+  --abp-type-h3: clamp(1.25rem, 1.15rem + 0.5vw, 1.75rem);
+  --abp-type-body-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --abp-type-body: 1rem;
+  --abp-type-caption: 0.875rem;
+  --abp-type-code: 0.875rem;
+
+  --abp-line-tight: 1.2;
+  --abp-line-normal: 1.55;
+  --abp-line-relaxed: 1.75;
+  --abp-track-tight: -0.02em;
+  --abp-track-normal: 0;
+  --abp-track-wide: 0.03em;
+
+  /* Layout + spacing */
+  --abp-container-sm: 720px;
+  --abp-container-md: 980px;
+  --abp-container-lg: 1200px;
+  --abp-container-xl: 1360px;
+
+  --abp-space-1: 0.25rem;
+  --abp-space-2: 0.5rem;
+  --abp-space-3: 0.75rem;
+  --abp-space-4: 1rem;
+  --abp-space-5: 1.25rem;
+  --abp-space-6: 1.5rem;
+  --abp-space-8: 2rem;
+  --abp-space-10: 2.5rem;
+  --abp-space-12: 3rem;
+  --abp-space-16: 4rem;
+  --abp-space-20: 5rem;
+  --abp-space-24: 6rem;
+
+  /* Radius */
+  --abp-radius-sm: 0.375rem;
+  --abp-radius-md: 0.625rem;
+  --abp-radius-lg: 0.875rem;
+  --abp-radius-xl: 1.25rem;
+  --abp-radius-pill: 9999px;
+
+  /* Elevation */
+  --abp-shadow-sm: 0 1px 3px rgba(14, 20, 27, 0.08);
+  --abp-shadow-md: 0 8px 24px rgba(14, 20, 27, 0.1);
+  --abp-shadow-lg: 0 16px 40px rgba(14, 20, 27, 0.14);
+  --abp-shadow-accent: 0 10px 30px rgba(212, 175, 55, 0.22);
+
+  /* Motion */
+  --abp-motion-fast: 140ms;
+  --abp-motion-base: 240ms;
+  --abp-motion-slow: 420ms;
+  --abp-ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
+  --abp-ease-emphasis: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Component aliases */
+  --abp-button-primary-bg: var(--abp-color-brand-800);
+  --abp-button-primary-text: var(--abp-color-white);
+  --abp-button-primary-bg-hover: var(--abp-color-brand-900);
+  --abp-button-secondary-bg: var(--abp-color-accent-500);
+  --abp-button-secondary-text: var(--abp-color-black);
+  --abp-card-bg: var(--abp-color-bg-surface);
+  --abp-card-border: var(--abp-color-border-subtle);
+  --abp-card-shadow: var(--abp-shadow-md);
+}
+
+/* Visual route override: editorial-luxury */
+:root[data-brand-route="editorial-luxury"] {
+  --abp-color-brand-900: #1f1b18;
+  --abp-color-brand-800: #302821;
+  --abp-color-brand-700: #4a3d31;
+  --abp-color-accent-600: #a47a3f;
+  --abp-color-accent-500: #c89a54;
+  --abp-color-accent-100: #f4ead8;
+  --abp-color-bg-page: #faf7f2;
+  --abp-color-neutral-900: #26211c;
+}
+
+/* Visual route override: agro-heritage-modern */
+:root[data-brand-route="agro-heritage-modern"] {
+  --abp-color-brand-900: #183224;
+  --abp-color-brand-800: #1f4631;
+  --abp-color-brand-700: #2a5d40;
+  --abp-color-accent-600: #bf8b3d;
+  --abp-color-accent-500: #d9a14b;
+  --abp-color-accent-100: #f9edd8;
+  --abp-color-bg-page: #f4f6f1;
+  --abp-color-neutral-900: #1d2e24;
+}
+
+/*
+  Legacy compatibility bridge
+  Keeps one source of truth while existing components still consume legacy vars.
+*/
+:root {
+  /* Typography bridge */
+  --font-display: var(--abp-font-display);
+  --font-body: var(--abp-font-body);
+  --font-mono: var(--abp-font-mono);
+
+  /* Main design token bridge */
+  --color-primary: var(--abp-color-brand-800);
+  --color-primary-dark: var(--abp-color-brand-900);
+  --color-primary-light: var(--abp-color-brand-700);
+  --color-secondary: var(--abp-color-accent-500);
+  --color-secondary-dark: var(--abp-color-accent-600);
+  --color-secondary-light: var(--abp-color-accent-100);
+
+  --color-white: var(--abp-color-white);
+  --color-black: var(--abp-color-black);
+  --color-gray-50: var(--abp-color-neutral-50);
+  --color-gray-100: var(--abp-color-neutral-100);
+  --color-gray-200: var(--abp-color-neutral-200);
+  --color-gray-300: var(--abp-color-neutral-300);
+  --color-gray-400: #9ca3af;
+  --color-gray-500: var(--abp-color-neutral-500);
+  --color-gray-600: #4b5563;
+  --color-gray-700: var(--abp-color-neutral-700);
+  --color-gray-800: #1f2937;
+  --color-gray-900: var(--abp-color-neutral-900);
+
+  /* Critical.css bridge */
+  --primary-green: var(--abp-color-brand-800);
+  --deep-green: var(--abp-color-brand-900);
+  --gold: var(--abp-color-accent-500);
+  --light-gold: var(--abp-color-accent-100);
+  --dark-gold: var(--abp-color-accent-600);
+  --white: var(--abp-color-white);
+  --light-bg: var(--abp-color-bg-page);
+  --gray-100: var(--abp-color-neutral-100);
+  --gray-800: var(--abp-color-neutral-900);
+}

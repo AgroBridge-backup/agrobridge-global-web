@@ -2,7 +2,7 @@
  * AgroBridge Global - Main Application Controller
  * @version 2.0.0
  * @description Core functionality for ZTD verification system
- * @author AgroBridge Engineering Team
+ * @author Alejandro Navarro Ayala - CEO & Founder, AgroBridge
  *
  * CHANGELOG v2.0.0:
  * - Fixed: API connection with real backend + demo fallback
@@ -48,6 +48,7 @@
      * Track an element event listener for cleanup
      */
     AgroBridgeApp.prototype._trackListener = function(element, event, handler, options) {
+        if (!element || typeof element.addEventListener !== 'function') return;
         element.addEventListener(event, handler, options);
         this._elementHandlers.push({ element, event, handler, options });
     };
@@ -187,6 +188,11 @@
         }
         if (this._boundHandlers) {
             this._boundHandlers = {};
+        }
+
+        // Clear slideshow interval
+        if (window.AgroBridgeUI && window.AgroBridgeUI.destroySlideshow) {
+            window.AgroBridgeUI.destroySlideshow();
         }
 
         // Disconnect performance observer

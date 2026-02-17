@@ -1,0 +1,499 @@
+/* AgroBridge Legal Premium Theme
+   Enterprise-grade visual language aligned with the main premium experience. */
+
+:root {
+  --font-display: 'Sora', 'Avenir Next', 'Segoe UI', sans-serif;
+  --font-body: 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Monaco, Consolas, monospace;
+
+  --color-primary-900: #121821;
+  --color-primary-800: #182430;
+  --color-primary-700: #274152;
+  --color-primary-600: #345a6f;
+  --color-primary-500: #4b7387;
+  --color-primary-100: #d9e4ea;
+
+  --color-gold-600: #8f6b40;
+  --color-gold-500: #c4a26d;
+  --color-gold-400: #ddbf8d;
+  --color-gold-100: #f0e7d8;
+  --color-gold-50: #f8f4ed;
+
+  --color-gray-950: #11110f;
+  --color-gray-900: #1b1815;
+  --color-gray-800: #2b241e;
+  --color-gray-700: #433a32;
+  --color-gray-600: #5b5045;
+  --color-gray-500: #72665a;
+  --color-gray-400: #9b8e80;
+  --color-gray-300: #c6b7a4;
+  --color-gray-200: #e2d7c8;
+  --color-gray-100: #eee6da;
+  --color-gray-50: #f7f2ea;
+  --color-white: #fffdf9;
+
+  --shadow-sm: 0 4px 12px rgba(19, 16, 12, 0.06);
+  --shadow-md: 0 12px 24px rgba(19, 16, 12, 0.09);
+  --shadow-lg: 0 20px 40px rgba(19, 16, 12, 0.12);
+  --shadow-xl: 0 28px 56px rgba(19, 16, 12, 0.16);
+  --shadow-gold: 0 14px 30px rgba(143, 107, 64, 0.2);
+  --shadow-gold-lg: 0 22px 40px rgba(143, 107, 64, 0.25);
+
+  --duration-fast: 180ms;
+  --duration-normal: 280ms;
+  --duration-slow: 420ms;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --focus-ring-legal: 0 0 0 3px rgba(196, 162, 109, 0.35);
+}
+
+body.legal-page {
+  color: var(--color-gray-800);
+  background:
+    radial-gradient(circle at 100% -10%, rgba(196, 162, 109, 0.14), transparent 38%),
+    radial-gradient(circle at 0% 0%, rgba(52, 90, 111, 0.08), transparent 30%),
+    var(--color-gray-50);
+}
+
+p,
+li {
+  color: var(--color-gray-700);
+}
+
+a {
+  color: var(--color-primary-700);
+}
+
+a:hover {
+  color: var(--color-primary-800);
+}
+
+.skip-link {
+  background: var(--color-primary-900);
+  border-color: var(--color-gold-500);
+}
+
+.legal-header {
+  background: rgba(17, 20, 26, 0.82);
+  border-bottom: 1px solid rgba(196, 162, 109, 0.3);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+}
+
+.legal-header.scrolled {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+}
+
+.legal-header__logo {
+  color: #f6efe3;
+}
+
+.legal-header__logo:hover {
+  opacity: 1;
+  color: #fff8ee;
+}
+
+.legal-header__logo-ztd,
+.text-gold-brand {
+  color: #e2c58f;
+}
+
+.legal-header__link {
+  color: rgba(242, 236, 227, 0.74);
+  font-size: var(--text-xs);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.legal-header__link:hover,
+.legal-header__link.active {
+  color: #f1ddba;
+}
+
+.legal-hero {
+  background:
+    radial-gradient(circle at 18% 30%, rgba(196, 162, 109, 0.2), transparent 36%),
+    radial-gradient(circle at 86% 80%, rgba(75, 115, 135, 0.2), transparent 42%),
+    linear-gradient(145deg, #11161d 0%, #19232e 55%, #1f313b 100%);
+}
+
+.legal-hero::before {
+  background:
+    linear-gradient(180deg, rgba(13, 16, 22, 0.15), rgba(13, 16, 22, 0.42)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: auto, 42px 42px, 42px 42px;
+}
+
+.legal-hero__badge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(196, 162, 109, 0.42);
+  color: #f1ddba;
+}
+
+.legal-hero__title {
+  color: #fff8ed;
+  letter-spacing: -0.02em;
+}
+
+.text-gold {
+  color: #e3c490;
+}
+
+.legal-hero__subtitle {
+  color: rgba(241, 237, 230, 0.84);
+}
+
+.legal-date__label {
+  color: rgba(241, 237, 230, 0.68);
+}
+
+.legal-date__value {
+  color: #f7f2e9;
+}
+
+.legal-hero__icon-large,
+.legal-hero__visual-icon {
+  color: rgba(241, 221, 186, 0.42);
+}
+
+.encryption-ring {
+  border-color: rgba(196, 162, 109, 0.26);
+}
+
+.encryption-core {
+  background: linear-gradient(145deg, #ddbf8d, #bc915b);
+  box-shadow: var(--shadow-gold-lg);
+}
+
+.btn {
+  border-radius: 999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: var(--text-xs);
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, #dbc39b, #b58b55);
+  color: #1c140d;
+  border: 1px solid rgba(248, 237, 219, 0.45);
+}
+
+.btn--primary:hover {
+  background: linear-gradient(135deg, #e3cdab, #bc925f);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-gold);
+}
+
+.legal-header__link:focus-visible,
+.btn:focus-visible,
+.legal-footer__link:focus-visible,
+.legal-section__header:focus-visible,
+.cookie-toggle__input:focus-visible + .cookie-toggle__slider,
+.tab:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring-legal);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn--secondary {
+  border: 1px solid rgba(42, 65, 82, 0.42);
+  color: var(--color-primary-800);
+}
+
+.btn--secondary:hover {
+  background: var(--color-primary-800);
+}
+
+.btn--ghost:hover {
+  background: rgba(43, 36, 30, 0.08);
+}
+
+.legal-main {
+  background: transparent;
+  padding-top: var(--space-20);
+}
+
+.legal-content h2 {
+  color: var(--color-gray-900);
+}
+
+.legal-content h3 {
+  color: var(--color-gray-800);
+}
+
+.legal-section {
+  border-bottom: 1px solid rgba(198, 183, 164, 0.45);
+}
+
+.legal-section__header {
+  padding: var(--space-5) 0;
+}
+
+.legal-section__header:hover {
+  color: var(--color-primary-800);
+}
+
+.legal-section__title {
+  font-size: clamp(1.16rem, 1rem + 0.6vw, 1.5rem);
+  color: var(--color-gray-900);
+}
+
+.legal-section__icon {
+  background: linear-gradient(145deg, #f2e9db, #eadfce);
+  border: 1px solid rgba(154, 134, 106, 0.34);
+}
+
+.legal-section__toggle {
+  background: rgba(117, 102, 81, 0.08);
+  border-radius: 999px;
+}
+
+.legal-section__toggle-icon {
+  border-right-color: var(--color-gray-700);
+  border-bottom-color: var(--color-gray-700);
+}
+
+.card,
+.contact-card,
+.legal-sidebar__card,
+.cookie-category,
+.dpa-party {
+  background: rgba(255, 253, 249, 0.78);
+  border: 1px solid rgba(160, 142, 117, 0.28);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.card:hover,
+.legal-sidebar__card:hover,
+.cookie-category:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card--highlight {
+  border-color: rgba(196, 162, 109, 0.6);
+}
+
+.legal-sidebar__title {
+  letter-spacing: -0.01em;
+}
+
+.legal-quick-ref__item {
+  border-bottom-color: rgba(198, 183, 164, 0.35);
+}
+
+.legal-quick-ref__value {
+  color: var(--color-primary-800);
+}
+
+.tabs {
+  background: rgba(43, 36, 30, 0.08);
+  border: 1px solid rgba(160, 142, 117, 0.3);
+  border-radius: var(--radius-xl);
+}
+
+.tab {
+  text-transform: uppercase;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+}
+
+.tab.active {
+  background: var(--color-white);
+  color: var(--color-gray-900);
+}
+
+.data-table th {
+  background: #f0e7d8;
+  color: var(--color-gray-800);
+}
+
+.data-table tr:hover td {
+  background: #f6efe2;
+}
+
+.info-box {
+  border-left-width: 3px;
+  border-radius: var(--radius-xl);
+}
+
+.cookie-category--essential {
+  background: #f8f2e7;
+}
+
+.cookie-category__details {
+  background: #f7f0e5;
+  border-top-color: rgba(198, 183, 164, 0.4);
+}
+
+.cookie-toggle__slider {
+  background: #c4b7a6;
+}
+
+.cookie-toggle__input:checked + .cookie-toggle__slider {
+  background: #bb915b;
+}
+
+.cookie-list code {
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(160, 142, 117, 0.3);
+}
+
+.dpa-header {
+  border-bottom-color: rgba(160, 142, 117, 0.36);
+}
+
+.dpa-header__version {
+  background: #e5ded2;
+  color: var(--color-primary-800);
+}
+
+.dpa-header__title {
+  color: var(--color-gray-900);
+}
+
+.dpa-header__meta {
+  color: var(--color-gray-600);
+}
+
+.annex {
+  border-top-color: rgba(160, 142, 117, 0.36);
+}
+
+.annex__badge {
+  background: #f0e5d4;
+  color: #8f6b40;
+}
+
+.contact-card__header {
+  background: linear-gradient(145deg, #121821 0%, #1f2f3d 100%);
+}
+
+.contact-card__avatar {
+  background: linear-gradient(145deg, #e2c796, #bb9058);
+}
+
+.contact-card__icon {
+  color: var(--color-primary-700);
+}
+
+.legal-sidebar__card--dark {
+  background: linear-gradient(145deg, #11161d 0%, #1c2a34 100%);
+  border-color: rgba(196, 162, 109, 0.35);
+  color: #f1ece3;
+}
+
+.legal-sidebar__card--dark .legal-sidebar__title {
+  color: #e4c997;
+}
+
+.legal-sidebar__card--dark .legal-sidebar__text-sm {
+  color: rgba(241, 236, 227, 0.86);
+}
+
+.cookie-banner {
+  background: rgba(247, 242, 234, 0.95);
+  border-top-color: rgba(196, 162, 109, 0.45);
+  box-shadow: 0 -16px 36px rgba(19, 16, 12, 0.15);
+}
+
+.cookie-banner__icon {
+  background: linear-gradient(145deg, #e0c596, #bf935d);
+}
+
+.cookie-banner__title {
+  color: var(--color-gray-900);
+}
+
+.cookie-banner__text {
+  color: var(--color-gray-700);
+}
+
+.toast {
+  border: 1px solid rgba(160, 142, 117, 0.28);
+  background: rgba(255, 253, 249, 0.95);
+}
+
+.legal-footer {
+  background:
+    radial-gradient(circle at 82% 16%, rgba(196, 162, 109, 0.13), transparent 36%),
+    linear-gradient(145deg, #10151b 0%, #15212b 100%);
+  border-top: 1px solid rgba(196, 162, 109, 0.24);
+}
+
+.legal-footer__logo,
+.legal-footer__section-title {
+  color: #e3c58f;
+}
+
+.legal-footer__tagline,
+.legal-footer__bottom {
+  color: rgba(242, 236, 227, 0.76);
+}
+
+.legal-footer__link {
+  color: rgba(242, 236, 227, 0.84);
+}
+
+.legal-footer__link:hover {
+  color: #f1ddba;
+}
+
+@media (max-width: 1024px) {
+  .legal-sidebar {
+    order: 1;
+  }
+
+  .legal-sidebar__sticky {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .legal-header__nav {
+    gap: var(--space-3);
+  }
+
+  .legal-header__link {
+    letter-spacing: 0.04em;
+    font-size: 0.66rem;
+  }
+
+  .legal-hero {
+    padding-top: calc(var(--space-20) + 72px);
+  }
+
+  .legal-hero__meta {
+    gap: var(--space-4);
+  }
+
+  .cookie-banner__actions .btn {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .legal-header__link,
+  .legal-section__header,
+  .card,
+  .cookie-category,
+  .tab,
+  .legal-footer__link {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .encryption-visual,
+  .encryption-ring,
+  .encryption-core {
+    animation: none !important;
+  }
+}

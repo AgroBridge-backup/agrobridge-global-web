@@ -48,6 +48,7 @@ export const validateLeadId = param('id')
   .withMessage('Invalid lead ID format');
 
 export const validateLeadStatus = body('status')
+  .optional()
   .isIn(['new', 'contacted', 'qualified', 'converted', 'closed'])
   .withMessage('Status must be one of: new, contacted, qualified, converted, closed');
 

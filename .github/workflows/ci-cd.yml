@@ -27,12 +27,69 @@ jobs:
         run: npm ci
 
       - name: Run linter
-        run: npm run lint || echo "No lint script configured"
+        run: npm run lint
+
+  release-gates:
+    name: Release Gates
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate configuration (fail-fast)
+        run: npm run validate:config
+        env:
+          NODE_ENV: production
+          JWT_ACCESS_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          JWT_REFRESH_SECRET: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+          CSRF_SECRET: cccccccccccccccccccccccccccccccc
+          CORS_ORIGIN: https://allowed.agrobridge.test
+
+      - name: Run security test suite
+        run: npm run test:security
+
+      - name: Run server boot smoke gate
+        run: npm run test:smoke
+        env:
+          NODE_ENV: development
+          JWT_ACCESS_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          JWT_REFRESH_SECRET: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+          CSRF_SECRET: cccccccccccccccccccccccccccccccc
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --production --audit-level=high
 
   test:
     name: Test
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [release-gates, security]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -79,6 +136,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build production assets
+        run: npm run build
+
+      - name: Validate deployment secrets
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then echo "::error::NETLIFY_AUTH_TOKEN not set" && exit 1; fi
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.1
         with:
@@ -116,11 +182,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run E2E tests against staging
-        run: npm run test:e2e
+      - name: Build production assets
+        run: npm run build
+
+      - name: Validate deployment secrets
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then echo "::error::NETLIFY_AUTH_TOKEN not set" && exit 1; fi
         env:
-          FRONTEND_URL: https://staging-agrobridge.netlify.app
-          BACKEND_URL: https://staging-api.agrobridge.global
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.1
@@ -137,6 +206,15 @@ jobs:
 
       - name: Run smoke tests
         run: curl -f https://agrobridge.global || exit 1
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests against production
+        run: npm run test:e2e
+        env:
+          FRONTEND_URL: https://agrobridge.global
+          BACKEND_URL: https://api.agrobridge.global
 
       - name: Notify deployment
         uses: 8398a7/action-slack@v3

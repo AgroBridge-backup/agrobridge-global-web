@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-legal-page="dpa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +9,16 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap&subset=latin,latin-ext">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap&subset=latin,latin-ext"></noscript>
     
     <!-- Styles -->
     <link rel="stylesheet" href="../styles/legal-base.css">
     <link rel="stylesheet" href="../styles/legal-components.css">
     <link rel="stylesheet" href="../styles/legal-layouts.css">
     <link rel="stylesheet" href="../styles/legal-animations.css">
+    <link rel="stylesheet" href="../styles/legal-utilities.css">
+    <link rel="stylesheet" href="../styles/legal-premium.css">
     <link rel="stylesheet" href="../styles/legal-print.css">
     
     <!-- Favicon -->
@@ -23,12 +26,12 @@
 </head>
 <body class="legal-page">
     <!-- Skip Link -->
-    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    <a href="#main-content" class="skip-link" data-legal-i18n="legal.skip">Saltar al contenido principal</a>
     
     <!-- Print Header -->
     <div class="print-header">
         <div class="print-header__logo">🌱 AgroBridge ZTD</div>
-        <div class="print-header__title">Acuerdo de Tratamiento de Datos</div>
+        <div class="print-header__title" data-legal-i18n="legal.page.{page}.printTitle">Acuerdo de Tratamiento de Datos</div>
     </div>
     
     <!-- Header -->
@@ -38,11 +41,11 @@
                 <span class="legal-header__logo-icon">🌱</span>
                 <span>AgroBridge <span class="text-gold-brand">ZTD</span></span>
             </a>
-            <nav class="legal-header__nav" aria-label="Navegación legal">
-                <a href="privacidad.html" class="legal-header__link">Privacidad</a>
-                <a href="terminos.html" class="legal-header__link">Términos</a>
-                <a href="cookies.html" class="legal-header__link">Cookies</a>
-                <a href="datos.html" class="legal-header__link active">Datos</a>
+            <nav class="legal-header__nav" aria-label="Navegación legal" data-legal-i18n-aria-label="legal.nav.aria">
+                <a href="privacidad.html" class="legal-header__link" data-legal-i18n="legal.nav.privacy">Privacidad</a>
+                <a href="terminos.html" class="legal-header__link" data-legal-i18n="legal.nav.terms">Términos</a>
+                <a href="cookies.html" class="legal-header__link" data-legal-i18n="legal.nav.cookies">Cookies</a>
+                <a href="datos.html" class="legal-header__link active" data-legal-i18n="legal.nav.data">Datos</a>
             </nav>
         </div>
     </header>
@@ -51,23 +54,23 @@
     <section class="legal-hero" role="banner">
         <div class="legal-hero__content">
             <span class="legal-hero__badge">
-                <span aria-hidden="true">📄</span> Acuerdo Empresarial
+                <span aria-hidden="true">📄</span> <span data-legal-i18n="legal.page.{page}.badge">Acuerdo Empresarial</span>
             </span>
             <h1 class="legal-hero__title">
-                Acuerdo de<br>
-                <span class="text-gold">Tratamiento de Datos</span>
+                <span data-legal-i18n="legal.page.{page}.titleMain">Acuerdo de</span><br>
+                <span class="text-gold" data-legal-i18n="legal.page.{page}.titleAccent">Tratamiento de Datos</span>
             </h1>
-            <p class="legal-hero__subtitle">
+            <p class="legal-hero__subtitle" data-legal-i18n="legal.page.{page}.subtitle">
                 Marco contractual para el procesamiento de datos personales en relaciones B2B. 
                 Cumplimiento con LFPDPPP, GDPR y estándares internacionales.
             </p>
             <div class="legal-hero__meta">
                 <time datetime="2026-01-29" class="legal-date">
-                    <span class="legal-date__label">Vigente desde:</span>
+                    <span class="legal-date__label" data-legal-i18n="legal.page.{page}.dateLabel">Vigente desde:</span>
                     <span class="legal-date__value">29 de enero de 2026</span>
                 </time>
-                <button class="btn btn--primary btn--small" data-action="print" onclick="LegalUtils.downloadPDF('dpa')">
-                    <span aria-hidden="true">📄</span> Descargar PDF
+                <button class="btn btn--primary btn--small" data-action="print">
+                    <span aria-hidden="true">📄</span> <span data-legal-i18n="legal.downloadPdf">Descargar PDF</span>
                 </button>
             </div>
         </div>
@@ -117,7 +120,7 @@
                 <button class="legal-section__header" aria-expanded="true" aria-controls="scope-content" id="scope-heading">
                     <h2 class="legal-section__title">
                         <span class="legal-section__icon" aria-hidden="true">📋</span>
-                        1. Alcance y Definiciones
+                        <span data-legal-i18n="legal.section.dpa.scope">1. Alcance y Definiciones</span>
                     </h2>
                     <span class="legal-section__toggle" aria-hidden="true">
                         <span class="legal-section__toggle-icon"></span>
@@ -145,7 +148,7 @@
                 <button class="legal-section__header" aria-expanded="false" aria-controls="responsibilities-content" id="responsibilities-heading">
                     <h2 class="legal-section__title">
                         <span class="legal-section__icon" aria-hidden="true">⚖️</span>
-                        2. Responsabilidades
+                        <span data-legal-i18n="legal.section.dpa.responsibilities">2. Responsabilidades</span>
                     </h2>
                     <span class="legal-section__toggle" aria-hidden="true">
                         <span class="legal-section__toggle-icon"></span>
@@ -181,7 +184,7 @@
                 <button class="legal-section__header" aria-expanded="false" aria-controls="security-content" id="security-heading">
                     <h2 class="legal-section__title">
                         <span class="legal-section__icon" aria-hidden="true">🔒</span>
-                        3. Medidas de Seguridad
+                        <span data-legal-i18n="legal.section.dpa.security">3. Medidas de Seguridad</span>
                     </h2>
                     <span class="legal-section__toggle" aria-hidden="true">
                         <span class="legal-section__toggle-icon"></span>
@@ -255,7 +258,7 @@
                 <button class="legal-section__header" aria-expanded="false" aria-controls="subprocessors-content" id="subprocessors-heading">
                     <h2 class="legal-section__title">
                         <span class="legal-section__icon" aria-hidden="true">🏢</span>
-                        4. Subcontratistas
+                        <span data-legal-i18n="legal.section.dpa.subprocessors">4. Subcontratistas</span>
                     </h2>
                     <span class="legal-section__toggle" aria-hidden="true">
                         <span class="legal-section__toggle-icon"></span>
@@ -315,7 +318,7 @@
                 <button class="legal-section__header" aria-expanded="false" aria-controls="incidents-content" id="incidents-heading">
                     <h2 class="legal-section__title">
                         <span class="legal-section__icon" aria-hidden="true">⚠️</span>
-                        5. Incidentes de Seguridad
+                        <span data-legal-i18n="legal.section.dpa.incidents">5. Incidentes de Seguridad</span>
                     </h2>
                     <span class="legal-section__toggle" aria-hidden="true">
                         <span class="legal-section__toggle-icon"></span>
@@ -356,7 +359,7 @@
                 <button class="legal-section__header" aria-expanded="false" aria-controls="audit-content" id="audit-heading">
                     <h2 class="legal-section__title">
                         <span class="legal-section__icon" aria-hidden="true">🔍</span>
-                        6. Auditoría
+                        <span data-legal-i18n="legal.section.dpa.audit">6. Auditoría</span>
                     </h2>
                     <span class="legal-section__toggle" aria-hidden="true">
                         <span class="legal-section__toggle-icon"></span>
@@ -389,7 +392,7 @@
                 <button class="legal-section__header" aria-expanded="false" aria-controls="termination-content" id="termination-heading">
                     <h2 class="legal-section__title">
                         <span class="legal-section__icon" aria-hidden="true">🗑️</span>
-                        7. Terminación
+                        <span data-legal-i18n="legal.section.dpa.termination">7. Terminación</span>
                     </h2>
                     <span class="legal-section__toggle" aria-hidden="true">
                         <span class="legal-section__toggle-icon"></span>
@@ -504,16 +507,16 @@
                     </p>
                 </div>
                 <div>
-                    <h3 class="legal-footer__section-title">Legal</h3>
+                    <h3 class="legal-footer__section-title" data-legal-i18n="legal.footer.legal">Legal</h3>
                     <ul class="legal-footer__links">
-                        <li><a href="privacidad.html" class="legal-footer__link">Privacidad</a></li>
-                        <li><a href="terminos.html" class="legal-footer__link">Términos</a></li>
-                        <li><a href="cookies.html" class="legal-footer__link">Cookies</a></li>
-                        <li><a href="datos.html" class="legal-footer__link">Datos</a></li>
+                        <li><a href="privacidad.html" class="legal-footer__link" data-legal-i18n="legal.nav.privacy">Privacidad</a></li>
+                        <li><a href="terminos.html" class="legal-footer__link" data-legal-i18n="legal.nav.terms">Términos</a></li>
+                        <li><a href="cookies.html" class="legal-footer__link" data-legal-i18n="legal.nav.cookies">Cookies</a></li>
+                        <li><a href="datos.html" class="legal-footer__link" data-legal-i18n="legal.nav.data">Datos</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="legal-footer__section-title">Contacto</h3>
+                    <h3 class="legal-footer__section-title" data-legal-i18n="legal.footer.contact">Contacto</h3>
                     <ul class="legal-footer__links">
                         <li><a href="mailto:dpo@agrobridge.global" class="legal-footer__link">DPO</a></li>
                         <li><a href="mailto:ceo@agrobridge.global" class="legal-footer__link">CEO</a></li>
@@ -534,6 +537,7 @@
     </div>
     
     <!-- Scripts -->
+    <script src="../scripts/legal-i18n.js"></script>
     <script src="../scripts/legal-core.js"></script>
     <script src="../scripts/legal-animations.js"></script>
     <script src="../scripts/legal-utils.js"></script>

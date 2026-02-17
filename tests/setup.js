@@ -80,6 +80,15 @@ Element.prototype.scrollIntoView = jest.fn();
 global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
 global.cancelAnimationFrame = (id) => clearTimeout(id);
 
+// Polyfill setImmediate for Node-style middleware used by Express/router in jsdom.
+if (typeof global.setImmediate !== 'function') {
+  global.setImmediate = (fn, ...args) => setTimeout(fn, 0, ...args);
+}
+
+if (typeof global.clearImmediate !== 'function') {
+  global.clearImmediate = (id) => clearTimeout(id);
+}
+
 // Mock window.scrollTo
 window.scrollTo = jest.fn();
 

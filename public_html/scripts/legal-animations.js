@@ -429,18 +429,6 @@ if (document.readyState === 'loading') {
   window.legalAnimations = new LegalAnimations();
 }
 
-// Add ripple keyframes to document
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes ripple {
-    to {
-      transform: scale(4);
-      opacity: 0;
-    }
-  }
-`;
-document.head.appendChild(style);
-
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = LegalAnimations;

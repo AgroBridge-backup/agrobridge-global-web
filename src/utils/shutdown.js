@@ -1,4 +1,5 @@
 import logger from './logger.js';
+import { getRateLimitRedisClient } from '../middleware/security.js';
 
 class GracefulShutdown {
   constructor(server) {
@@ -116,10 +117,9 @@ class GracefulShutdown {
 
   async closeRedisConnections() {
     try {
-      const redis = await import('redis').catch(() => null);
-      
-      if (redis && global.redisClient) {
-        await global.redisClient.quit();
+      const redisClient = getRateLimitRedisClient();
+      if (redisClient && redisClient.status !== 'end') {
+        await redisClient.quit();
         logger.info('Redis connection closed successfully.');
       }
     } catch (error) {

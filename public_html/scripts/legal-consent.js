@@ -114,7 +114,8 @@ class CookieConsentManager {
   setCookie(name, value, days) {
     const expires = new Date();
     expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-    document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+    const secure = window.location.protocol === 'https:' ? ';Secure' : '';
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax${secure}`;
   }
 
   /**
@@ -189,6 +190,27 @@ class CookieConsentManager {
    * Create cookie banner HTML
    */
   createBanner() {
+    const bannerStrings = {
+      es: {
+        title: 'Respetamos su privacidad',
+        message: 'Utilizamos cookies esenciales para el funcionamiento del sitio y, con su consentimiento, cookies anal\u00edticas para mejorar su experiencia.',
+        moreInfo: 'M\u00e1s informaci\u00f3n',
+        reject: 'Solo esenciales',
+        customize: 'Personalizar',
+        accept: 'Aceptar todas'
+      },
+      en: {
+        title: 'We respect your privacy',
+        message: 'We use essential cookies for site functionality and, with your consent, analytics cookies to improve your experience.',
+        moreInfo: 'More information',
+        reject: 'Essential only',
+        customize: 'Customize',
+        accept: 'Accept all'
+      }
+    };
+    const lang = (document.documentElement.lang || 'es').substring(0, 2);
+    const t = bannerStrings[lang] || bannerStrings.es;
+
     const banner = document.createElement('div');
     banner.id = 'cookie-banner';
     banner.className = 'cookie-banner';
@@ -201,22 +223,21 @@ class CookieConsentManager {
       <div class="cookie-banner__container">
         <div class="cookie-banner__icon" aria-hidden="true">🍪</div>
         <div class="cookie-banner__content">
-          <h2 id="cookie-banner-title" class="cookie-banner__title">Respetamos su privacidad</h2>
+          <h2 id="cookie-banner-title" class="cookie-banner__title">${t.title}</h2>
           <p id="cookie-banner-desc" class="cookie-banner__text">
-            Utilizamos cookies esenciales para el funcionamiento del sitio y, con su consentimiento,
-            cookies analiticas para mejorar su experiencia.
-            <a href="/legal/cookies.html" class="text-primary">Mas informacion</a>
+            ${t.message}
+            <a href="/legal/cookies.html" class="text-primary">${t.moreInfo}</a>
           </p>
         </div>
         <div class="cookie-banner__actions">
           <button id="cookie-reject-optional" class="btn btn--ghost btn--small">
-            Solo esenciales
+            ${t.reject}
           </button>
           <button id="cookie-customize" class="btn btn--secondary btn--small">
-            Personalizar
+            ${t.customize}
           </button>
           <button id="cookie-accept-all" class="btn btn--primary btn--small">
-            Aceptar todas
+            ${t.accept}
           </button>
         </div>
       </div>
@@ -351,15 +372,20 @@ class CookieConsentManager {
     if (window.gtag || window.gaLoaded) return;
 
     // Google Analytics 4
+    const gaId = window.AGROBRIDGE_GA_ID || 'G-XXXXXXXXXX';
+    if (!gaId || gaId === 'G-XXXXXXXXXX' || !/^G-[A-Z0-9]+$/.test(gaId)) {
+      return;
+    }
+
     const script = document.createElement('script');
     script.async = true;
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX'; // Replace with actual ID
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`;
 
     script.onload = () => {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function() { dataLayer.push(arguments); };
       gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX', {
+      gtag('config', gaId, {
         anonymize_ip: true,
         allow_google_signals: false,
         allow_ad_personalization_signals: false
@@ -379,7 +405,8 @@ class CookieConsentManager {
    */
   disableAnalytics() {
     // Disable Google Analytics
-    window['ga-disable-G-XXXXXXXXXX'] = true;
+    const gaId = window.AGROBRIDGE_GA_ID || 'G-XXXXXXXXXX';
+    window['ga-disable-' + gaId] = true;
 
     // Remove any existing analytics cookies
     this.deleteCookie('_ga');

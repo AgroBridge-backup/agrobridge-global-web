@@ -8,9 +8,9 @@
   /* ═══════════════════════════════════════════════════════════════════════
      TYPOGRAPHY SYSTEM V2.0 - Font Families
      ═══════════════════════════════════════════════════════════════════════ */
-  --font-display: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-body: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, 'Courier New', monospace;
+  --font-display: 'Sora', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, 'Courier New', monospace;
   
   /* Typography Scale - Fluid Sizing with clamp() */
   /* Using ~1.25x ratio (Major Third) for harmonic progression */
@@ -596,6 +596,36 @@ small {
   padding: var(--space-6) var(--space-12);
 }
 
+.button:focus-visible,
+.demo-btn:focus-visible,
+.validate-btn:focus-visible,
+.reset-validation-btn:focus-visible,
+.example-chip:focus-visible,
+.contact-form input:focus-visible,
+.contact-form textarea:focus-visible,
+.form-select:focus-visible,
+.lang-select-custom:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.35);
+}
+
+.button:active,
+.demo-btn:active,
+.validate-btn:active,
+.reset-validation-btn:active,
+.example-chip:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.button:disabled,
+.button[aria-disabled="true"],
+.demo-btn:disabled,
+.validate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ==========================================================================
    SECTION SYSTEM
    ========================================================================== */
@@ -1077,6 +1107,20 @@ small {
 .contact-form textarea {
   resize: vertical;
   min-height: 140px;
+}
+
+.contact-form input.is-invalid,
+.contact-form textarea.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+.contact-form input.is-valid,
+.contact-form textarea.is-valid,
+.form-select.is-valid {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.16);
 }
 
 /* ==========================================================================
@@ -1705,6 +1749,16 @@ small {
   letter-spacing: 0.5px;
 }
 
+.validation-input[aria-invalid="true"] {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.22);
+}
+
+.validation-input[aria-invalid="false"]:not(:placeholder-shown) {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.16);
+}
+
 .validate-btn {
   background: var(--gradient-gold);
   color: var(--color-primary-dark);
@@ -2206,7 +2260,7 @@ small {
 .case-card__metric {
   font-size: var(--text-3xl);
   font-weight: var(--font-extrabold);
-  color: var(--color-secondary);
+  color: #6f4f00;
   margin-bottom: var(--space-2);
 }
 
@@ -2470,6 +2524,39 @@ small {
   color: #60a5fa;
 }
 
+.validation-feedback {
+  margin: 0 var(--space-8) var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  border: 1px solid transparent;
+  line-height: 1.45;
+}
+
+.validation-feedback--error {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.validation-feedback--success {
+  background: rgba(22, 163, 74, 0.14);
+  border-color: rgba(22, 163, 74, 0.4);
+}
+
+.validation-feedback--details {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.form-status {
+  min-height: 1.5rem;
+  font-size: var(--text-sm);
+  margin-top: calc(var(--space-4) * -0.3);
+}
+
+.form-status--info { color: var(--color-info); }
+.form-status--success { color: var(--color-success); }
+.form-status--error { color: var(--color-error); }
+
 /* ==========================================================================
    SUCCESS ANIMATION
    ========================================================================== */
@@ -2549,7 +2636,7 @@ small {
 .mockup-title {
   margin-left: auto;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: #e2e8f0;
   font-family: var(--font-mono);
 }
 
@@ -3028,4 +3115,103 @@ small {
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-wide);
   line-height: 1;
+}
+
+/* Notification styles moved from runtime JS for strict CSP compatibility */
+.agrobridge-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10000;
+  transform: translateX(120%);
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  max-width: 400px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.agrobridge-notification.visible {
+  transform: translateX(0);
+}
+
+.agrobridge-notification.hiding {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.agrobridge-notification--success {
+  border-left: 4px solid #22c55e;
+}
+
+.agrobridge-notification--error {
+  border-left: 4px solid #ef4444;
+}
+
+.agrobridge-notification--warning {
+  border-left: 4px solid #f59e0b;
+}
+
+.agrobridge-notification--info {
+  border-left: 4px solid #3b82f6;
+}
+
+.notification-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  background: rgba(31, 41, 55, 0.08);
+  color: #111827;
+}
+
+.notification-message {
+  flex: 1;
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+  line-height: 1;
+}
+
+.notification-close:hover {
+  color: #4b5563;
+}
+
+.notification-close:focus-visible {
+  outline: 2px solid #b58d57;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agrobridge-notification,
+  .agrobridge-notification.visible,
+  .agrobridge-notification.hiding {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .agrobridge-notification {
+    left: 10px;
+    right: 10px;
+    max-width: none;
+  }
 }

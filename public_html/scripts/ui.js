@@ -8,10 +8,32 @@ window.AgroBridgeUI = (function() {
     'use strict';
 
     var utils = window.AgroBridgeUtils;
+    var i18n = window.AgroBridgeI18n;
+    if (!utils) { console.warn('AgroBridgeUtils not loaded'); return {}; }
 
     // ============================================
     // MOBILE MENU (Bug #7 Fix)
     // ============================================
+
+    function trapFocus(container) {
+        var focusable = container.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])');
+        if (!focusable.length) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        container.addEventListener('keydown', function(e) {
+            if (e.key !== 'Tab') return;
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        });
+    }
+
+    function setMobileMenuState(navToggle, navMenu, isActive) {
+        if (!navToggle || !navMenu) return;
+        navMenu.classList.toggle('active', isActive);
+        navToggle.classList.toggle('active', isActive);
+        navToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        navMenu.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    }
 
     function initMobileMenu(app) {
         var navToggle = utils.getElement('navToggle');
@@ -19,41 +41,49 @@ window.AgroBridgeUI = (function() {
 
         if (navToggle && navMenu) {
             app._trackListener(navToggle, 'click', function() {
-                var isActive = navMenu.classList.toggle('active');
-                navToggle.classList.toggle('active');
-                navToggle.setAttribute('aria-expanded', isActive.toString());
-
-                if (isActive) {
-                    document.addEventListener('click', function outsideClick(e) {
-                        handleOutsideClick(e);
-                    }, { once: true });
+                var shouldOpen = !navMenu.classList.contains('active');
+                setMobileMenuState(navToggle, navMenu, shouldOpen);
+                if (shouldOpen) {
+                    trapFocus(navMenu);
+                    var firstFocusable = navMenu.querySelector('a[href], button, [tabindex]:not([tabindex="-1"])');
+                    if (firstFocusable) firstFocusable.focus();
+                } else {
+                    navToggle.focus();
                 }
+            });
+
+            app._trackListener(document, 'click', function(e) {
+                if (!navMenu.classList.contains('active')) {
+                    return;
+                }
+                if (navToggle.contains(e.target) || navMenu.contains(e.target)) {
+                    return;
+                }
+                setMobileMenuState(navToggle, navMenu, false);
+                navToggle.focus();
+            });
+
+            app._trackListener(document, 'keydown', function(e) {
+                if (e.key !== 'Escape') return;
+                if (!navMenu.classList.contains('active')) return;
+                setMobileMenuState(navToggle, navMenu, false);
+                navToggle.focus();
             });
 
             navMenu.querySelectorAll('.nav__link').forEach(function(link) {
                 app._trackListener(link, 'click', function() {
-                    navMenu.classList.remove('active');
-                    navToggle.classList.remove('active');
-                    navToggle.setAttribute('aria-expanded', 'false');
+                    setMobileMenuState(navToggle, navMenu, false);
+                    navToggle.focus();
                 });
             });
-        }
-    }
-
-    function handleOutsideClick(e) {
-        var navToggle = utils.getElement('navToggle');
-        var navMenu = utils.getElement('navMenu');
-
-        if (navToggle && navMenu && !navToggle.contains(e.target) && !navMenu.contains(e.target)) {
-            navMenu.classList.remove('active');
-            navToggle.classList.remove('active');
-            navToggle.setAttribute('aria-expanded', 'false');
         }
     }
 
     // ============================================
     // SLIDESHOW
     // ============================================
+
+    var slideshowInterval = null;
 
     function initSlideshow() {
         var slideshow = utils.getElement('heroSlideshow');
@@ -64,11 +94,22 @@ window.AgroBridgeUI = (function() {
 
         var currentSlide = 0;
 
-        setInterval(function() {
+        if (slideshowInterval) {
+            clearInterval(slideshowInterval);
+        }
+
+        slideshowInterval = setInterval(function() {
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
         }, 5000);
+    }
+
+    function destroySlideshow() {
+        if (slideshowInterval) {
+            clearInterval(slideshowInterval);
+            slideshowInterval = null;
+        }
     }
 
     // ============================================
@@ -109,24 +150,33 @@ window.AgroBridgeUI = (function() {
         var existing = document.querySelector('.agrobridge-notification');
         if (existing) existing.remove();
 
+        var htmlLang = document.documentElement.getAttribute('data-ui-language') ||
+            document.documentElement.lang || 'es';
+
         var notification = document.createElement('div');
         notification.className = 'agrobridge-notification agrobridge-notification--' + type;
+        notification.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        notification.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+        notification.setAttribute('aria-atomic', 'true');
+        notification.tabIndex = -1;
 
         var icons = {
-            success: '\u2705',
-            error: '\u274c',
-            warning: '\u26a0\ufe0f',
-            info: '\u2139\ufe0f'
+            success: '✓',
+            error: '!',
+            warning: '!',
+            info: 'i'
         };
 
         notification.innerHTML =
             '<span class="notification-icon">' + (icons[type] || icons.info) + '</span>' +
             '<span class="notification-message">' + utils.escapeHtml(message) + '</span>' +
-            '<button class="notification-close" aria-label="Cerrar">\u00d7</button>';
+            '<button class="notification-close" aria-label="' +
+            utils.escapeHtml(i18n.t(htmlLang, 'notification.close')) + '">\u00d7</button>';
 
         ensureNotificationStyles();
 
         document.body.appendChild(notification);
+        notification.focus({ preventScroll: true });
 
         notification.querySelector('.notification-close').addEventListener('click', function() {
             notification.classList.add('hiding');
@@ -146,30 +196,8 @@ window.AgroBridgeUI = (function() {
     }
 
     function ensureNotificationStyles() {
-        if (document.getElementById('agrobridge-notification-styles')) return;
-
-        var styles = document.createElement('style');
-        styles.id = 'agrobridge-notification-styles';
-        styles.textContent =
-            '.agrobridge-notification {' +
-            '  position: fixed; top: 20px; right: 20px; padding: 16px 20px;' +
-            '  border-radius: 12px; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.2);' +
-            '  display: flex; align-items: center; gap: 12px; z-index: 10000;' +
-            '  transform: translateX(120%); transition: transform 0.3s ease, opacity 0.3s ease;' +
-            '  max-width: 400px; font-family: "Inter", sans-serif;' +
-            '}' +
-            '.agrobridge-notification.visible { transform: translateX(0); }' +
-            '.agrobridge-notification.hiding { transform: translateX(120%); opacity: 0; }' +
-            '.agrobridge-notification--success { border-left: 4px solid #22c55e; }' +
-            '.agrobridge-notification--error { border-left: 4px solid #ef4444; }' +
-            '.agrobridge-notification--warning { border-left: 4px solid #f59e0b; }' +
-            '.agrobridge-notification--info { border-left: 4px solid #3b82f6; }' +
-            '.notification-icon { font-size: 1.25rem; }' +
-            '.notification-message { flex: 1; color: #1f2937; font-size: 0.95rem; }' +
-            '.notification-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #9ca3af; padding: 0; line-height: 1; }' +
-            '.notification-close:hover { color: #4b5563; }' +
-            '@media (max-width: 480px) { .agrobridge-notification { left: 10px; right: 10px; max-width: none; } }';
-        document.head.appendChild(styles);
+        // Styles are served from external CSS to avoid inline style CSP exceptions.
+        return;
     }
 
     // ============================================
@@ -209,34 +237,37 @@ window.AgroBridgeUI = (function() {
     // SCANNING STEPS ANIMATION
     // ============================================
 
-    async function showScanningSteps(currentLang) {
+    async function showScanningSteps(currentLang, options) {
         var scanningStep = utils.getElement('scanning-step');
         if (!scanningStep) return;
+        var shouldStop = options && typeof options.shouldStop === 'function'
+            ? options.shouldStop
+            : function() { return false; };
+        var stepDelay = options && typeof options.stepDelay === 'number'
+            ? Math.max(80, options.stepDelay)
+            : 320;
 
-        var steps = currentLang === 'es' ? [
-            'Conectando con TrustChain\u2122...',
-            'Verificando hash SHA-256...',
-            'Consultando registro de origen...',
-            'Validando cadena de fr\u00edo...',
-            'Generando certificado...'
-        ] : [
-            'Connecting to TrustChain\u2122...',
-            'Verifying SHA-256 hash...',
-            'Querying origin registry...',
-            'Validating cold chain...',
-            'Generating certificate...'
+        var steps = [
+            i18n.t(currentLang, 'validation.scan.step.connect'),
+            i18n.t(currentLang, 'validation.scan.step.hash'),
+            i18n.t(currentLang, 'validation.scan.step.origin'),
+            i18n.t(currentLang, 'validation.scan.step.cold'),
+            i18n.t(currentLang, 'validation.scan.step.certificate')
         ];
 
         for (var i = 0; i < steps.length; i++) {
+            if (shouldStop()) {
+                break;
+            }
             scanningStep.textContent = steps[i];
-            await utils.delay(500);
+            await utils.delay(stepDelay);
         }
     }
 
     return {
         initMobileMenu: initMobileMenu,
-        handleOutsideClick: handleOutsideClick,
         initSlideshow: initSlideshow,
+        destroySlideshow: destroySlideshow,
         initExampleChips: initExampleChips,
         showNotification: showNotification,
         ensureNotificationStyles: ensureNotificationStyles,

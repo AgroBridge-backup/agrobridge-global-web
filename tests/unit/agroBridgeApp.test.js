@@ -614,12 +614,21 @@ describe('AgroBridgeApp', () => {
   // ADDITIONAL DOM UTILITIES
   // ============================================
   describe('Additional DOM Utilities', () => {
-    test('setHtml should set innerHTML on existing element', () => {
+    test('setHtml should escape HTML by default', () => {
       const div = document.createElement('div');
       div.id = 'test-html-div';
       document.body.appendChild(div);
 
       app.setHtml('test-html-div', '<span>Test Content</span>');
+      expect(div.innerHTML).toBe('&lt;span&gt;Test Content&lt;/span&gt;');
+    });
+
+    test('setHtml should set raw innerHTML when raw flag is true', () => {
+      const div = document.createElement('div');
+      div.id = 'test-html-raw';
+      document.body.appendChild(div);
+
+      app.setHtml('test-html-raw', '<span>Test Content</span>', true);
       expect(div.innerHTML).toBe('<span>Test Content</span>');
     });
 
@@ -663,32 +672,6 @@ describe('AgroBridgeApp', () => {
       expect(menu.classList.contains('active')).toBe(false);
     });
 
-    test('handleOutsideClick should close menu when clicking outside', () => {
-      const toggle = document.getElementById('navToggle');
-      const menu = document.getElementById('navMenu');
-
-      toggle.click(); // Open menu
-      expect(menu.classList.contains('active')).toBe(true);
-
-      // Simulate clicking outside
-      const outsideEvent = { target: document.body };
-      app.handleOutsideClick(outsideEvent);
-
-      expect(menu.classList.contains('active')).toBe(false);
-    });
-
-    test('handleOutsideClick should not close when clicking inside menu', () => {
-      const toggle = document.getElementById('navToggle');
-      const menu = document.getElementById('navMenu');
-
-      toggle.click(); // Open menu
-
-      // Simulate clicking inside menu
-      const insideEvent = { target: menu };
-      app.handleOutsideClick(insideEvent);
-
-      expect(menu.classList.contains('active')).toBe(true);
-    });
   });
 
   // ============================================
@@ -857,7 +840,7 @@ describe('AgroBridgeApp', () => {
       form.querySelector('select[name="inquiry_type"]').value = 'cotizacion';
       form.querySelector('textarea[name="message"]').value = 'Solicitud de prueba detallada.';
 
-      const notifySpy = jest.spyOn(app, 'showNotification');
+      const notifySpy = jest.spyOn(window.AgroBridgeUI, 'showNotification');
       const event = { preventDefault: jest.fn(), target: form };
       await app.handleContactSubmit(event);
 
@@ -908,7 +891,7 @@ describe('AgroBridgeApp', () => {
       form.querySelector('select[name="inquiry_type"]').value = 'cotizacion';
       form.querySelector('textarea[name="message"]').value = 'Solicitud de prueba detallada.';
 
-      const notifySpy = jest.spyOn(app, 'showNotification');
+      const notifySpy = jest.spyOn(window.AgroBridgeUI, 'showNotification');
       const event = { preventDefault: jest.fn(), target: form };
       await app.handleContactSubmit(event);
 
@@ -1241,12 +1224,12 @@ describe('AgroBridgeApp', () => {
       }
     });
 
-    test('ensureNotificationStyles should add styles only once', () => {
+    test('ensureNotificationStyles should not inject inline style tags', () => {
       app.ensureNotificationStyles();
       app.ensureNotificationStyles();
 
       const styles = document.querySelectorAll('#agrobridge-notification-styles');
-      expect(styles.length).toBe(1);
+      expect(styles.length).toBe(0);
     });
 
     test('showNotification with default type should use info', () => {

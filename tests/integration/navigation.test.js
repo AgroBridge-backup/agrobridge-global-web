@@ -6,6 +6,10 @@
 import { jest } from '@jest/globals';
 
 describe('Navigation Integration', () => {
+  beforeAll(async () => {
+    await global.loadAgroBridgeModules();
+  });
+
   beforeEach(() => {
     global.testUtils.createMockDOM();
   });

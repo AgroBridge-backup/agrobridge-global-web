@@ -23,15 +23,6 @@ const LegalUtils = {
    * Download page as PDF
    */
   downloadPDF: function(pageType) {
-    const pageNames = {
-      'privacy': 'Politica-de-Privacidad',
-      'terms': 'Terminos-y-Condiciones',
-      'cookies': 'Politica-de-Cookies',
-      'dpa': 'Acuerdo-de-Tratamiento-de-Datos'
-    };
-
-    const filename = `${pageNames[pageType] || 'Documento'}-AgroBridge.pdf`;
-
     // Trigger print dialog with PDF option
     window.print();
 

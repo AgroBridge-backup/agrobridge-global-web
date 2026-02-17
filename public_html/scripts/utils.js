@@ -126,10 +126,10 @@ window.AgroBridgeUtils = (function() {
      * @param {string} id - Element ID
      * @param {string} html - HTML content (will be used as-is, ensure it's safe)
      */
-    function setHtml(id, html) {
+    function setHtml(id, html, raw) {
         const element = document.getElementById(id);
         if (element) {
-            element.innerHTML = html;
+            element.innerHTML = raw ? html : escapeHtml(html);
         }
     }
 

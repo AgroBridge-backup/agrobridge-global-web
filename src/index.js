@@ -1,28 +1,21 @@
 /**
  * AgroBridge Global — Main Express application entry point.
- *
- * Responsibilities:
- *  1. Load environment configuration
- *  2. Create Express app and apply middleware
- *  3. Mount routes
- *  4. Mount the global error handler (MUST be last app.use())
- *  5. Register process-level exception/rejection handlers
- *  6. Start the HTTP server
  */
 
 import 'dotenv/config';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import { randomUUID } from 'crypto';
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { randomUUID } from 'crypto';
-import cookieParser from 'cookie-parser';
-import compression from 'compression';
-
-import setupSecurity from './middleware/security.js';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { config, validateConfig } from './config/index.js';
 import errorHandler from './middleware/errorHandler.js';
+import createObservabilityMiddleware from './middleware/observability.js';
+import setupSecurity from './middleware/security.js';
+import adminRouter from './routes/admin.js';
 import { setupGracefulShutdown } from './utils/shutdown.js';
 
-// ---------- Logger (fallback to console if Agent 5's logger isn't created yet) ----------
 let logger;
 try {
   logger = (await import('./utils/logger.js')).default;
@@ -30,96 +23,140 @@ try {
   logger = console;
 }
 
-// ---------- Directory helpers ----------
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 
-// ---------- Configuration ----------
-const PORT = parseInt(process.env.PORT, 10) || 3000;
-const HOST = process.env.SERVER_HOST || '0.0.0.0';
-const NODE_ENV = process.env.NODE_ENV || 'development';
-
-// ---------- Process-level exception handlers ----------
-process.on('uncaughtException', (error) => {
-  if (typeof logger.error === 'function') {
-    logger.error('UNCAUGHT EXCEPTION — shutting down', {
-      message: error.message,
-      stack: error.stack,
-    });
-  } else {
-    console.error('UNCAUGHT EXCEPTION:', error);
-  }
-  // Give logger time to flush, then exit.
-  setTimeout(() => process.exit(1), 1000);
-});
-
-process.on('unhandledRejection', (reason) => {
-  if (typeof logger.error === 'function') {
-    logger.error('UNHANDLED REJECTION', {
-      message: reason instanceof Error ? reason.message : String(reason),
-      stack: reason instanceof Error ? reason.stack : undefined,
-    });
-  } else {
-    console.error('UNHANDLED REJECTION:', reason);
-  }
-});
-
-// ---------- Express app ----------
-const app = express();
-
-// Trust first proxy (required for correct req.ip behind load balancers)
-app.set('trust proxy', 1);
-
-// Request ID middleware — assigns a unique correlation ID to every request
 const requestIdMiddleware = (req, res, next) => {
   req.id = req.headers['x-request-id'] || randomUUID();
   res.setHeader('X-Request-ID', req.id);
   next();
 };
-app.use(requestIdMiddleware);
 
-// Body parsers
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-app.use(cookieParser());
-app.use(compression());
-
-// Security middleware (helmet, cors, rate-limit, mongo-sanitize, CSRF)
-setupSecurity(app);
-
-// Serve static frontend assets from public_html/
-app.use(express.static(path.join(PROJECT_ROOT, 'public_html')));
-
-// ---------- API routes ----------
-// Admin routes
-import adminRouter from './routes/admin.js';
-app.use('/api/admin', adminRouter);
-
-// Health-check endpoint (no auth required — used by load balancers)
-app.get('/health', (_req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    version: process.env.npm_package_version || '2.0.0',
+const createApp = () => {
+  const app = express();
+  const observability = createObservabilityMiddleware({
+    metricsBearerToken: config.observability.metricsBearerToken,
   });
-});
 
-// ---------- Global error handler — MUST be last app.use() ----------
-app.use(errorHandler);
+  app.set('trust proxy', config.server.trustProxy);
 
-// ---------- Start server ----------
-const server = app.listen(PORT, HOST, () => {
-  const msg = `AgroBridge server running on ${HOST}:${PORT} [${NODE_ENV}]`;
-  if (typeof logger.info === 'function') {
-    logger.info(msg);
-  } else {
-    console.log(msg);
+  app.use(requestIdMiddleware);
+  if (config.observability.enabled) {
+    app.use(observability.middleware);
   }
-});
+  app.use(express.json({ limit: '10kb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+  app.use(cookieParser());
+  app.use(compression());
 
-// Graceful shutdown (SIGTERM / SIGINT)
-setupGracefulShutdown(server);
+  setupSecurity(app);
 
-export default app;
+  app.use(express.static(path.join(PROJECT_ROOT, 'public_html')));
+
+  app.use('/api/admin', adminRouter);
+
+  app.get('/health', (_req, res) => {
+    res.status(200).json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      version: process.env.npm_package_version || config.app.version || '2.0.0',
+    });
+  });
+
+  if (config.app.env === 'test' || process.env.ENABLE_TEST_ENDPOINTS === 'true') {
+    app.post('/api/test/csrf-protected', (req, res) => {
+      res.status(200).json({
+        success: true,
+        message: 'CSRF validation passed',
+        requestId: req.id,
+      });
+    });
+  }
+
+  if (config.observability.metricsEnabled) {
+    app.get(
+      config.observability.metricsPath,
+      observability.metricsAuthMiddleware,
+      observability.metricsHandler
+    );
+  }
+
+  app.use(errorHandler);
+  return app;
+};
+
+const connectDatabase = async () => {
+  let mongoose;
+  try {
+    mongoose = (await import('mongoose')).default;
+    await mongoose.connect(config.database.uri, config.database.options);
+    logger.info?.('MongoDB connected');
+
+    try {
+      const { synchronizeLeadIndexes } = await import('./models/Lead.js');
+      await synchronizeLeadIndexes({ mode: config.database.indexMode, logger });
+    } catch (error) {
+      logger.error?.('Lead index initialization failed', {
+        message: error.message,
+        mode: config.database.indexMode,
+      });
+
+      if (config.database.requireIndexes) {
+        throw error;
+      }
+    }
+  } catch (error) {
+    logger.error?.('MongoDB connection failed', { message: error.message });
+    if (config.database.required || config.app.env === 'production') {
+      throw error;
+    }
+
+    if (mongoose?.connection?.readyState === 1) {
+      await mongoose.connection.close();
+    }
+  }
+};
+
+const startServer = async (appInstance) => {
+  validateConfig();
+  await connectDatabase();
+
+  const app = appInstance || createApp();
+  const server = app.listen(config.server.port, config.server.host, () => {
+    logger.info?.(`AgroBridge server running on ${config.server.host}:${config.server.port} [${config.app.env}]`);
+  });
+
+  if (Number.isFinite(config.server.timeout) && config.server.timeout > 0) {
+    server.setTimeout(config.server.timeout);
+  }
+
+  if (config.server.keepAlive === false) {
+    server.keepAliveTimeout = 0;
+  }
+
+  setupGracefulShutdown(server);
+  return { app, server };
+};
+
+const isExecutedDirectly = (() => {
+  if (!process.argv[1]) {
+    return false;
+  }
+  return import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+})();
+
+if (isExecutedDirectly) {
+  startServer().catch((error) => {
+    logger.error?.('Failed to start server', { message: error.message, stack: error.stack });
+    process.exit(1);
+  });
+}
+
+export {
+  createApp,
+  startServer,
+};
+
+export default createApp;

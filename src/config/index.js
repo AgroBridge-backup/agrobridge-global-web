@@ -1,53 +1,66 @@
-require('dotenv').config();
+import 'dotenv/config';
+
+const parseInteger = (value, fallback) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const parseCsv = (value, fallback) => {
+  const source = value || fallback;
+  return source.split(',').map((entry) => entry.trim()).filter(Boolean);
+};
+
+const parseTrustProxy = (value) => {
+  if (value === undefined || value === null || value === '') {
+    return false;
+  }
+
+  if (value === 'true') {
+    return true;
+  }
+
+  if (value === 'false') {
+    return false;
+  }
+
+  if (/^\d+$/.test(value)) {
+    return Number.parseInt(value, 10);
+  }
+
+  return value;
+};
 
 const config = {
   app: {
     name: process.env.APP_NAME || 'AgroBridge',
     env: process.env.NODE_ENV || 'development',
-    port: parseInt(process.env.PORT, 10) || 3000,
+    port: parseInteger(process.env.PORT, 3000),
     version: process.env.APP_VERSION || '1.0.0',
   },
 
   server: {
     host: process.env.SERVER_HOST || '0.0.0.0',
-    port: parseInt(process.env.SERVER_PORT, 10) || 3000,
-    timeout: parseInt(process.env.SERVER_TIMEOUT, 10) || 30000,
+    port: parseInteger(process.env.SERVER_PORT || process.env.PORT, 3000),
+    timeout: parseInteger(process.env.SERVER_TIMEOUT, 30000),
     keepAlive: process.env.SERVER_KEEP_ALIVE === 'true',
+    trustProxy: parseTrustProxy(process.env.TRUST_PROXY),
   },
 
   database: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/agrobridge',
+    required: process.env.DB_REQUIRED === 'true',
+    indexMode: process.env.DB_INDEX_MODE || 'ensure',
+    requireIndexes: process.env.DB_REQUIRE_INDEXES === 'true',
     options: {
-      maxPoolSize: parseInt(process.env.DB_POOL_SIZE, 10) || 20,
-      socketTimeoutMS: parseInt(process.env.DB_CONNECTION_TIMEOUT, 10) || 45000,
-      serverSelectionTimeoutMS: 5000,
+      maxPoolSize: parseInteger(process.env.DB_POOL_SIZE, 20),
+      socketTimeoutMS: parseInteger(process.env.DB_CONNECTION_TIMEOUT, 45000),
+      serverSelectionTimeoutMS: parseInteger(process.env.DB_SERVER_SELECTION_TIMEOUT, 5000),
     },
   },
 
   jwt: {
-    accessSecret: (() => {
-      const secret = process.env.JWT_ACCESS_SECRET;
-      if (!secret) {
-        throw new Error('FATAL: JWT_ACCESS_SECRET must be set in environment variables');
-      }
-      if (secret.length < 64) {
-        throw new Error('FATAL: JWT secret must be at least 64 characters for HMAC-SHA256 security');
-      }
-      return secret;
-    })(),
-    refreshSecret: (() => {
-      const secret = process.env.JWT_REFRESH_SECRET;
-      if (!secret) {
-        throw new Error('FATAL: JWT_REFRESH_SECRET must be set in environment variables');
-      }
-      if (secret.length < 64) {
-        throw new Error('FATAL: JWT secret must be at least 64 characters for HMAC-SHA256 security');
-      }
-      if (secret === process.env.JWT_ACCESS_SECRET) {
-        throw new Error('FATAL: JWT_REFRESH_SECRET must be different from JWT_ACCESS_SECRET');
-      }
-      return secret;
-    })(),
+    accessSecret: process.env.JWT_ACCESS_SECRET,
+    refreshSecret: process.env.JWT_REFRESH_SECRET,
     accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
     issuer: process.env.JWT_ISSUER || 'agrobridge',
@@ -55,29 +68,21 @@ const config = {
   },
 
   csrf: {
-    secret: (() => {
-      const secret = process.env.CSRF_SECRET;
-      if (!secret) {
-        throw new Error('FATAL: CSRF_SECRET must be set in environment variables');
-      }
-      if (secret.length < 32) {
-        throw new Error('FATAL: CSRF_SECRET must be at least 32 characters for security');
-      }
-      return secret;
-    })(),
+    secret: process.env.CSRF_SECRET,
     cookieName: process.env.CSRF_COOKIE_NAME || 'csrf-token',
     headerName: process.env.CSRF_HEADER_NAME || 'X-CSRF-Token',
     secure: process.env.CSRF_SECURE === 'true' || process.env.NODE_ENV === 'production',
     sameSite: process.env.CSRF_SAME_SITE || 'strict',
+    maxAgeMs: parseInteger(process.env.CSRF_MAX_AGE_MS, 60 * 60 * 1000),
   },
 
   security: {
-    bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 12,
-    maxLoginAttempts: parseInt(process.env.MAX_LOGIN_ATTEMPTS, 10) || 5,
-    lockoutDuration: parseInt(process.env.LOCKOUT_DURATION, 10) || 900,
-    passwordMinLength: parseInt(process.env.PASSWORD_MIN_LENGTH, 10) || 12,
+    bcryptRounds: parseInteger(process.env.BCRYPT_ROUNDS, 12),
+    maxLoginAttempts: parseInteger(process.env.MAX_LOGIN_ATTEMPTS, 5),
+    lockoutDuration: parseInteger(process.env.LOCKOUT_DURATION, 900),
+    passwordMinLength: parseInteger(process.env.PASSWORD_MIN_LENGTH, 12),
     requireStrongPassword: process.env.REQUIRE_STRONG_PASSWORD !== 'false',
-    sessionTimeout: parseInt(process.env.SESSION_TIMEOUT, 10) || 3600,
+    sessionTimeout: parseInteger(process.env.SESSION_TIMEOUT, 3600),
   },
 
   cors: {
@@ -89,32 +94,39 @@ const config = {
       if (origin === '*') {
         return origin;
       }
-      return origin.split(',').map(o => o.trim()).filter(Boolean);
+      return parseCsv(origin, '');
     })(),
     credentials: process.env.CORS_CREDENTIALS === 'true',
-    methods: (process.env.CORS_METHODS || 'GET,POST,PUT,DELETE,PATCH,OPTIONS').split(','),
-    allowedHeaders: (process.env.CORS_ALLOWED_HEADERS || 'Content-Type,Authorization,X-CSRF-Token').split(','),
-    exposedHeaders: (process.env.CORS_EXPOSED_HEADERS || 'X-Total-Count,X-Page-Count').split(','),
-    maxAge: parseInt(process.env.CORS_MAX_AGE, 10) || 86400,
+    methods: parseCsv(process.env.CORS_METHODS, 'GET,POST,PUT,DELETE,PATCH,OPTIONS'),
+    allowedHeaders: parseCsv(process.env.CORS_ALLOWED_HEADERS, 'Content-Type,Authorization,X-CSRF-Token'),
+    exposedHeaders: parseCsv(process.env.CORS_EXPOSED_HEADERS, 'X-Total-Count,X-Page-Count'),
+    maxAge: parseInteger(process.env.CORS_MAX_AGE, 86400),
   },
 
   rateLimit: {
     enabled: process.env.RATE_LIMIT_ENABLED !== 'false',
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 900000,
-    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100,
+    windowMs: parseInteger(process.env.RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
+    maxRequests: parseInteger(process.env.RATE_LIMIT_MAX_REQUESTS, 100),
     skipSuccessfulRequests: process.env.RATE_LIMIT_SKIP_SUCCESS === 'true',
-    skipFailedRequests: process.env.RATE_LIMIT_SKIP_FAILED === 'false',
+    skipFailedRequests: process.env.RATE_LIMIT_SKIP_FAILED === 'true',
     keyPrefix: process.env.RATE_LIMIT_KEY_PREFIX || 'ratelimit:',
     standardHeaders: process.env.RATE_LIMIT_STANDARD_HEADERS !== 'false',
     legacyHeaders: process.env.RATE_LIMIT_LEGACY_HEADERS === 'true',
+  },
+
+  observability: {
+    enabled: process.env.OBSERVABILITY_ENABLED !== 'false',
+    metricsEnabled: process.env.METRICS_ENDPOINT_ENABLED === 'true',
+    metricsPath: process.env.METRICS_PATH || '/metrics',
+    metricsBearerToken: process.env.METRICS_BEARER_TOKEN || '',
   },
 };
 
 function validateRequiredSecrets() {
   const requiredSecrets = [
-    { name: 'CSRF_SECRET', value: process.env.CSRF_SECRET, minLength: 32 },
-    { name: 'JWT_ACCESS_SECRET', value: process.env.JWT_ACCESS_SECRET, minLength: 64 },
-    { name: 'JWT_REFRESH_SECRET', value: process.env.JWT_REFRESH_SECRET, minLength: 64 },
+    { name: 'CSRF_SECRET', value: config.csrf.secret, minLength: 32 },
+    { name: 'JWT_ACCESS_SECRET', value: config.jwt.accessSecret, minLength: 64 },
+    { name: 'JWT_REFRESH_SECRET', value: config.jwt.refreshSecret, minLength: 64 },
   ];
 
   const errors = [];
@@ -127,42 +139,36 @@ function validateRequiredSecrets() {
     }
   }
 
-  if (process.env.JWT_ACCESS_SECRET && process.env.JWT_REFRESH_SECRET) {
-    if (process.env.JWT_ACCESS_SECRET === process.env.JWT_REFRESH_SECRET) {
-      errors.push('FATAL: JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must be different values');
-    }
+  if (config.jwt.accessSecret && config.jwt.refreshSecret && config.jwt.accessSecret === config.jwt.refreshSecret) {
+    errors.push('FATAL: JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must be different values');
   }
 
   if (errors.length > 0) {
-    errors.forEach(error => console.error(error));
-    throw new Error('Configuration validation failed. Check errors above.');
+    throw new Error(`Configuration validation failed:\n${errors.join('\n')}`);
   }
 
   return true;
 }
 
 function validateConfig() {
-  try {
-    validateRequiredSecrets();
+  validateRequiredSecrets();
 
-    if (config.app.env === 'production') {
-      if (config.cors.origin === '*') {
-        console.warn('WARNING: CORS origin is set to * in production. This is not recommended.');
-      }
-      if (!config.csrf.secure) {
-        console.warn('WARNING: CSRF secure cookies are disabled in production.');
-      }
+  if (config.app.env === 'production') {
+    if (config.cors.origin === '*') {
+      console.warn('WARNING: CORS origin is set to * in production. This is not recommended.');
     }
-
-    return true;
-  } catch (error) {
-    console.error('Configuration Error:', error.message);
-    process.exit(1);
+    if (!config.csrf.secure) {
+      console.warn('WARNING: CSRF secure cookies are disabled in production.');
+    }
   }
+
+  return true;
 }
 
-module.exports = {
+export {
   config,
   validateConfig,
   validateRequiredSecrets,
 };
+
+export default config;

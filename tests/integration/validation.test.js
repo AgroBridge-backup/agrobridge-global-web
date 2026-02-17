@@ -8,6 +8,10 @@ import { jest } from '@jest/globals';
 describe('Validation Flow Integration', () => {
   let mockApp;
 
+  beforeAll(async () => {
+    await global.loadAgroBridgeModules();
+  });
+
   beforeEach(() => {
     global.testUtils.createMockDOM();
 
