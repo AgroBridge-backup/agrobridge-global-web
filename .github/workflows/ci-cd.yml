@@ -1,3 +1,20 @@
+# CI/CD Pipeline for AgroBridge Global Frontend
+#
+# Deploys static frontend (public_html/) to SiteGround shared hosting via SSH/rsync.
+# Backend deploys separately to Render.com (auto-deploy from GitHub, no CI needed here).
+#
+# Required GitHub Secrets:
+#   SITEGROUND_SSH_HOST       - SiteGround server hostname (e.g., sg123.siteground.biz)
+#   SITEGROUND_SSH_USER       - SSH username for SiteGround
+#   SITEGROUND_SSH_KEY        - Private SSH key (Ed25519 or RSA) for authentication
+#   SITEGROUND_REMOTE_PATH    - Production document root (e.g., /home/username/public_html)
+#   SITEGROUND_STAGING_PATH   - Staging document root (e.g., /home/username/staging.agrobridge.global)
+#
+# Optional GitHub Secrets:
+#   SITEGROUND_SSH_PORT       - SSH port (defaults to 18765, SiteGround's non-standard port)
+#   SLACK_WEBHOOK             - Slack webhook URL for deployment notifications
+#   CODECOV_TOKEN             - Codecov upload token
+
 name: Frontend CI/CD
 
 on:
@@ -121,7 +138,7 @@ jobs:
 
     environment:
       name: staging
-      url: https://staging-agrobridge.netlify.app
+      url: https://staging.agrobridge.global
 
     steps:
       - name: Checkout code
@@ -141,23 +158,63 @@ jobs:
 
       - name: Validate deployment secrets
         run: |
-          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then echo "::error::NETLIFY_AUTH_TOKEN not set" && exit 1; fi
+          if [ -z "$SITEGROUND_SSH_HOST" ]; then echo "::error::SITEGROUND_SSH_HOST not set" && exit 1; fi
+          if [ -z "$SITEGROUND_SSH_USER" ]; then echo "::error::SITEGROUND_SSH_USER not set" && exit 1; fi
+          if [ -z "$SITEGROUND_SSH_KEY" ]; then echo "::error::SITEGROUND_SSH_KEY not set" && exit 1; fi
+          if [ -z "$SITEGROUND_STAGING_PATH" ]; then echo "::error::SITEGROUND_STAGING_PATH not set" && exit 1; fi
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          SITEGROUND_SSH_HOST: ${{ secrets.SITEGROUND_SSH_HOST }}
+          SITEGROUND_SSH_USER: ${{ secrets.SITEGROUND_SSH_USER }}
+          SITEGROUND_SSH_KEY: ${{ secrets.SITEGROUND_SSH_KEY }}
+          SITEGROUND_STAGING_PATH: ${{ secrets.SITEGROUND_STAGING_PATH }}
 
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v2.1
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          publish-dir: './public_html'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy to staging from GitHub Actions"
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
+          ssh-private-key: ${{ secrets.SITEGROUND_SSH_KEY }}
+
+      - name: Determine SSH port
+        id: ssh-port
+        run: |
+          if [ -n "$SSH_PORT_SECRET" ]; then
+            echo "port=$SSH_PORT_SECRET" >> "$GITHUB_OUTPUT"
+          else
+            echo "port=18765" >> "$GITHUB_OUTPUT"
+          fi
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_STAGING }}
+          SSH_PORT_SECRET: ${{ secrets.SITEGROUND_SSH_PORT }}
+
+      - name: Add SiteGround host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ steps.ssh-port.outputs.port }} -H ${{ secrets.SITEGROUND_SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy to SiteGround (staging)
+        run: |
+          rsync -azv --delete \
+            -e "ssh -p ${{ steps.ssh-port.outputs.port }}" \
+            ./public_html/ \
+            ${{ secrets.SITEGROUND_SSH_USER }}@${{ secrets.SITEGROUND_SSH_HOST }}:${{ secrets.SITEGROUND_STAGING_PATH }}/
+
+      - name: Smoke test staging
+        run: |
+          sleep 5
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://staging.agrobridge.global)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::error::Staging smoke test failed with HTTP $HTTP_STATUS"
+            exit 1
+          fi
+          echo "Staging smoke test passed (HTTP $HTTP_STATUS)"
+
+      - name: Notify deployment
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author
+          text: "Staging deployment ${{ job.status }}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   deploy-production:
     name: Deploy to Production
@@ -187,25 +244,53 @@ jobs:
 
       - name: Validate deployment secrets
         run: |
-          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then echo "::error::NETLIFY_AUTH_TOKEN not set" && exit 1; fi
+          if [ -z "$SITEGROUND_SSH_HOST" ]; then echo "::error::SITEGROUND_SSH_HOST not set" && exit 1; fi
+          if [ -z "$SITEGROUND_SSH_USER" ]; then echo "::error::SITEGROUND_SSH_USER not set" && exit 1; fi
+          if [ -z "$SITEGROUND_SSH_KEY" ]; then echo "::error::SITEGROUND_SSH_KEY not set" && exit 1; fi
+          if [ -z "$SITEGROUND_REMOTE_PATH" ]; then echo "::error::SITEGROUND_REMOTE_PATH not set" && exit 1; fi
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          SITEGROUND_SSH_HOST: ${{ secrets.SITEGROUND_SSH_HOST }}
+          SITEGROUND_SSH_USER: ${{ secrets.SITEGROUND_SSH_USER }}
+          SITEGROUND_SSH_KEY: ${{ secrets.SITEGROUND_SSH_KEY }}
+          SITEGROUND_REMOTE_PATH: ${{ secrets.SITEGROUND_REMOTE_PATH }}
 
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v2.1
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          publish-dir: './public_html'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy to production from GitHub Actions"
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          ssh-private-key: ${{ secrets.SITEGROUND_SSH_KEY }}
 
-      - name: Run smoke tests
-        run: curl -f https://agrobridge.global || exit 1
+      - name: Determine SSH port
+        id: ssh-port
+        run: |
+          if [ -n "$SSH_PORT_SECRET" ]; then
+            echo "port=$SSH_PORT_SECRET" >> "$GITHUB_OUTPUT"
+          else
+            echo "port=18765" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          SSH_PORT_SECRET: ${{ secrets.SITEGROUND_SSH_PORT }}
+
+      - name: Add SiteGround host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ steps.ssh-port.outputs.port }} -H ${{ secrets.SITEGROUND_SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy to SiteGround (production)
+        run: |
+          rsync -azv --delete \
+            -e "ssh -p ${{ steps.ssh-port.outputs.port }}" \
+            ./public_html/ \
+            ${{ secrets.SITEGROUND_SSH_USER }}@${{ secrets.SITEGROUND_SSH_HOST }}:${{ secrets.SITEGROUND_REMOTE_PATH }}/
+
+      - name: Smoke test production
+        run: |
+          sleep 5
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://agrobridge.global)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::error::Production smoke test failed with HTTP $HTTP_STATUS"
+            exit 1
+          fi
+          echo "Production smoke test passed (HTTP $HTTP_STATUS)"
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -217,8 +302,8 @@ jobs:
           BACKEND_URL: https://api.agrobridge.global
 
       - name: Notify deployment
-        uses: 8398a7/action-slack@v3
         if: always()
+        uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
           fields: repo,message,commit,author
