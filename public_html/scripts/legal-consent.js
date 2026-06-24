@@ -197,7 +197,7 @@ class CookieConsentManager {
       es: {
         title: 'Respetamos su privacidad',
         message: 'Utilizamos cookies esenciales para el funcionamiento del sitio y, con su consentimiento, cookies anal\u00edticas para mejorar su experiencia.',
-        moreInfo: 'M\u00e1s informaci\u00f3n',
+        moreInfo: 'Leer pol\u00edtica de cookies',
         reject: 'Solo esenciales',
         customize: 'Personalizar',
         accept: 'Aceptar todas'
@@ -205,7 +205,7 @@ class CookieConsentManager {
       en: {
         title: 'We respect your privacy',
         message: 'We use essential cookies for site functionality and, with your consent, analytics cookies to improve your experience.',
-        moreInfo: 'More information',
+        moreInfo: 'Read cookie policy',
         reject: 'Essential only',
         customize: 'Customize',
         accept: 'Accept all'
