@@ -61,3 +61,6 @@ PROMPT_*.md
 
 # IDEs JetBrains
 .idea/
+
+# Local Netlify folder
+.netlify

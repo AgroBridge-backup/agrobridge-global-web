@@ -1,5 +1,3 @@
-const JSON_LD_SCRIPT_HASH = "'sha256-OMsjk0Rr0y2j21NMPqmahkA84vQQcv30MpieOtJnIs8='";
-
 const cspDirectives = Object.freeze({
   defaultSrc: ["'self'"],
   baseUri: ["'self'"],
@@ -8,7 +6,6 @@ const cspDirectives = Object.freeze({
   frameAncestors: ["'none'"],
   scriptSrc: [
     "'self'",
-    JSON_LD_SCRIPT_HASH,
     'https://www.google.com/recaptcha/',
     'https://www.gstatic.com/recaptcha/',
     'https://browser.sentry-cdn.com',
@@ -57,7 +54,6 @@ const serializeCspDirectives = (directives = cspDirectives) => Object.entries(di
 const cspHeaderValue = serializeCspDirectives(cspDirectives);
 
 export {
-  JSON_LD_SCRIPT_HASH,
   cspDirectives,
   cspHeaderValue,
   serializeCspDirectives,
