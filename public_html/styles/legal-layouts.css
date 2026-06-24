@@ -72,6 +72,26 @@
   font-size: var(--text-2xl);
 }
 
+/* Brand logo image (added in legal header next to wordmark) */
+.legal-header__logo-img {
+  height: 2rem;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 3px;
+  contain: layout style paint;
+}
+
+.legal-footer__logo-img {
+  contain: layout style paint;
+}
+
+@media (max-width: 768px) {
+  .legal-header__logo-img {
+    height: 1.5rem;
+  }
+}
+
 .legal-header__nav {
   display: flex;
   align-items: center;
@@ -557,6 +577,20 @@
   font-weight: var(--weight-bold);
   color: var(--color-white);
   text-decoration: none;
+}
+
+.legal-footer__logo-img {
+  height: 2.5rem;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .legal-footer__logo-img {
+    height: 2rem;
+  }
 }
 
 .legal-footer__tagline {

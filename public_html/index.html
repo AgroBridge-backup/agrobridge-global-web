@@ -11,7 +11,10 @@
     <!-- OPEN GRAPH OPTIMIZADO -->
     <meta property="og:title" content="AgroBridge ZTD | Confianza Criptográfica Enterprise">
     <meta property="og:description" content="Trazabilidad criptográfica inviolable para productos agrícolas premium desde Michoacán al mundo.">
-    <meta property="og:image" content="https://agrobridge.global/assets/images/logo.jpg">
+    <meta property="og:image" content="https://agrobridge.global/assets/images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Logotipo de AgroBridge ZTD">
     <meta property="og:url" content="https://agrobridge.global">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="AgroBridge ZTD">
@@ -19,7 +22,10 @@
     
     <!-- PWA CONFIGURATION -->
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/logo-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/logo-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
     <meta name="theme-color" content="#d4af37">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -29,7 +35,8 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AgroBridge ZTD | Confianza Criptográfica Enterprise">
     <meta name="twitter:description" content="Trazabilidad de precisión para mercados Enterprise. AgroBridge ZeroLoss™ Protocol y TrustChain™.">
-    <meta name="twitter:image" content="https://agrobridge.global/assets/images/logo.jpg">
+    <meta name="twitter:image" content="https://agrobridge.global/assets/images/og-image.jpg">
+    <meta name="twitter:image:alt" content="Logotipo de AgroBridge ZTD">
     <meta name="twitter:site" content="@aglobridge_ztd">
     
     <!-- SCHEMA.ORG MARKUP -->
@@ -40,7 +47,7 @@
         "name": "AgroBridge ZTD",
         "description": "Trazabilidad criptográfica para productos agrícolas premium con AgroBridge ZeroLoss™ Protocol y TrustChain™",
         "url": "https://agrobridge.global",
-        "logo": "https://agrobridge.global/assets/images/logo.jpg",
+        "logo": "https://agrobridge.global/assets/images/logo-512.png",
         "sameAs": [
             "https://www.instagram.com/agrobridge.mx"
         ],
@@ -78,6 +85,9 @@
     <link rel="dns-prefetch" href="https://wa.me">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
+    <!-- Production config overrides (API URL, feature flags) -->
+    <script src="config-production.js"></script>
+
     <!-- Runtime bootstrap -->
     <script src="scripts/runtime-bootstrap.js"></script>
 
@@ -103,7 +113,15 @@
         <nav class="nav" id="navbar" aria-label="Navegación principal" data-i18n-aria-label="nav.mainAria">
             <div class="container nav__container">
                 <a href="#inicio" class="nav__logo">
-                    Agro<span class="nav__logo-accent">Bridge</span>
+                    <img src="assets/images/logo-48.png"
+                         srcset="assets/images/logo-48.png 1x, assets/images/logo-64.png 1.5x, assets/images/logo-96.png 2x"
+                         width="48" height="45"
+                         alt=""
+                         aria-hidden="true"
+                         class="nav__logo-img"
+                         decoding="async"
+                         loading="eager">
+                    <span class="nav__logo-text">Agro<span class="nav__logo-accent">Bridge</span></span>
                 </a>
 
                 <!-- Mobile Hamburger Menu Button (Bug #7 Fix) -->

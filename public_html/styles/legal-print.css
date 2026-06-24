@@ -318,6 +318,16 @@
     font-size: 18pt;
     font-weight: bold;
     margin-bottom: 0.3cm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2cm;
+  }
+
+  .print-header__logo-img {
+    height: 0.9cm;
+    width: auto;
+    display: inline-block;
   }
   
   .print-header__title {

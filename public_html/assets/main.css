@@ -424,6 +424,32 @@ small {
   transform: scaleX(1);
 }
 
+/* Brand logo image (added in nav next to wordmark) */
+.nav__logo-img {
+  height: 2.25rem;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 4px;
+  contain: layout style paint;
+}
+
+.nav__logo-text {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .nav__logo-img {
+    height: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__logo-img {
+    transition: none;
+  }
+}
+
 .nav__menu {
   display: flex;
   list-style: none;

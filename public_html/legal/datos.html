@@ -22,7 +22,10 @@
     <link rel="stylesheet" href="../styles/legal-print.css">
     
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/logo-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/logo-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
 </head>
 <body class="legal-page">
     <!-- Skip Link -->
@@ -30,7 +33,10 @@
     
     <!-- Print Header -->
     <div class="print-header">
-        <div class="print-header__logo">🌱 AgroBridge ZTD</div>
+        <div class="print-header__logo">
+            <img src="../assets/images/logo-64.png" width="32" height="30" alt="" class="print-header__logo-img" decoding="async" loading="lazy">
+            AgroBridge ZTD
+        </div>
         <div class="print-header__title" data-legal-i18n="legal.page.{page}.printTitle">Acuerdo de Tratamiento de Datos</div>
     </div>
     
@@ -38,7 +44,13 @@
     <header class="legal-header">
         <div class="legal-header__container">
             <a href="/" class="legal-header__logo">
-                <span class="legal-header__logo-icon">🌱</span>
+                <img src="../assets/images/logo-32.png"
+                     srcset="../assets/images/logo-32.png 1x, ../assets/images/logo-48.png 1.5x, ../assets/images/logo-64.png 2x"
+                     width="32" height="30"
+                     alt=""
+                     aria-hidden="true"
+                     class="legal-header__logo-img"
+                     decoding="async">
                 <span>AgroBridge <span class="text-gold-brand">ZTD</span></span>
             </a>
             <nav class="legal-header__nav" aria-label="Navegación legal" data-legal-i18n-aria-label="legal.nav.aria">
@@ -500,7 +512,14 @@
             <div class="legal-footer__container">
                 <div class="legal-footer__brand">
                     <a href="/" class="legal-footer__logo">
-                        <span aria-hidden="true">🌱</span> AgroBridge ZTD
+                        <img src="../assets/images/logo-48.png"
+                             srcset="../assets/images/logo-48.png 1x, ../assets/images/logo-64.png 1.5x, ../assets/images/logo-96.png 2x"
+                             width="40" height="38"
+                             alt=""
+                             aria-hidden="true"
+                             class="legal-footer__logo-img"
+                             decoding="async">
+                        <span>AgroBridge ZTD</span>
                     </a>
                     <p class="legal-footer__tagline">
                         La certidumbre es nuestro lote. Trazabilidad criptográfica inviolable desde Michoacán al mundo.

@@ -137,6 +137,8 @@ This repo contains both the **static frontend** (served via Netlify from `public
 | `build` | `build:js && build:css` | Minify all JS + CSS via esbuild |
 | `build:js` | esbuild loop | Minify each `public_html/scripts/*.js` into `dist/scripts/` |
 | `build:css` | esbuild loop | Minify `assets/*.css` + `styles/*.css` into `dist/` |
+| `sync:brand` | `node scripts/sync-brand-logo.mjs` | Regenerate brand logo markup across all HTML pages from canonical templates |
+| `lint:brand` | `sync-brand-logo.mjs --check` | CI gate: exit 1 if brand markup drifted out of sync (hooked into `test:release-gates`) |
 | `clean` | `rm -rf node_modules && npm cache clean --force` | Full clean |
 
 **Legacy scripts (reference `tools/` which no longer exists -- will fail):**
@@ -218,6 +220,29 @@ The frontend uses **window globals with IIFE module pattern** (no bundler, no im
 The `AgroBridgeApp` class uses **prototype extension pattern**: `app.js` defines the class with method delegations, `main.js` overrides `_construct` and `_trackListener`, then bootstraps. All modules reference each other through `window.*` globals.
 
 Legal pages (`legal/*.html`) load their own scripts: `legal-core.js`, `legal-utils.js`, `legal-animations.js`, `legal-consent.js`.
+
+### Brand Assets
+
+Brand logo files live in `public_html/assets/images/`. Generated from the source JPG via `sharp` (alpha matting on beige background, palette-quantized PNGs, multi-resolution `favicon.ico`, PWA icons).
+
+**Single source of truth**: brand `<img>` markup is centralized in `scripts/sync-brand-logo.mjs`. **Never hand-edit logo `<img>` tags** in HTML files — instead:
+1. Edit `TEMPLATES` in `scripts/sync-brand-logo.mjs`
+2. Run `npm run sync:brand` (writes to all 6 HTML files)
+3. Verify with `npm run lint:brand` (CI gate, exits 1 on drift)
+
+**File naming**:
+- `logo-{N}.png` — display variants at N px height (16, 32, 48, 64, 80, 96, 128, 192, 256, 384, 512). Aspect 1056/992.
+- `logo.png` — master at 512px height, palette-quantized (~47 KB)
+- `favicon.ico` — multi-resolution (16/32/48)
+- `apple-touch-icon.png` — 180×180 on brand navy bg
+- `og-image.jpg` — 1200×630 social card
+- `logo-social.jpg` — 512×512 on white bg (for JSON-LD fallback)
+- `pwa-any-{192,512}.png` — PWA icon (any purpose), on brand navy
+- `pwa-maskable-{192,512}.png` — PWA icon (maskable safe zone), on brand green
+
+**Codec choice**: palette PNG (64 colors) wins over AVIF/WebP for this logo by 2.7–4.4× because the artwork has a flat color palette, not photographic gradients. Do not "optimize" to AVIF without re-running the empirical comparison in the `logo-tool` script.
+
+**Regenerating assets**: the `sharp`-based generator lives in a temp dir outside the project (to avoid polluting `package.json`). Ask the user to re-run if the source logo changes.
 
 ## Backend Architecture
 
