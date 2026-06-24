@@ -380,3 +380,50 @@ npx serve public_html -l 5000
 - **Backend**: Render.com -- see backend repo
 - **Domain**: `agrobridge.global` (SiteGround) / `api.agrobridge.global` (Render)
 - **Preview deploys**: Netlify CLI can be used for isolated CDN validation (e.g. `netlify deploy --dir=public_html --prod`). Not the production host since commit `1bf3eeb` (Feb 2026).
+
+## Architectural Decision Records
+
+### ADR-001: Render-blocking CSS — Won't Fix (2026-06-24)
+
+**Status**: Accepted
+
+**Context**: 6 CSS stylesheets load render-blocking in `<head>` of `index.html`:
+`critical.css` (38KB), `main.css` (75KB), `accesibility.css` (9KB),
+`utilities.css` (4KB), `premium-theme.css` (16KB), `premium-tokens-v1.css` (6KB).
+Total: ~148KB before brotli. Lighthouse `render-blocking-insight` audit
+consistently reports this as an optimization opportunity.
+
+Audit performed Sprint 2 Día 1 revealed:
+- All 6 files contain rules used above-the-fold (interconnected)
+- `critical.css` is a hand-written "minimum viable styles" subset that
+  intentionally duplicates rules from `main.css` (`.button`, `.animate-*`)
+- Simple `media="print" onload="this.media='all'"` async trick would cause
+  FOUC on `.skip-link`, `:focus-visible`, `.button`, `.nav__link`,
+  `.hero__title`, `.container` max-width, `html` responsive font-size
+
+**Decision**: **Won't Fix.** No critical CSS extraction (Penthouse), no
+async loading, no consolidation of `critical.css` into `main.css`.
+
+**Rationale (empirical)**:
+- Lighthouse Performance: **100/100** on Netlify CDN (measured 2026-06-24)
+- LCP: **1.0s** (objective was <1.8s)
+- CLS: **0.0**, TBT: **0ms**
+- The original "LCP variance 1.4s↔2.4s" symptom disappeared with Sprint 1
+  CDN validation (it was edge cache warmth, not CSS blocking)
+- Cost of Fase 2: 1 day engineering + FOUC risk in 3 viewports + ongoing
+  critical CSS maintenance burden
+- Benefit: 0 marginal — already at 100
+
+**Consequences**:
+- Future agents should NOT re-attempt D2 optimization without a clear
+  regression in Performance score or measured LCP > 1.8s on production CDN
+- If site grows 10× and Performance drops below 95, re-evaluate
+- The `critical.css`/`main.css` duplication is accepted as intentional
+  defensive design (graceful degradation if `main.css` fails to load)
+- Brotli + HTTP/2 + edge cache remain the compensating factors
+
+**Re-evaluation triggers** (when to revisit):
+- Lighthouse Performance < 95 sustained across 3 runs
+- LCP > 2.5s measured on production CDN (not preview)
+- Mobile-only regression (CSS size > 200KB combined)
+- New CSS files added without consolidation review
