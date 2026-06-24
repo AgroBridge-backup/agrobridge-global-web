@@ -153,9 +153,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build production assets
-        run: npm run build
-
       - name: Validate deployment secrets
         run: |
           if [ -z "$SITEGROUND_SSH_HOST" ]; then echo "::error::SITEGROUND_SSH_HOST not set" && exit 1; fi
@@ -238,9 +235,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Build production assets
-        run: npm run build
 
       - name: Validate deployment secrets
         run: |

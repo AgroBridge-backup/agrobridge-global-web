@@ -42,7 +42,6 @@ This repo contains both the **static frontend** (served via SiteGround CDN/rsync
 | jest | ^29.7.0 | Unit/integration testing |
 | jest-environment-jsdom | ^29.7.0 | Browser DOM simulation |
 | @playwright/test | ^1.40.0 | E2E testing |
-| esbuild | ^0.27.3 | JS/CSS minification |
 | eslint | ^8.52.0 | Linting |
 | nodemon | ^3.0.1 | Dev server auto-restart |
 | supertest | ^6.3.3 | HTTP assertion testing |
@@ -87,7 +86,7 @@ This repo contains both the **static frontend** (served via SiteGround CDN/rsync
 │   │   ├── cookies.html          # Cookie policy
 │   │   ├── datos.html            # Data rights
 │   │   └── _template.html        # Legal page template
-│   └── dist/                     # Minified output (NOT referenced by HTML -- see Build Notes below)
+│   └── styles/                   # Legal page CSS only
 ├── src/                          # Backend (Express server)
 │   ├── index.js                  # Entry point: Express app, middleware, routes, server
 │   ├── config/
@@ -134,14 +133,11 @@ This repo contains both the **static frontend** (served via SiteGround CDN/rsync
 | `test:e2e` | `npx playwright test` | Playwright E2E tests |
 | `test:watch` | `jest --watch` | Jest in watch mode |
 | `test:ci` | `jest --ci --coverage` | CI test run with junit reporter |
-| `build` | `build:js && build:css` | Minify all JS + CSS via esbuild into `dist/` |
-| `build:js` | esbuild loop | Minify each `public_html/scripts/*.js` into `dist/scripts/` |
-| `build:css` | esbuild loop | Minify `assets/*.css` + `styles/*.css` into `dist/` |
-
-> **⚠️ Build output is currently unused**: HTML files reference source CSS/JS directly (e.g. `assets/main.css`, `scripts/utils.js`), not the minified versions in `dist/`. This is an intentional trade-off accepted after CDN validation showed Lighthouse Performance = 100 even without minification (brotli + HTTP/2 + edge cache compensate). To activate `dist/`, HTML refs must be updated and the deploy script's rsync source changed from `public_html/` to `public_html/dist/` with path-prefix adjustments.
 | `sync:brand` | `node scripts/sync-brand-logo.mjs` | Regenerate brand logo markup across all HTML pages from canonical templates |
 | `lint:brand` | `sync-brand-logo.mjs --check` | CI gate: exit 1 if brand markup drifted out of sync (hooked into `test:release-gates`) |
 | `clean` | `rm -rf node_modules && npm cache clean --force` | Full clean |
+
+> **ℹ️ No build step**: The repo intentionally ships without a JS/CSS minification pipeline. HTML references source CSS/JS directly (e.g. `assets/main.css`, `scripts/utils.js`). Lighthouse Performance = 100 on Netlify CDN without minification (brotli + HTTP/2 + edge cache compensate). A build step was originally present (`esbuild` + `public_html/dist/`) but was **removed in Sprint 1 Día 2** as dead code — it generated files that no HTML referenced. If the site grows 10× and minification becomes meaningful, re-introducing it takes ~30 min.
 
 **Legacy scripts (reference `tools/` which no longer exists -- will fail):**
 `deploy`, `deploy:full`, `pre-deploy`, `post-deploy`, `test:backend`, `test:blockchain`, `test:security`, `test:api`, `test:compatibility`, `test:hash`, `persistence:*`, `blockchain:*`, `monitor:*`, `lotes:*`, `optimize`, `security:scan`, `reset:dev`, `docs`, `logs:view`
@@ -357,9 +353,6 @@ npm run dev
 
 # 4. Run tests
 npm test
-
-# 5. Build minified assets (optional)
-npm run build
 ```
 
 For full-stack development with the backend:

@@ -114,19 +114,7 @@ if [ "$DRY_RUN" = "1" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# Step 1: Build minified assets
-# ---------------------------------------------------------------------------
-step "Building production assets"
-
-cd "$PROJECT_ROOT"
-if npm run build; then
-  success "Build completed"
-else
-  fail "Build failed -- aborting deployment"
-fi
-
-# ---------------------------------------------------------------------------
-# Step 2: Verify .htaccess exists
+# Step 1: Verify .htaccess exists
 # ---------------------------------------------------------------------------
 step "Verifying .htaccess"
 
@@ -137,7 +125,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Step 3: rsync to SiteGround
+# Step 2: rsync to SiteGround
 # ---------------------------------------------------------------------------
 step "Deploying to SiteGround via rsync"
 
@@ -171,7 +159,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Step 4: Post-deploy smoke test
+# Step 3: Post-deploy smoke test
 # ---------------------------------------------------------------------------
 if [ "$DRY_RUN" = "1" ]; then
   warn "Skipping smoke test (dry-run mode)"

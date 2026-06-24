@@ -39,7 +39,6 @@ Sistema de trazabilidad Zero-Trust Data (ZTD) para exportaciones agricolas mexic
 │   │   ├── accesibility.css  # Estilos de accesibilidad
 │   │   └── compatibility.css # Compatibilidad entre navegadores
 │   ├── legal/                # Paginas legales (privacidad, terminos, etc.)
-│   └── dist/                 # Archivos minificados (generados por esbuild)
 ├── src/                      # Backend (Node.js/Express)
 │   ├── index.js              # Punto de entrada del servidor
 │   ├── config/index.js       # Configuracion con validacion de secretos
@@ -79,9 +78,6 @@ npm run dev
 
 # Servidor de produccion
 npm run start:prod
-
-# Build (minificacion con esbuild)
-npm run build
 
 # Tests
 npm test                   # Todos los tests con cobertura
