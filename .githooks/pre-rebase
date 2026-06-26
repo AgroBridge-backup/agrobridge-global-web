@@ -1,0 +1,216 @@
+#!/bin/bash
+#
+# Pre-Rebase Hook - Branch Protection (FAANG-Grade)
+# Location: .githooks/pre-rebase
+#
+# Security: Branch name validation, no injection
+# Reliability: Signal handling, safe stash operations
+# UX: Clear warnings and recovery instructions
+#
+
+# Source core library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/core.sh"
+
+# Configuration
+readonly HOOK_NAME="pre-rebase"
+readonly DEBUG=${HOOKS_DEBUG:-0}
+readonly SKIP_ALL=${SKIP_PRE_REBASE:-0}
+readonly PROTECTED_BRANCHES=${PROTECTED_BRANCHES:-"main master develop production"}
+
+# Get rebase target (upstream branch)
+UPSTREAM_BRANCH="${1:-}"
+
+# Get current branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")
+
+# Validate branch names
+if ! validate_branch_name "$CURRENT_BRANCH"; then
+    log_error "Invalid current branch name: $CURRENT_BRANCH"
+    exit 1
+fi
+
+if [[ -n "$UPSTREAM_BRANCH" ]] && ! validate_branch_name "$UPSTREAM_BRANCH"; then
+    log_error "Invalid upstream branch name: $UPSTREAM_BRANCH"
+    exit 1
+fi
+
+# Validate skip flag
+if [[ "$SKIP_ALL" -eq 1 ]]; then
+    log_warning "Pre-rebase checks skipped (SKIP_PRE_REBASE=1)"
+    exit 0
+fi
+
+log_info "Pre-Rebase Safety Checks (v${GITHOOKS_VERSION})"
+echo ""
+log_debug "Current branch: $CURRENT_BRANCH"
+log_debug "Upstream: ${UPSTREAM_BRANCH:-\"(not specified)\"}"
+
+# ============================================
+# CHECK 1: Never rebase protected branches
+# ============================================
+log_info "▶️  Checking branch protection..."
+
+for protected in $PROTECTED_BRANCHES; do
+    if [[ "$CURRENT_BRANCH" == "$protected" ]]; then
+        log_error "CRITICAL: Attempting to rebase protected branch '$CURRENT_BRANCH'"
+        echo ""
+        log_warning "Rebasing $CURRENT_BRANCH is dangerous and can corrupt shared history."
+        echo ""
+        echo "Instead:"
+        echo "  1. Create a feature branch: git checkout -b feature/my-work"
+        echo "  2. Do your work on the feature branch"
+        echo "  3. Merge or rebase the feature branch onto $CURRENT_BRANCH"
+        echo ""
+        echo "If you absolutely must rebase $CURRENT_BRANCH (not recommended):"
+        echo "  SKIP_PRE_REBASE=1 git rebase $UPSTREAM_BRANCH"
+        echo ""
+        exit 1
+    fi
+done
+
+log_success "✓ Branch '$CURRENT_BRANCH' is not protected"
+
+# ============================================
+# CHECK 2: Check for uncommitted changes
+# ============================================
+log_info "▶️  Checking for uncommitted changes..."
+
+if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+    log_warning "You have uncommitted changes"
+    echo "   These changes will be preserved during rebase (git stash)"
+    echo ""
+    
+    # Non-interactive check (respects CI environments)
+    if [[ -t 0 ]]; then
+        read -p "   Stash changes and continue? [Y/n] " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ -n "$REPLY" ]]; then
+            log_warning "Rebase cancelled"
+            exit 1
+        fi
+    else
+        log_info "Non-interactive mode: auto-stashing changes"
+    fi
+    
+    log_info "Stashing changes..."
+    if git stash push -m "pre-rebase-auto-stash-$(date +%s)"; then
+        log_success "Changes stashed"
+        
+        # Set up trap to restore stash on failure
+        restore_stash() {
+            log_info "Restoring stashed changes..."
+            git stash pop 2>/dev/null || log_warning "Could not restore stash automatically"
+        }
+        trap restore_stash EXIT
+    else
+        log_error "Failed to stash changes"
+        exit 1
+    fi
+fi
+
+log_success "✓ Working directory clean"
+
+# ============================================
+# CHECK 3: Check if branch has been pushed
+# ============================================
+log_info "▶️  Checking if branch has been pushed..."
+
+if git rev-parse --abbrev-ref --symbolic-full-name @{u} &>/dev/null; then
+    UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
+    LOCAL_COMMIT=$(git rev-parse HEAD)
+    REMOTE_COMMIT=$(git rev-parse "$UPSTREAM" 2>/dev/null || echo "")
+    
+    if [[ -n "$REMOTE_COMMIT" ]] && [[ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]]; then
+        COMMITS_AHEAD=$(git rev-list --count "$UPSTREAM..HEAD" 2>/dev/null || echo "0")
+        
+        if [[ "$COMMITS_AHEAD" -gt 0 ]]; then
+            log_warning "Branch has been pushed with $COMMITS_AHEAD commit(s)"
+            echo "   Rebasing will rewrite published history and can cause issues for collaborators."
+            echo ""
+            echo "Options:"
+            echo "  1. Use merge instead: git merge $UPSTREAM_BRANCH"
+            echo "  2. Force push after rebase (if sure no one else is using this branch)"
+            echo "  3. Create a new branch from here and rebase that"
+            echo ""
+            
+            if [[ -t 0 ]]; then
+                read -p "   Continue with rebase? [y/N] " -n 1 -r
+                echo
+                if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                    log_warning "Rebase cancelled"
+                    exit 1
+                fi
+            fi
+            
+            log_warning "You will need to force push after rebase: git push --force-with-lease"
+        fi
+    fi
+else
+    log_debug "No upstream branch configured"
+fi
+
+log_success "✓ Branch either not pushed or up to date with remote"
+
+# ============================================
+# CHECK 4: Warn about complex rebases
+# ============================================
+if [[ -n "$UPSTREAM_BRANCH" ]]; then
+    log_info "▶️  Analyzing rebase complexity..."
+    
+    # Count commits to rebase
+    COMMITS_TO_REBASE=$(git rev-list --count HEAD.."$UPSTREAM_BRANCH" 2>/dev/null || echo "0")
+    
+    if [[ "$COMMITS_TO_REBASE" -gt 50 ]]; then
+        log_warning "Large rebase detected: $COMMITS_TO_REBASE commits"
+        echo "   Consider:"
+        echo "     - Interactive rebase: git rebase -i $UPSTREAM_BRANCH"
+        echo "     - Merge instead: git merge $UPSTREAM_BRANCH"
+        echo ""
+        
+        if [[ -t 0 ]]; then
+            read -p "   Continue with $COMMITS_TO_REBASE commits? [Y/n] " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ -n "$REPLY" ]]; then
+                log_warning "Rebase cancelled"
+                exit 1
+            fi
+        fi
+    else
+        log_success "✓ $COMMITS_TO_REBASE commits to rebase"
+    fi
+fi
+
+# ============================================
+# CHECK 5: Check for merge conflicts risk
+# ============================================
+log_info "▶️  Estimating conflict risk..."
+
+if [[ -n "$UPSTREAM_BRANCH" ]]; then
+    # Check for files modified in both branches
+    CONFLICT_CANDIDATES=$(git diff --name-only HEAD..."$UPSTREAM_BRANCH" 2>/dev/null | wc -l | tr -d ' ')
+    
+    if [[ "$CONFLICT_CANDIDATES" -gt 10 ]]; then
+        log_warning "High conflict risk: $CONFLICT_CANDIDATES files changed in both branches"
+        echo "   You may want to preview conflicts: git diff HEAD...$UPSTREAM_BRANCH --stat"
+    else
+        log_success "✓ Low conflict risk: $CONFLICT_CANDIDATES overlapping files"
+    fi
+fi
+
+# ============================================
+# Final approval
+# ============================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+log_success "All safety checks passed!"
+log_success "Rebase allowed: $CURRENT_BRANCH → ${UPSTREAM_BRANCH:-HEAD}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Tip: If rebase goes wrong, recover with:"
+echo "  git rebase --abort"
+echo "  git reflog  # Find previous HEAD"
+echo "  git reset --hard HEAD@{1}  # Restore pre-rebase state"
+echo ""
+
+exit 0

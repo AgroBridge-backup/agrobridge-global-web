@@ -1,0 +1,181 @@
+# Githooks Configuration File
+# Location: .githooks-config (in project root)
+#
+# This file allows project-specific customization of git hooks.
+# It overrides default behaviors and adds custom checks.
+#
+# Format: YAML-like key-value pairs (simple =value syntax)
+
+# ============================================
+# GENERAL SETTINGS
+# ============================================
+
+# Enable/disable hooks globally
+ENABLE_PRE_COMMIT=true
+ENABLE_COMMIT_MSG=true
+ENABLE_PRE_PUSH=true
+ENABLE_POST_MERGE=true
+ENABLE_PRE_REBASE=true
+ENABLE_POST_CHECKOUT=true
+ENABLE_PREPARE_COMMIT_MSG=true
+
+# Debug mode (verbose output)
+DEBUG=false
+
+# ============================================
+# PRE-COMMIT HOOK SETTINGS
+# ============================================
+
+# Skip specific checks (set to false to disable)
+PRECOMMIT_RUN_LINT=true
+PRECOMMIT_RUN_TESTS=true
+PRECOMMIT_RUN_CONFIG_VALIDATION=true
+PRECOMMIT_RUN_SKILL_AUDIT=true
+PRECOMMIT_RUN_SECRETS_SCAN=true
+
+# Lint specific directories (space-separated)
+# Default: auto-detect from git status
+# PRECOMMIT_LINT_DIRS=src/ public_html/scripts/ tests/
+
+# Test file patterns to run
+# Default: *.test.js *.spec.js
+PRECOMMIT_TEST_PATTERNS="*.test.js *.test.mjs *.spec.js *.spec.mjs"
+
+# Custom pre-commit command (runs after standard checks)
+# Return non-zero to block commit
+# PRECOMMIT_CUSTOM_COMMAND="npm run custom-check"
+
+# ============================================
+# COMMIT-MSG HOOK SETTINGS
+# ============================================
+
+# Conventional commit types (space-separated)
+COMMIT_TYPES="feat fix docs style refactor test chore security db build ci perf revert"
+
+# Maximum subject length
+COMMIT_MAX_LENGTH=72
+
+# Require scope for certain types
+COMMIT_REQUIRE_SCOPE_FOR="feat fix security"
+
+# Custom commit message validation command
+# Return 0 for valid, 1 for invalid
+# COMMIT_MSG_CUSTOM_VALIDATOR="./scripts/validate-commit.sh"
+
+# ============================================
+# PRE-PUSH HOOK SETTINGS
+# ============================================
+
+# Skip specific checks
+PREPUSH_RUN_UNIT_TESTS=true
+PREPUSH_RUN_INTEGRATION_TESTS=true
+PREPUSH_RUN_SECURITY_TESTS=true
+PREPUSH_RUN_ACCESSIBILITY_TESTS=true
+PREPUSH_RUN_SMOKE_TESTS=true
+PREPUSH_RUN_SKILL_AUDITS=true
+
+# Branches that require full test suite
+# Default: main develop
+PREPUSH_FULL_TEST_BRANCHES="main master develop production"
+
+# Branches that can skip optional tests
+PREPUSH_WIP_BRANCH_PREFIXES="wip draft tmp experiment"
+
+# Maximum file size (in MB)
+PREPUSH_MAX_FILE_SIZE=10
+
+# Custom pre-push command
+# Return non-zero to block push
+# PREPUSH_CUSTOM_COMMAND="npm run e2e"
+
+# ============================================
+# PRE-REBASE HOOK SETTINGS
+# ============================================
+
+# Protected branches (never rebase these)
+PROTECTED_BRANCHES="main master develop production release/*"
+
+# Warn if more than N commits in rebase
+REBASE_WARN_COMMIT_COUNT=50
+
+# Warn if more than N files changed in both branches
+REBASE_WARN_CONFLICT_FILES=10
+
+# Auto-stash uncommitted changes
+REBASE_AUTO_STASH=true
+
+# Custom pre-rebase validation
+# REBASE_CUSTOM_COMMAND="./scripts/validate-rebase.sh"
+
+# ============================================
+# POST-MERGE HOOK SETTINGS
+# ============================================
+
+# Auto-migrate database (dangerous, use with caution)
+POSTMERGE_AUTO_MIGRATE=false
+
+# Auto-install npm packages
+POSTMERGE_AUTO_INSTALL=true
+
+# Auto-build assets
+POSTMERGE_AUTO_BUILD=true
+
+# Clear caches on config changes
+POSTMERGE_AUTO_CLEAR_CACHE=true
+
+# Custom post-merge actions
+# POSTMERGE_CUSTOM_COMMAND="npm run post-merge-hook"
+
+# ============================================
+# CUSTOM CHECKS
+# ============================================
+# Add your own checks here
+# They will be sourced and run by the hooks
+
+# Example: Check for TODO/FIXME in code
+# [check-todos]
+# enabled=true
+# pattern="TODO|FIXME|XXX"
+# message="Found TODO/FIXME comments. Consider resolving before commit."
+# severity=warning  # error, warning, info
+
+# Example: Enforce test coverage minimum
+# [check-coverage]
+# enabled=true
+# command="npm run test:coverage"
+# min_coverage=80
+# severity=error
+
+# Example: Validate branch naming convention
+# [check-branch-name]
+# enabled=true
+# pattern="^(feature|fix|hotfix|release)/.+"
+# message="Branch name should follow: feature/*, fix/*, hotfix/*, release/*"
+# severity=error
+
+# ============================================
+# PROJECT-SPECIFIC SETTINGS
+# ============================================
+
+# AgroBridge Global specific settings
+[agrobridge]
+# Enforce security checks for blockchain code
+blockchain_security_check=true
+
+# Validate Spanish translations
+i18n_validation=true
+
+# Check for agricultural domain terms
+# domain_terms="trazabilidad|blockchain|berrie|aguacate|certificacion"
+
+# ============================================
+# ENVIRONMENT OVERRIDES
+# ============================================
+# These can also be set via environment variables:
+# - SKIP_PRE_COMMIT=1
+# - SKIP_COMMIT_MSG=1
+# - SKIP_PRE_PUSH=1
+# - SKIP_PRE_REBASE=1
+# - SKIP_POST_MERGE=1
+# - HOOKS_DEBUG=1
+# - AUTO_MIGRATE=true

@@ -1,0 +1,142 @@
+#!/bin/bash
+#
+# Commit Message Hook - Conventional Commits Validation (FAANG-Grade)
+# Location: .githooks/commit-msg
+#
+# Security: Input validation, no eval
+# Reliability: Signal handling, safe defaults
+#
+
+# Source core library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/core.sh"
+
+# Configuration
+readonly HOOK_NAME="commit-msg"
+readonly DEBUG=${HOOKS_DEBUG:-0}
+readonly SKIP_ALL=${SKIP_COMMIT_MSG:-0}
+
+# Input validation - ensure commit message file is provided
+if [[ $# -lt 1 ]]; then
+    log_error "Usage: $0 <commit-msg-file>"
+    exit 1
+fi
+
+COMMIT_MSG_FILE="$1"
+
+# Validate file exists and is readable
+if ! validate_file "$COMMIT_MSG_FILE" "commit message file"; then
+    exit 1
+fi
+
+# Validate skip flag
+if [[ "$SKIP_ALL" -eq 1 ]]; then
+    log_warning "Commit message validation skipped"
+    exit 0
+fi
+
+# Read commit message safely
+COMMIT_MSG=$(head -n1 "$COMMIT_MSG_FILE")
+
+# Skip for merge commits
+if echo "$COMMIT_MSG" | grep -qE '^Merge'; then
+    log_debug "Skipping validation for merge commit"
+    exit 0
+fi
+
+# Skip for revert commits
+if echo "$COMMIT_MSG" | grep -qE '^Revert'; then
+    log_debug "Skipping validation for revert commit"
+    exit 0
+fi
+
+log_info "Validating commit message..."
+log_debug "Message: $COMMIT_MSG"
+
+# Conventional commit pattern
+# Format: type(scope): subject
+# Types: feat, fix, docs, style, refactor, test, chore, security, db
+# Scope: optional, alphanumeric with hyphens
+# Subject: starts with lowercase, no period at end, max 72 chars
+
+VALID_TYPES="feat|fix|docs|style|refactor|test|chore|security|db|build|ci|perf|revert"
+PATTERN="^($VALID_TYPES)(\([a-z0-9-]+\))?!?: .+$"
+
+# Check pattern
+if ! echo "$COMMIT_MSG" | grep -qE "$PATTERN"; then
+    log_error "Invalid commit message format"
+    echo ""
+    echo "Expected format: type(scope): subject"
+    echo ""
+    echo "Valid types:"
+    echo "  feat      - New feature"
+    echo "  fix       - Bug fix"
+    echo "  docs      - Documentation only"
+    echo "  style     - Formatting, semicolons, etc"
+    echo "  refactor  - Code restructuring"
+    echo "  test      - Adding tests"
+    echo "  chore     - Maintenance tasks"
+    echo "  security  - Security fixes"
+    echo "  db        - Database changes"
+    echo "  build     - Build system changes"
+    echo "  ci        - CI/CD changes"
+    echo "  perf      - Performance improvements"
+    echo ""
+    echo "Examples:"
+    echo "  ✓ feat(blockchain): add Solana escrow integration"
+    echo "  ✓ fix(auth): resolve token refresh race condition"
+    echo "  ✓ docs(api): update GraphQL schema documentation"
+    echo "  ✓ security: patch vulnerability in dependencies"
+    echo ""
+    echo "Your message:"
+    echo "  ✗ $COMMIT_MSG"
+    echo ""
+    echo "To bypass (not recommended):"
+    echo "  SKIP_COMMIT_MSG=1 git commit -m \"your message\""
+    exit 1
+fi
+
+# Check subject length (max 72 chars for readability)
+SUBJECT=$(echo "$COMMIT_MSG" | sed 's/^[^:]*: //')
+if [[ ${#SUBJECT} -gt 72 ]]; then
+    log_warning "Subject exceeds 72 characters (${#SUBJECT} chars)"
+    echo "   Consider shortening for better readability"
+    # Don't fail, just warn
+fi
+
+# Check subject starts with lowercase
+if echo "$SUBJECT" | grep -qE '^[A-Z]'; then
+    log_warning "Subject should start with lowercase"
+    echo "   Change: '${SUBJECT:0:1}' -> '$(echo "${SUBJECT:0:1}" | tr '[:upper:]' '[:lower:]')'"
+fi
+
+# Check no period at end
+if echo "$SUBJECT" | grep -qE '\.$'; then
+    log_warning "Subject should not end with a period"
+fi
+
+# Check for breaking change marker
+if echo "$COMMIT_MSG" | grep -qE '^.+!: '; then
+    log_warning "Breaking change detected!"
+    echo "   Ensure body explains the breaking change"
+fi
+
+# Scope auto-detection (helpful suggestion)
+SCOPE=$(echo "$COMMIT_MSG" | grep -oE '\([a-z0-9-]+\)' | tr -d '()' || true)
+if [[ -z "$SCOPE" ]]; then
+    log_debug "No scope detected"
+    
+    # Try to auto-suggest scope from changed files
+    STAGED_FILES=$(git diff --cached --name-only 2>/dev/null || true)
+    
+    if echo "$STAGED_FILES" | grep -q "blockchain"; then
+        log_info "💡 Suggestion: Consider adding scope (blockchain)"
+    elif echo "$STAGED_FILES" | grep -qE "(auth|security)"; then
+        log_info "💡 Suggestion: Consider adding scope (auth) or type (security)"
+    elif echo "$STAGED_FILES" | grep -qE "(test|spec)"; then
+        log_info "💡 Suggestion: Consider adding scope (tests)"
+    fi
+fi
+
+log_success "✅ Commit message is valid!"
+exit 0

@@ -1,0 +1,248 @@
+#!/bin/bash
+#
+# Pre-Push Hook - Full Quality Pipeline (FAANG-Grade)
+# Location: .githooks/pre-push
+#
+# Security: Input validation, no eval
+# Reliability: Signal handling, atomic operations
+# Performance: Parallel execution where safe
+#
+
+# Source core library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/core.sh"
+
+# Configuration
+readonly HOOK_NAME="pre-push"
+readonly DEBUG=${HOOKS_DEBUG:-0}
+readonly SKIP_ALL=${SKIP_PRE_PUSH:-0}
+
+# Get push target info (local_ref local_sha remote_ref remote_sha)
+read -r local_ref local_sha remote_ref remote_sha
+
+# Skip for deleted branches
+if [[ "$local_sha" == "0000000000000000000000000000000000000000" ]]; then
+    exit 0
+fi
+
+# Determine branch name
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+REMOTE_BRANCH=$(echo "$remote_ref" | sed 's/refs\/heads\///' 2>/dev/null || echo "unknown")
+
+# Validate branch names
+if ! validate_branch_name "$BRANCH"; then
+    exit 1
+fi
+
+if ! validate_branch_name "$REMOTE_BRANCH"; then
+    exit 1
+fi
+
+# Validate skip flag
+if [[ "$SKIP_ALL" -eq 1 ]]; then
+    log_warning "Pre-push hooks skipped (SKIP_PRE_PUSH=1)"
+    exit 0
+fi
+
+# Skip for WIP branches
+if echo "$BRANCH" | grep -qE '^(wip|WIP|draft|tmp)'; then
+    log_info "Skipping checks for WIP branch: $BRANCH"
+    exit 0
+fi
+
+log_info "Pre-Push Quality Pipeline (v${GITHOOKS_VERSION})"
+echo ""
+log_info "Branch: $BRANCH"
+log_info "Remote: $REMOTE_BRANCH"
+echo ""
+
+# Counters
+declare -i CHECKS_PASSED=0
+declare -i CHECKS_FAILED=0
+declare -i TOTAL_CHECKS=0
+
+# Function to run a check with timing (no eval!)
+run_check() {
+    local name="$1"
+    local cmd="$2"
+    local is_required="${3:-1}"
+    
+    TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    
+    log_info "▶️  $name"
+    local start_time=$(date +%s)
+    
+    # Execute directly - no eval!
+    if bash -c "$cmd" 2>&1 | while IFS= read -r line; do
+        echo "   $line"
+    done; then
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
+        log_success "✓ $name passed (${duration}s)"
+        log_metric "$HOOK_NAME" "$name" "pass" "$duration"
+        CHECKS_PASSED=$((CHECKS_PASSED + 1))
+        return 0
+    else
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
+        
+        if [[ "$is_required" -eq 1 ]]; then
+            log_error "✗ $name failed (${duration}s)"
+            CHECKS_FAILED=$((CHECKS_FAILED + 1))
+        else
+            log_warning "⚠️  $name failed (${duration}s) [optional]"
+            CHECKS_PASSED=$((CHECKS_PASSED + 1))
+        fi
+        log_metric "$HOOK_NAME" "$name" "fail" "$duration"
+        return 1
+    fi
+}
+
+# ============================================
+# CHECK 1: Full linting
+# ============================================
+run_check "ESLint (full)" "npm run lint" || true
+
+# ============================================
+# CHECK 2: Config validation
+# ============================================
+run_check "Config Validation" "npm run validate:config" || true
+
+# ============================================
+# CHECK 3: Unit tests with coverage
+# ============================================
+run_check "Unit Tests" "npm run test:unit" || true
+
+# ============================================
+# CHECK 4: Integration tests (develop/main only)
+# ============================================
+if [[ "$BRANCH" == "main" ]] || [[ "$BRANCH" == "develop" ]]; then
+    run_check "Integration Tests" "npm run test:integration" || true
+fi
+
+# ============================================
+# CHECK 5: Security tests
+# ============================================
+run_check "Security Tests" "npm run test:security" || true
+
+# ============================================
+# CHECK 6: Accessibility tests (main/develop)
+# ============================================
+if [[ "$BRANCH" == "main" ]] || [[ "$BRANCH" == "develop" ]]; then
+    run_check "Accessibility Tests" "npm run test:a11y" || true
+fi
+
+# ============================================
+# CHECK 7: Smoke test (server startup)
+# ============================================
+run_check "Server Smoke Test" "npm run test:smoke" 0 || true
+
+# ============================================
+# CHECK 8: Skill audits (if skills exist)
+# ============================================
+if [[ -d ".codex/skills" ]]; then
+    log_info "▶️  Auditing all skills..."
+    
+    SKILL_FAILURES=0
+    for skill_dir in .codex/skills/*/; do
+        if [[ -f "$skill_dir/SKILL.md" ]]; then
+            skill_name=$(basename "$skill_dir")
+            
+            if python3 "$HOME/.codex/skills/ultimate-skill-creator/scripts/audit_skill.py" "$skill_dir" --mode standard > /dev/null 2>&1; then
+                echo -e "   ${GREEN}✓ $skill_name${NC}"
+            else
+                echo -e "   ${RED}✗ $skill_name (audit failed)${NC}"
+                SKILL_FAILURES=$((SKILL_FAILURES + 1))
+            fi
+        fi
+    done
+    
+    TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    if [[ $SKILL_FAILURES -eq 0 ]]; then
+        log_success "✓ All skills passed audit"
+        CHECKS_PASSED=$((CHECKS_PASSED + 1))
+    else
+        log_error "✗ $SKILL_FAILURES skill(s) failed audit"
+        CHECKS_FAILED=$((CHECKS_FAILED + 1))
+    fi
+fi
+
+# ============================================
+# CHECK 9: Check for large files (>10MB)
+# ============================================
+log_info "▶️  Large file check"
+LARGE_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | \
+    while IFS= read -r file; do
+        if [[ -f "$file" ]]; then
+            size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+            if [[ $size -gt 10485760 ]]; then
+                echo "$file"
+            fi
+        fi
+    done || true)
+
+TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+if [[ -z "$LARGE_FILES" ]]; then
+    log_success "✓ No large files detected"
+    CHECKS_PASSED=$((CHECKS_PASSED + 1))
+else
+    log_error "✗ Large files detected:"
+    echo "$LARGE_FILES" | while IFS= read -r file; do
+        size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+        size_mb=$(echo "scale=2; $size / 1048576" | bc 2>/dev/null || echo "?")
+        echo "   $file (${size_mb}MB)"
+    done
+    echo "   Consider using Git LFS for large files"
+    CHECKS_FAILED=$((CHECKS_FAILED + 1))
+fi
+
+# ============================================
+# CHECK 10: Branch protection check
+# ============================================
+if [[ "$REMOTE_BRANCH" == "main" ]] && [[ "$BRANCH" != "main" ]]; then
+    log_info "▶️  Branch protection check"
+    
+    # Check if branch is behind main
+    git fetch origin main --quiet 2>/dev/null || true
+    BEHIND=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
+    
+    TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    if [[ "$BEHIND" -gt 0 ]]; then
+        log_warning "Your branch is $BEHIND commit(s) behind main"
+        echo "   Consider rebasing: git pull --rebase origin main"
+        # Don't fail, just warn
+        CHECKS_PASSED=$((CHECKS_PASSED + 1))
+    else
+        log_success "✓ Branch is up to date with main"
+        CHECKS_PASSED=$((CHECKS_PASSED + 1))
+    fi
+fi
+
+# ============================================
+# Summary
+# ============================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+log_info "Quality Pipeline Summary"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Total checks: $TOTAL_CHECKS"
+echo -e "${GREEN}Passed: $CHECKS_PASSED${NC}"
+echo -e "${RED}Failed: $CHECKS_FAILED${NC}"
+echo ""
+
+if [[ $CHECKS_FAILED -gt 0 ]]; then
+    log_error "❌ Push blocked: $CHECKS_FAILED check(s) failed"
+    echo ""
+    echo "To bypass these checks (use with caution):"
+    echo "  SKIP_PRE_PUSH=1 git push"
+    echo ""
+    echo "To fix issues:"
+    echo "  - Fix linting: npm run lint -- --fix"
+    echo "  - Run tests: npm run test"
+    echo "  - Audit skills: python scripts/audit_skill.py <skill> --mode standard"
+    exit 1
+else
+    log_success "✅ All quality checks passed!"
+    log_success "✓ Push allowed to $REMOTE_BRANCH"
+    exit 0
+fi

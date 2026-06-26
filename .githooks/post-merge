@@ -1,0 +1,226 @@
+#!/bin/bash
+#
+# Post-Merge Hook - Auto-Migrations & Environment Sync (FAANG-Grade)
+# Location: .githooks/post-merge
+#
+# Security: Safe command execution, no eval
+# Reliability: Atomic operations, error recovery
+# Observability: Structured logging of all actions
+#
+
+# Source core library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/core.sh"
+
+# Configuration
+readonly HOOK_NAME="post-merge"
+readonly DEBUG=${HOOKS_DEBUG:-0}
+readonly SKIP_ALL=${SKIP_POST_MERGE:-0}
+readonly AUTO_MIGRATE=${AUTO_MIGRATE:-false}
+readonly SQUASH_MERGE="${1:-0}"
+
+# Get merged branch info
+PREVIOUS_HEAD=$(git rev-parse HEAD@{1} 2>/dev/null || echo "HEAD@{1}")
+CURRENT_HEAD=$(git rev-parse HEAD)
+
+# Validate skip flag
+if [[ "$SKIP_ALL" -eq 1 ]]; then
+    log_warning "Post-merge hooks skipped (SKIP_POST_MERGE=1)"
+    exit 0
+fi
+
+# Skip for squash merges
+if [[ "$SQUASH_MERGE" -eq 1 ]]; then
+    log_debug "Squash merge detected, skipping"
+    exit 0
+fi
+
+log_info "Post-Merge Environment Sync (v${GITHOOKS_VERSION})"
+echo ""
+
+# Get changed files safely
+CHANGED_FILES=$(git diff-tree -r --name-only --no-commit-id "$PREVIOUS_HEAD" "$CURRENT_HEAD" 2>/dev/null || echo "")
+log_debug "Changed files: $(echo "$CHANGED_FILES" | wc -l | tr -d ' ')"
+
+# Track what we did
+declare -a ACTIONS_TAKEN=()
+declare -a WARNINGS=()
+declare -a ERRORS=()
+
+# Function to run action safely
+run_action() {
+    local name="$1"
+    local cmd="$2"
+    
+    log_info "▶️  $name"
+    
+    # Execute command directly - no eval!
+    if bash -c "$cmd" 2>&1; then
+        log_success "✓ $name complete"
+        ACTIONS_TAKEN+=("$name")
+        return 0
+    else
+        log_error "✗ $name failed"
+        ERRORS+=("$name")
+        return 1
+    fi
+}
+
+# ============================================
+# ACTION 1: NPM Install (if package.json changed)
+# ============================================
+if echo "$CHANGED_FILES" | grep -q "package.json"; then
+    run_action "Installing NPM dependencies" "npm install"
+fi
+
+# ============================================
+# ACTION 2: Prisma Migrations (if schema changed)
+# ============================================
+if echo "$CHANGED_FILES" | grep -qE "(prisma/schema.prisma|prisma/migrations)"; then
+    log_info "▶️  Database migrations detected"
+    
+    if [[ "$AUTO_MIGRATE" == "true" ]]; then
+        # Check if migrations need to be applied
+        if npm run prisma:migrate:status 2>/dev/null | grep -q "pending"; then
+            run_action "Applying Prisma migrations" "npm run prisma:migrate:prod"
+            
+            # Regenerate Prisma Client
+            run_action "Regenerating Prisma Client" "npm run prisma:generate"
+        else
+            log_success "✓ No pending migrations"
+        fi
+    else
+        log_warning "Database schema changed!"
+        echo "   Manual action required:"
+        echo "     npm run prisma:migrate:prod"
+        echo "     npm run prisma:generate"
+        WARNINGS+=("Database migrations pending")
+    fi
+fi
+
+# ============================================
+# ACTION 3: TypeScript rebuild (if types changed)
+# ============================================
+if echo "$CHANGED_FILES" | grep -qE "(tsconfig|\.d\.ts$)"; then
+    if [[ -f "package.json" ]] && grep -q "typescript" package.json; then
+        run_action "TypeScript type check" "npx tsc --noEmit" || WARNINGS+=("TypeScript errors detected")
+    fi
+fi
+
+# ============================================
+# ACTION 4: Build assets (if source changed)
+# ============================================
+if echo "$CHANGED_FILES" | grep -qE "(public_html/scripts|public_html/assets)"; then
+    if grep -q "build" package.json 2>/dev/null; then
+        run_action "Building frontend assets" "npm run build"
+    fi
+fi
+
+# ============================================
+# ACTION 5: Environment variable updates
+# ============================================
+if echo "$CHANGED_FILES" | grep -q ".env.example"; then
+    log_info "▶️  Environment variables changed"
+    
+    # Check for new required variables
+    if [[ -f ".env" ]] && [[ -f ".env.example" ]]; then
+        NEW_VARS=$(comm -23 <(grep -oE '^[A-Z_]+=' .env.example | sort) <(grep -oE '^[A-Z_]+=' .env | sort) 2>/dev/null || true)
+        
+        if [[ -n "$NEW_VARS" ]]; then
+            log_warning "New environment variables detected:"
+            echo "$NEW_VARS" | while IFS= read -r var; do
+                echo "   - ${var%=}"
+            done
+            echo ""
+            echo "   Update your .env file with these new variables"
+            WARNINGS+=("New environment variables in .env.example")
+        else
+            log_success "✓ No new required variables"
+        fi
+    fi
+fi
+
+# ============================================
+# ACTION 6: Skill audits (if skills changed)
+# ============================================
+if echo "$CHANGED_FILES" | grep -qE "^\.codex/skills/|/skills/"; then
+    log_info "▶️  Skills changed, running audits..."
+    
+    SKILL_FAILURES=0
+    for skill_dir in .codex/skills/*/; do
+        if [[ -f "$skill_dir/SKILL.md" ]]; then
+            skill_name=$(basename "$skill_dir")
+            
+            # Check if this skill was modified
+            if echo "$CHANGED_FILES" | grep -q "$skill_dir"; then
+                if python3 "$HOME/.codex/skills/ultimate-skill-creator/scripts/audit_skill.py" "$skill_dir" --mode standard > /dev/null 2>&1; then
+                    echo -e "   ${GREEN}✓ $skill_name${NC}"
+                else
+                    echo -e "   ${RED}✗ $skill_name (audit failed)${NC}"
+                    SKILL_FAILURES=$((SKILL_FAILURES + 1))
+                fi
+            fi
+        fi
+    done
+    
+    if [[ $SKILL_FAILURES -gt 0 ]]; then
+        WARNINGS+=("$SKILL_FAILURES skill(s) failed audit")
+    fi
+fi
+
+# ============================================
+# ACTION 7: Git hooks update (if hooks changed)
+# ============================================
+if echo "$CHANGED_FILES" | grep -q ".githooks/"; then
+    run_action "Updating git hooks" "./scripts/setup-git-hooks.sh"
+fi
+
+# ============================================
+# ACTION 8: Clear caches (if cache files changed)
+# ============================================
+if echo "$CHANGED_FILES" | grep -qE "(\.eslintcache|\.jest|tsconfig)"; then
+    if [[ -d "node_modules/.cache" ]]; then
+        run_action "Clearing build caches" "rm -rf node_modules/.cache"
+    fi
+fi
+
+# ============================================
+# Summary
+# ============================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+log_info "Post-Merge Summary"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [[ ${#ACTIONS_TAKEN[@]} -gt 0 ]]; then
+    log_success "Actions taken:"
+    for action in "${ACTIONS_TAKEN[@]}"; do
+        echo "  ✓ $action"
+    done
+fi
+
+if [[ ${#WARNINGS[@]} -gt 0 ]]; then
+    echo ""
+    log_warning "Warnings:"
+    for warning in "${WARNINGS[@]}"; do
+        echo "  ⚠️  $warning"
+    done
+fi
+
+if [[ ${#ERRORS[@]} -gt 0 ]]; then
+    echo ""
+    log_error "Errors:"
+    for error in "${ERRORS[@]}"; do
+        echo "  ✗ $error"
+    done
+fi
+
+if [[ ${#ACTIONS_TAKEN[@]} -eq 0 ]] && [[ ${#WARNINGS[@]} -eq 0 ]] && [[ ${#ERRORS[@]} -eq 0 ]]; then
+    log_success "✓ No actions required"
+fi
+
+echo ""
+log_success "✅ Merge complete!"
+echo ""
+
+exit 0

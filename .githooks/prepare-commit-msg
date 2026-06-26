@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+# Prepare Commit Message Hook - Auto-prefix suggestions
+# Location: .githooks/prepare-commit-msg
+#
+# Suggests commit message prefix based on changed files
+#
+
+set -euo pipefail
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+# Skip if message already provided (e.g., -m flag)
+if [ -n "${COMMIT_SOURCE:-}" ]; then
+  exit 0
+fi
+
+# Get changed files
+STAGED_FILES=$(git diff --cached --name-only)
+
+# Suggest prefix based on changes
+SUGGESTION=""
+
+if echo "$STAGED_FILES" | grep -qE "\.md$"; then
+  SUGGESTION="docs: "
+elif echo "$STAGED_FILES" | grep -qE "test|spec"; then
+  SUGGESTION="test: "
+elif echo "$STAGED_FILES" | grep -qE "blockchain|contracts"; then
+  SUGGESTION="feat(blockchain): "
+elif echo "$STAGED_FILES" | grep -qE "security|auth|encrypt"; then
+  SUGGESTION="security: "
+elif echo "$STAGED_FILES" | grep -qE "\.github|ci|deploy"; then
+  SUGGESTION="ci: "
+elif echo "$STAGED_FILES" | grep -qE "fix|bug|hotfix"; then
+  SUGGESTION="fix: "
+fi
+
+if [ -n "$SUGGESTION" ]; then
+  # Prepend suggestion to commit message
+  echo "#$SUGGESTION" >> "$COMMIT_MSG_FILE"
+fi
+
+exit 0
