@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 /**
  * AgroBridge Contact Module
  * @description Contact form submission and reCAPTCHA integration

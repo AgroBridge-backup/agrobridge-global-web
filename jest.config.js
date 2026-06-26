@@ -24,17 +24,25 @@ export default {
   ],
 
   // Coverage configuration
+  // Use V8 provider: instruments by execution (Node V8 inspector) rather than
+  // babel transform, so every collectCoverageFrom file that runs reports real
+  // numbers. The default Istanbul provider was silently omitting files loaded
+  // via the window-global IIFE pattern, inflating the headline percentage.
+  coverageProvider: 'v8',
   collectCoverage: true,
   coverageDirectory: '<rootDir>/coverage',
   coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
 
-  // Coverage thresholds - 90%+ target
+  // Coverage thresholds - ratcheted to current true (V8-measured) coverage,
+  // ~2pt below measured to absorb run-to-run variance. Acts as a regression
+  // floor; raise incrementally as tests are added. Measured baseline:
+  // stmts 86.78 | branches 72.83 | functions 81.45 | lines 86.78.
   coverageThreshold: {
     global: {
-      branches: 55,
-      functions: 70,
-      lines: 73,
-      statements: 73
+      branches: 70,
+      functions: 79,
+      lines: 84,
+      statements: 84
     }
   },
 
