@@ -136,6 +136,11 @@ p {
   margin: 0 auto 1.25rem;
   max-width: 15ch;
   line-height: 1.03;
+  text-align: center;
+}
+
+.hero__title > span {
+  display: block;
 }
 
 .hero__title-accent {
