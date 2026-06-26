@@ -221,7 +221,7 @@ window.AgroBridgeI18n = (function() {
             'contact.inquiry.other': 'Información General',
             'contact.message.autogen': 'Solicitud enterprise desde el sitio web.\nEmpresa: {company}\nTeléfono: {phone}\nTipo: {inquiry}',
 
-            'footer.copy': '© 2026 AGRO BRIDGE. Propiedad Intelectual Corporativa. | Zamora, Michoacán, México.',
+            'footer.copy': '© 2026 AGROBRIDGE. Propiedad Intelectual Corporativa. | Zamora, Michoacán, México.',
             'footer.execContact': 'Contacto Ejecutivo',
             'footer.instagram': 'Síguenos en Instagram',
             'footer.ztd': 'ZTD Protocol',
@@ -443,7 +443,7 @@ window.AgroBridgeI18n = (function() {
             'contact.inquiry.other': 'General information',
             'contact.message.autogen': 'Enterprise request from website.\nCompany: {company}\nPhone: {phone}\nType: {inquiry}',
 
-            'footer.copy': '© 2026 AGRO BRIDGE. Corporate Intellectual Property. | Zamora, Michoacán, Mexico.',
+            'footer.copy': '© 2026 AGROBRIDGE. Corporate Intellectual Property. | Zamora, Michoacán, Mexico.',
             'footer.execContact': 'Executive contact',
             'footer.instagram': 'Follow us on Instagram',
             'footer.ztd': 'ZTD Protocol',
