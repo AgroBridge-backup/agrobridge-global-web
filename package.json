@@ -25,6 +25,8 @@
     "test:smoke": "node scripts/server-smoke.mjs",
     "test:release-gates": "npm run lint:brand && npm run validate:config && npm run test:security && npm run test:smoke",
     "test:e2e": "npx playwright test",
+    "test:e2e:smoke": "npx playwright test tests/e2e/smoke.spec.js --project=chromium",
+    "serve:static": "node scripts/serve-static.mjs",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage --reporters=default --reporters=jest-junit",
     "clean": "rm -rf node_modules && npm cache clean --force"

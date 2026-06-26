@@ -47,7 +47,10 @@ export default defineConfig({
 
   webServer: SHOULD_START_LOCAL_SERVER
     ? {
-        command: 'npm run start',
+        // Zero-dependency static server: lets E2E run locally + pre-merge in CI
+        // without booting Express or its required secrets. The full E2E suite
+        // runs post-deploy against FRONTEND_URL (prod/staging) instead.
+        command: 'node scripts/serve-static.mjs',
         url: FRONTEND_URL,
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,

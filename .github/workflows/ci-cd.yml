@@ -123,6 +123,12 @@ jobs:
       - name: Run tests
         run: npm run test:ci
 
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E smoke (pre-merge, local static server)
+        run: npm run test:e2e:smoke
+
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:

@@ -12,7 +12,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/**/*.js', 'jest*.js', '.github/**/*.js'],
+      files: ['src/**/*.js', 'jest*.js', '.github/**/*.js', 'playwright.config.js', 'scripts/**/*.mjs'],
       env: {
         node: true,
         es2022: true,
