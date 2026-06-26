@@ -54,19 +54,25 @@ This repo contains both the **static frontend** (served via SiteGround CDN/rsync
 ├── public_html/                  # Frontend (deployed to SiteGround)
 │   ├── index.html                # Main page (loads all scripts/styles)
 │   ├── config-production.js      # Production config overrides
-│   ├── scripts/                  # 12 browser JS modules (IIFE pattern)
-│   │   ├── utils.js              # Shared utilities (escapeHtml, DOM helpers, fetchWithTimeout)
+│   ├── scripts/                  # 18 browser JS modules (IIFE pattern); see Frontend Architecture
+│   │   ├── utils.js              # Shared utilities (escapeHtml, debounce/throttle, DOM helpers, fetchWithTimeout)
 │   │   ├── demo-data.js          # Demo lot data for offline/testing
-│   │   ├── i18n.js               # Translations (es/en)
+│   │   ├── i18n.js               # Translations (es/en) for main site
 │   │   ├── ui.js                 # Mobile menu, slideshow, notifications, animations
 │   │   ├── validation.js         # Lot code verification logic
 │   │   ├── contact.js            # Contact form + reCAPTCHA integration
 │   │   ├── app.js                # AgroBridgeApp class (delegates to above modules)
 │   │   ├── main.js               # Overrides _construct, bootstraps on DOMContentLoaded
+│   │   ├── page-ready.js         # Marks body.ready + IntersectionObserver fade-in
+│   │   ├── whatsapp-config.js    # Floating WhatsApp link href from AGROBRIDGE_WHATSAPP_NUMBER
+│   │   ├── runtime-bootstrap.js  # Head-loaded (no defer): brand-route selection + config
+│   │   ├── web-vitals.js         # LCP/CLS/FID collection via PerformanceObserver -> sendBeacon
 │   │   ├── legal-core.js         # Legal page rendering engine
 │   │   ├── legal-utils.js        # Legal page utilities
 │   │   ├── legal-animations.js   # Legal page animations
-│   │   └── legal-consent.js      # Cookie/data consent management
+│   │   ├── legal-i18n.js         # Legal page chrome/hero i18n (es/en)
+│   │   ├── legal-consent.js      # Cookie/data consent manager (shared by main + legal)
+│   │   └── legal-cookies-preferences.js  # Cookies-preferences page controller (save/reject/toggles)
 │   ├── styles/                   # Legal page CSS only
 │   │   ├── legal-base.css
 │   │   ├── legal-components.css
@@ -204,20 +210,25 @@ This repo contains both the **static frontend** (served via SiteGround CDN/rsync
 
 ## Frontend Architecture
 
-The frontend uses **window globals with IIFE module pattern** (no bundler, no import/export). Scripts are loaded via `<script defer>` in this order:
+The frontend uses **window globals with IIFE module pattern** (no bundler, no import/export). On `index.html`, scripts load via `<script defer>` in this order (except `runtime-bootstrap.js`, which is head-loaded without defer so brand-route + config resolve before first paint):
 
-1. `utils.js` -> `window.AgroBridgeUtils` (base utilities, must load first)
-2. `demo-data.js` -> `window.AgroBridgeDemoData`
-3. `i18n.js` -> `window.AgroBridgeI18n`
-4. `ui.js` -> `window.AgroBridgeUI`
-5. `validation.js` -> `window.AgroBridgeValidation`
-6. `contact.js` -> `window.AgroBridgeContact`
-7. `app.js` -> `window.AgroBridge.App` (class definition, delegates to modules above)
-8. `main.js` -> Overrides `_construct` on `AgroBridgeApp.prototype`, bootstraps on `DOMContentLoaded`
+1. `runtime-bootstrap.js` -> brand-route selection (URL param -> localStorage) + config bootstrap (head, blocking)
+2. `web-vitals.js` -> LCP/CLS/FID via `PerformanceObserver` -> `sendBeacon`
+3. `utils.js` -> `window.AgroBridgeUtils` (base utilities, must load first)
+4. `demo-data.js` -> `window.AgroBridgeDemoData`
+5. `i18n.js` -> `window.AgroBridgeI18n`
+6. `ui.js` -> `window.AgroBridgeUI`
+7. `validation.js` -> `window.AgroBridgeValidation`
+8. `contact.js` -> `window.AgroBridgeContact`
+9. `app.js` -> `window.AgroBridge.App` (class definition, delegates to modules above)
+10. `main.js` -> Overrides `_construct` on `AgroBridgeApp.prototype`, bootstraps on `DOMContentLoaded`
+11. `page-ready.js` -> Marks `body.ready` + IntersectionObserver fade-in
+12. `whatsapp-config.js` -> Floating WhatsApp link href from `AGROBRIDGE_WHATSAPP_NUMBER`
+13. `legal-consent.js` -> Cookie/data consent banner manager
 
 The `AgroBridgeApp` class uses **prototype extension pattern**: `app.js` defines the class with method delegations, `main.js` overrides `_construct` and `_trackListener`, then bootstraps. All modules reference each other through `window.*` globals.
 
-Legal pages (`legal/*.html`) load their own scripts: `legal-core.js`, `legal-utils.js`, `legal-animations.js`, `legal-consent.js`.
+Legal pages (`legal/*.html`) load their own 6 scripts (no defer): `legal-i18n.js` -> `legal-core.js` -> `legal-animations.js` -> `legal-utils.js` -> `legal-consent.js` -> `legal-cookies-preferences.js`. The cookies-preferences controller only runs on `legal/cookies.html`.
 
 ### Brand Assets
 
@@ -276,21 +287,24 @@ Request pipeline:
 
 **Framework:** Jest 29 with jsdom environment (ESM via `--experimental-vm-modules`)
 
-**Coverage thresholds** (from `jest.config.js`):
-| Metric | Threshold |
-|---|---|
-| Lines | 75% |
-| Statements | 75% |
-| Functions | 70% |
-| Branches | 55% |
+**Coverage provider:** V8 (`coverageProvider: 'v8'`) — instruments by execution via Node's V8 inspector rather than babel transform, so every `collectCoverageFrom` file that runs reports real numbers. The legacy Istanbul provider silently omitted files loaded via the window-global IIFE pattern.
 
-**Coverage collected from:** `app.js`, `contact.js`, `demo-data.js`, `i18n.js`, `ui.js`, `utils.js`, `validation.js` (7 of 12 frontend modules -- legal scripts excluded)
+**Coverage thresholds** (from `jest.config.js`, ratcheted ~2pt below measured to act as a regression floor):
+| Metric | Threshold | Measured baseline |
+|---|---|---|
+| Lines | 84% | 86.78% |
+| Statements | 84% | 86.78% |
+| Functions | 79% | 81.45% |
+| Branches | 70% | 72.83% |
+
+**Coverage collected from:** `app.js`, `contact.js`, `demo-data.js`, `i18n.js`, `ui.js`, `utils.js`, `validation.js` (7 of 18 frontend modules -- runtime/bootstrap/legal/web-vitals/whatsapp scripts excluded)
 
 **Test suites:**
 - `tests/unit/agroBridgeApp.test.js` -- Core app functionality
-- `tests/integration/navigation.test.js` -- Navigation flows
-- `tests/integration/validation.test.js` -- Validation integration
+- `tests/unit/{utils,validation-reset,bootstrap-smoke,legal-consent,contact-submit}.test.js` -- Focused module coverage
+- `tests/integration/{navigation,validation,index-bootstrap,server-smoke,legal-pages}.test.js` -- Integration flows
 - `tests/accessibility/a11y.test.js` -- Accessibility checks
+- `tests/security/*.test.js` -- Backend security (CSRF, CORS, rate-limit, admin auth) + **backend coverage gate for `src/`** (V8, ratcheted; separate config, excluded from `npm test`)
 - `tests/e2e/` -- Playwright E2E (excluded from Jest via `testPathIgnorePatterns`)
 
 **Commands:**
@@ -301,8 +315,14 @@ npm test
 # Run single file
 node --experimental-vm-modules node_modules/jest/bin/jest.js tests/unit/agroBridgeApp.test.js
 
-# E2E (requires running frontend + backend)
+# E2E full suite (requires running frontend + backend; post-deploy uses FRONTEND_URL)
 npm run test:e2e
+
+# E2E pre-merge smoke (chromium only, local static server, no backend)
+npm run test:e2e:smoke
+
+# Backend security + src/ coverage gate
+npm run test:security
 ```
 
 ## CI/CD Pipeline
