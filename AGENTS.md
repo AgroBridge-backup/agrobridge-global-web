@@ -255,33 +255,35 @@ Brand logo files live in `public_html/assets/images/`. Generated from the source
 
 ## Backend Architecture
 
+> **This repo's `src/` is a thin admin scaffold** (JWT auth middleware, CORS, CSRF, rate limiting, `/api/admin/*` CRUD). It is **not** the production API.
+>
+> The production backend — which serves lot verification and lead capture — lives at:
+> **`~/Documents/agrobridge-global-backend`**
+>
+> Its complete architecture is documented in:
+> **[`~/Documents/agrobridge-global-backend/BACKEND.md`](../agrobridge-global-backend/BACKEND.md)**
+>
+> **Read that file before modifying anything in `contact.js`, `validation.js`, or any `fetch` call in this repo.**
+
+### This repo's `src/` scaffold
+
 **Entry point:** `src/index.js` (ESM)
 
 Request pipeline:
-1. Request ID middleware (X-Request-ID header, UUID)
+1. Request ID middleware (`X-Request-ID` header, UUID)
 2. Body parsers (JSON + URL-encoded, 10KB limit)
-3. Cookie parser
-4. Compression
-5. Security middleware (`setupSecurity(app)` from `security.js`):
-   - Helmet (CSP, HSTS 1yr with preload, frameguard deny, noSniff, XSS filter)
-   - CORS (whitelist in production: `FRONTEND_URL` + `ADMIN_URL`; permissive in dev)
-   - Rate limiting (100 req/15 min, Redis-backed with in-memory fallback)
-   - MongoDB sanitization (replaces `$` and `.` with `_`)
-   - CSRF double-submit (via `csrf-csrf`, on POST/PUT/PATCH/DELETE only)
-   - CSRF token endpoint: `GET /api/csrf-token`
-6. Static file serving (`public_html/`)
-7. API routes: `/api/admin/*` (authenticated, admin-only)
-8. Health check: `GET /health`
-9. Global error handler (last `app.use()`)
+3. Cookie parser + compression
+4. `setupSecurity(app)` — Helmet, CORS (`FRONTEND_URL`+`ADMIN_URL` whitelist in prod), rate limiting (100 req/15 min, Redis-backed with in-memory fallback), MongoDB sanitization, CSRF double-submit
+5. Static file serving (`public_html/`)
+6. API routes: `/api/admin/*` (authenticated, admin-only) — **note: these are the scaffold's own admin routes, separate from the production backend's `/v2/admin/*` routes**
+7. Health check: `GET /health`
+8. Global error handler
 
-**Authentication:** Dual JWT with HS256
-- Access tokens: 15m default, signed with `JWT_ACCESS_SECRET` (64+ chars)
-- Refresh tokens: 7d default, signed with `JWT_REFRESH_SECRET` (64+ chars, must differ)
-- Both include JTI (JWT ID) for token tracking via `crypto.randomUUID()`
-- Refresh tokens include `type: 'refresh'` claim, validated on verification
-- Middleware: `authenticate` (required), `authorize(roles)` (role check), `optionalAuth` (passthrough)
+**Authentication (scaffold only):** Dual JWT with HS256. Access tokens: 15m, `JWT_ACCESS_SECRET` (64+ chars). Refresh tokens: 7d, `JWT_REFRESH_SECRET` (64+ chars, must differ). Refresh tokens carry `type: 'refresh'` claim validated on verification.
 
-**Note:** `src/middleware/auth.js` and `src/services/authService.js` use CommonJS (`require`/`module.exports`) while the rest of `src/` uses ESM. The `admin.js` route imports the CommonJS auth module via ESM `import` -- this works due to Node's interop.
+**Note:** `src/middleware/auth.js` and `src/services/authService.js` use CommonJS (`require`/`module.exports`) while the rest of `src/` uses ESM. The `admin.js` route imports the CommonJS auth module via ESM `import` — this works due to Node's interop.
+
+**CORS — important distinction**: This repo's `src/middleware/security.js` reads allowed origins from `FRONTEND_URL` and `ADMIN_URL` environment variables. The **production backend** (`~/Documents/agrobridge-global-backend`) has its origins **hardcoded** in its own `security.js` and ignores the `CORS_ORIGIN` env var entirely. These are two separate CORS implementations. Adding an origin to one does not affect the other.
 
 ## Testing
 
@@ -345,17 +347,37 @@ npm run test:security
 
 ## API Endpoints
 
+### This repo's `src/` scaffold (`/api/*`)
+
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | `GET` | `/health` | None | Health check (status, uptime, version) |
 | `GET` | `/api/csrf-token` | None | Get CSRF token |
-| `GET` | `/api/admin/leads` | Admin | List leads (paginated) |
-| `GET` | `/api/admin/leads/:id` | Admin | Get lead by ID |
-| `PATCH` | `/api/admin/leads/:id` | Admin | Update lead status/notes |
-| `DELETE` | `/api/admin/leads/:id` | Admin | Delete lead |
-| `GET` | `/api/admin/stats` | Admin | Dashboard statistics |
+| `GET` | `/api/admin/leads` | Admin JWT | List leads (paginated) |
+| `GET` | `/api/admin/leads/:id` | Admin JWT | Get lead by ID |
+| `PATCH` | `/api/admin/leads/:id` | Admin JWT | Update lead status/notes |
+| `DELETE` | `/api/admin/leads/:id` | Admin JWT | Delete lead |
+| `GET` | `/api/admin/stats` | Admin JWT | Dashboard statistics |
 
-**Note:** The verification (`/v2/verify/:code`) and lead submission (`/v2/leads`) endpoints are served by the separate backend at `~/Documents/agrobridge-global-backend`, not this repo.
+### Production backend (`~/Documents/agrobridge-global-backend`) — `/v2/*`
+
+All routes below are served by the **separate backend** at `api.agrobridge.global`. The frontend calls these directly from the browser.
+
+| Method | Path | Auth | Frontend caller | Description |
+|---|---|---|---|---|
+| `GET` | `/v2/verify/:code` | None | `validation.js` | Lot code traceability lookup |
+| `POST` | `/v2/leads` | None (reCAPTCHA) | `contact.js` | Enterprise lead submission |
+| `POST` | `/v2/admin/login` | None | Admin dashboard | Admin authentication |
+| `POST` | `/v2/admin/refresh` | None | Admin dashboard | Token refresh |
+| `POST` | `/v2/admin/logout` | Bearer JWT | Admin dashboard | Token revocation |
+| `GET` | `/v2/admin/dashboard` | Bearer JWT | Admin dashboard | Dashboard statistics |
+| `GET` | `/v2/admin/leads` | Bearer JWT | Admin dashboard | Lead management |
+| `GET` | `/v2/admin/export` | Bearer JWT | Admin dashboard | CSV export |
+| `GET` | `/v2/admin/audit-logs` | Bearer JWT | Admin dashboard | Audit trail |
+| `GET` | `/health` | None | CI/CD + load balancer | Backend health check |
+| `POST` | `/v2/vitals` | None | `web-vitals.js` via `sendBeacon` | Web Vitals telemetry sink |
+
+For full request/response shapes and rate limits, see [`BACKEND.md`](../agrobridge-global-backend/BACKEND.md).
 
 ## Development Setup
 
@@ -390,14 +412,102 @@ npx serve public_html -l 5000
 
 ## Sibling Repos
 
-| Repo | Path | Relationship |
+| Repo | Path | Full docs |
 |---|---|---|
-| Backend API | `~/Documents/agrobridge-global-backend` | Serves `/v2/verify/:code` and `/v2/leads` endpoints that this frontend consumes |
+| Production Backend API | `~/Documents/agrobridge-global-backend` | [`BACKEND.md`](../agrobridge-global-backend/BACKEND.md) |
+
+## Frontend ↔ Backend Integration
+
+This section documents the **seam** between the two repos. This is where bugs live and where agents most frequently need context from both sides.
+
+### How the frontend finds the backend
+
+`window.AGROBRIDGE_API_BASE` is set in `public_html/config-production.js` (overrides) and read by `runtime-bootstrap.js` at head-load time before any deferred script runs.
+
+| Environment | Value | Set by |
+|---|---|---|
+| Production | `https://api.agrobridge.global/v2` | `config-production.js` |
+| Development | `http://localhost:3000/v2` | `index.html` default |
+| Demo/offline | N/A — bypassed entirely | `window.AGROBRIDGE_USE_DEMO = true` |
+
+### Demo mode
+
+When `window.AGROBRIDGE_USE_DEMO = true`, `validation.js` short-circuits all `fetch` calls and returns data from `demo-data.js` instead. **No backend is contacted.** Use this for:
+- Frontend-only development without spinning up the backend
+- UI/UX iteration on the lot verification result card
+- Running the E2E smoke suite (`npm run test:e2e:smoke`) which has no backend dependency
+
+Never commit `AGROBRIDGE_USE_DEMO = true` to `config-production.js`.
+
+### Lot verification flow (`validation.js` → `/v2/verify/:code`)
+
+```
+User types lot code
+  → validation.js validates format (client-side: ^[A-Z0-9-]+$)
+  → fetchWithTimeout(AGROBRIDGE_API_BASE + '/verify/' + code)
+  → Backend: Product.findOne({ lotCode }) → returns traceability payload
+  → validation.js renders result card with escapeHtml() on all fields
+```
+
+**Key constraint**: Lot codes must match `^[A-Z0-9-]+$`. This regex is enforced on **both** sides — client-side in `validation.js` and server-side in the `Product` Mongoose schema. If you change the format on one side, change it on both.
+
+### Lead submission flow (`contact.js` → `/v2/leads`)
+
+```
+User submits contact form
+  → contact.js collects: name, email, phone, company, message, lotCode, inquiryType
+  → grecaptcha.execute(AGROBRIDGE_RECAPTCHA_SITE_KEY, { action: AGROBRIDGE_RECAPTCHA_ACTION })
+  → POST AGROBRIDGE_API_BASE + '/leads'  { ...formData, recaptchaToken }
+  → Backend: verifyRecaptcha(token) → score must be ≥ 0.5 (RECAPTCHA_MIN_SCORE)
+  → Backend: createLead() in MongoDB transaction + AuditLog write
+  → Backend: sendLeadConfirmation(lead) + sendOwnerNotification(lead) via Resend (non-blocking)
+  → Frontend: shows success notification
+```
+
+**Key constraints**:
+- `phone` and `company` are required by the **frontend form** for UX completeness, but the backend schema marks them optional. If you add a new required field to the form, you do not need to update the backend schema — only if you need it server-side validated.
+- **`name` min-length discrepancy**: the `express-validator` middleware in the backend enforces ≥ 2 characters, but the `Lead` Mongoose schema enforces ≥ 3 characters at the database level. The schema constraint wins on save — a 2-character name passes HTTP validation but fails at `Lead.save()` and returns a 500. When writing client-side validation for the contact form, use ≥ 3 characters to match the schema.
+- The reCAPTCHA **site key** (`AGROBRIDGE_RECAPTCHA_SITE_KEY`) lives in the frontend. The **secret key** (`RECAPTCHA_SECRET_KEY`) lives in the backend's `.env`. They are different keys from the same Google reCAPTCHA v3 pair.
+- Rate limit on `/v2/leads`: **10 submissions per hour per IP**. If you're testing form submission repeatedly in dev, use demo mode or spin up the backend locally.
+- The form includes a **honeypot field** (never visible to users). The backend's `validateLead` middleware rejects any submission where the honeypot arrives non-empty with a `400 Bot detected` error. The frontend must send the honeypot as an empty string or omit it entirely.
+
+### Web Vitals telemetry (`web-vitals.js` → `/v2/vitals`)
+
+`web-vitals.js` collects LCP/CLS/FID via `PerformanceObserver` and fires them to the backend via `navigator.sendBeacon` (fire-and-forget). The backend logs them and returns `204`. No auth, no response body. This endpoint is intentionally exempt from CSRF.
+
+### CORS — the one gotcha every agent hits
+
+The backend's allowed CORS origins are **hardcoded** in `~/Documents/agrobridge-global-backend/src/middleware/security.js`:
+
+```js
+// Production
+['https://agrobridge.global', 'https://www.agrobridge.global']
+
+// Development
+['http://localhost:3000', 'http://localhost:8080', 'http://127.0.0.1:3000']
+```
+
+They are **not** driven by the `CORS_ORIGIN` environment variable (which exists in config but is ignored by the middleware). To add a new allowed origin (e.g. a staging URL), you must edit `security.js` and redeploy the backend. Do not waste time looking for an env var solution — it does not exist by design.
+
+### Full-stack local development
+
+```bash
+# Terminal 1 — Production backend (port 3000)
+cd ~/Documents/agrobridge-global-backend
+npm run dev
+
+# Terminal 2 — Frontend static files (port 5000)
+cd ~/Documents/agrobridge-global-web
+npx serve public_html -l 5000
+# AGROBRIDGE_API_BASE defaults to http://localhost:3000/v2 in dev
+```
+
+Alternatively, set `window.AGROBRIDGE_USE_DEMO = true` in `public_html/index.html` for frontend-only work.
 
 ## Deployment
 
-- **Frontend**: SiteGround via `scripts/deploy-siteground.sh` (rsync over SSH) -- deploys `public_html/` to production doc root. CI/CD hooks exist in `.github/workflows/ci-cd.yml` but require GitHub secrets (`SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SITEGROUND_STAGING_PATH`) to be configured.
-- **Backend**: Render.com -- see backend repo
+- **Frontend**: SiteGround via `scripts/deploy-siteground.sh` (rsync over SSH) — deploys `public_html/` to production doc root. CI/CD hooks exist in `.github/workflows/ci-cd.yml` but require GitHub secrets (`SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SITEGROUND_STAGING_PATH`) to be configured.
+- **Backend**: Render.com (Docker, Oregon region) — see [`~/Documents/agrobridge-global-backend/BACKEND.md`](../agrobridge-global-backend/BACKEND.md) and `render.yaml`
 - **Domain**: `agrobridge.global` (SiteGround) / `api.agrobridge.global` (Render)
 - **Preview deploys**: Netlify CLI can be used for isolated CDN validation (e.g. `netlify deploy --dir=public_html --prod`). Not the production host since commit `1bf3eeb` (Feb 2026).
 
